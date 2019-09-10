@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="zanclick-app" />
+        <module name="zanclick-auth" />
+        <module name="zanclick-authorize" />
+        <module name="zanclick-common" />
+        <module name="zanclick-supplychain" />
+        <module name="zanclick-web" />
+      </profile>
+    </annotationProcessing>
+  </component>
+</project>

@@ -1,0 +1,40 @@
+[
+  {
+    "amount": "100.00",
+    "authNo": "2019050710002001870207587496",
+    "body": "{\"alipay_fund_auth_order_freeze_response\":{\"code\":\"10000\",\"msg\":\"Success\",\"amount\":\"100.00\",\"auth_no\":\"2019050710002001870207587496\",\"gmt_trans\":\"2019-05-07 18:59:12\",\"operation_id\":\"20190507528372228702\",\"out_order_no\":\"155722674927812890980\",\"out_request_no\":\"155722674928222395074\",\"payer_logon_id\":\"bba***@sandbox.com\",\"payer_user_id\":\"2088102178037874\",\"status\":\"SUCCESS\"},\"sign\":\"izbzxXnGTxB8bJHFWZXXvn+fMC7EIpYm3l+vsp3R3ZNA/XUFQEzmvv7uIIqB9SSuDdmvV3DTEJHMVilmJq/CmwJ8Gia063kRLSpIav7R/3Iy1ErdhsDbTU84cCbnrR3Yg57jAiDaQ1CXAwS0357niuUdg7G89LqRnQ+Kq/45//sArF2vCYnpw1uJuKgi5G8Pg2Fh2fPxQgiYCxe1bgtGh5+Ys2BjfTyoOukd4Cj3Zccw3w00LY4PxPWnM5TinjKmO2CzY8/2YrANGqrHs6XZOkhjMtvcLb5uYqvbmfsy/b5KW9+ZShJ2mNX9q7Sh4Lj4zJYMZBJ1A6h1XpkIggQ9Tg==\"}",
+    "code": "10000",
+    "errorCode": "10000",
+    "gmtTrans": 1557226752000,
+    "msg": "Success",
+    "operationId": "20190507528372228702",
+    "outOrderNo": "155722674927812890980",
+    "outRequestNo": "155722674928222395074",
+    "params": {
+      "biz_content": "{\"auth_code\":\"281076089472407934\",\"auth_code_type\":\"bar_code\",\"out_order_no\":\"155722674927812890980\",\"out_request_no\":\"155722674928222395074\",\"order_title\":\"预授权资金冻结测试100元\",\"amount\":100,\"payee_user_id\":\"2088102177714604\",\"pay_timeout\":\"1m\",\"product_code\":\"PRE_AUTH\",\"extend_params\":\"{\\\"sys_service_provider_id\\\":\\\"2088721239794361\\\"}\"}"
+    },
+    "payerLogonId": "bba***@sandbox.com",
+    "payerUserId": "2088102178037874",
+    "status": "SUCCESS",
+    "success": true
+  },
+  {
+    "amount": "10.00",
+    "authNo": "2019052110002001250205466736",
+    "body": "{\"alipay_fund_auth_order_freeze_response\":{\"code\":\"10000\",\"msg\":\"Success\",\"amount\":\"10.00\",\"auth_no\":\"2019052110002001250205466736\",\"gmt_trans\":\"2019-05-21 10:35:31\",\"operation_id\":\"20190521367986762502\",\"out_order_no\":\"155840612593004362715\",\"out_request_no\":\"155840612593764818386\",\"payer_logon_id\":\"296***@qq.com\",\"payer_user_id\":\"2088402847876251\",\"status\":\"SUCCESS\"},\"sign\":\"epxmon/iT5CTPUxkR6rXMdYRtZixxK1dKiIaXFCX1jfP3asjndgdF6uNf2op7ay8dQ2YM08pNdHW9mhUeiAz0z7H5j31cYlu+LaQXHASWD8yytQfHkJcTlXkjEoJVpvz9GSeNI3RyUjsC+kXLQ1a/MUgPyYYGoVi9+Kv3mZUXaVZuDO7sG/uNZOuYGRPF491wNtC31leKfkNG4Rav1s2nJtA4ucNdlnpeKwB5X6nJhVdD1ZpSwjuCn/d7lpdt1tAYSTEa5uPdFNP5H3gQsiCrhrsUs2xUVelxDRG6h3RqalZcULHvaiK48iOEZChwImXj3JkWfJCxRh5MCiEnUzqPA==\"}",
+    "code": "10000",
+    "errorCode": "10000",
+    "gmtTrans": 1558406131000,
+    "msg": "Success",
+    "operationId": "20190521367986762502",
+    "outOrderNo": "155840612593004362715",
+    "outRequestNo": "155840612593764818386",
+    "params": {
+      "biz_content": "{\"auth_code\":\"280279571270923568\",\"auth_code_type\":\"bar_code\",\"out_order_no\":\"155840612593004362715\",\"out_request_no\":\"155840612593764818386\",\"order_title\":\"预授权资金冻结测试100元\",\"amount\":10,\"payee_user_id\":\"2088231616604616\",\"pay_timeout\":\"1m\",\"product_code\":\"PRE_AUTH\",\"extend_params\":\"{\\\"sys_service_provider_id\\\":\\\"2088721239794361\\\"}\",\"enable_pay_channels\":\"[{\\\"payChannelType\\\":\\\"MONEY_FUND\\\"}]\"}"
+    },
+    "payerLogonId": "296***@qq.com",
+    "payerUserId": "2088402847876251",
+    "status": "SUCCESS",
+    "success": true
+  }
+]

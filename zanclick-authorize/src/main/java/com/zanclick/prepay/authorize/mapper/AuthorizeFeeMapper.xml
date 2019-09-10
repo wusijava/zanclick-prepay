@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zanclick.prepay.authorize.mapper.AuthorizeFeeMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.AuthorizeFee">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="app_id" property="appId" jdbcType="VARCHAR"/>
+        <result column="fee" property="fee" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="table">authorize_fee</sql>
+
+    <sql id="Base_Column_List">
+        id,
+        app_id,
+        fee
+    </sql>
+
+    <sql id="Base_Where_Clause">
+        <where>
+            <trim prefixOverrides="and">
+                <if test="id != null">AND id = #{id}</if>
+                <if test="appId != null and appId != ''">AND app_id = #{appId}</if>
+            </trim>
+        </where>
+        ORDER BY id DESC
+        <if test="offset == null and limit != null">
+            limit #{limit}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </sql>
+
+    <!-- 查询总数 -->
+    <select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT count(id)
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <!-- 查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
+    <select id="selectByAppId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE app_id = #{appId} ORDER BY id DESC LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeMerchant" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        (
+        id,
+        app_id,
+        fee
+        )
+        VALUES
+        (
+        #{id},
+        #{appId},
+        #{fee}
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="table"/>
+        (
+        id,
+        app_id,
+        fee
+        )
+        VALUES
+        <foreach collection="list" item="cm" index="index" separator=",">
+            (
+            #{cm.id},
+            #{cm.appId},
+            #{cm.fee}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeMerchant">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="fee != null and fee != ''">fee = #{fee},</if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+</mapper>

@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zanclick.prepay.authorize.mapper.AuthorizeOrderRefundRecordMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.AuthorizeOrderRefundRecord">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="trade_no" property="tradeNo" jdbcType="VARCHAR"/>
+        <result column="refund_no" property="refundNo" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="VARCHAR"/>
+        <result column="refund_reason" property="refundReason" jdbcType="VARCHAR"/>
+        <result column="reason" property="reason" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="table">authorize_order_refund_record</sql>
+
+    <sql id="Base_Column_List">
+        id,
+        trade_no,
+        refund_no,
+        amount,
+        refund_reason,
+        reason,
+        create_time,
+        finish_time,
+        state
+    </sql>
+
+    <sql id="Base_Where_Clause">
+        <where>
+            <trim prefixOverrides="and">
+                <if test="id != null">AND id = #{id}</if>
+                <if test="state != null">AND state = #{state}</if>
+                <if test="tradeNo != null and requestNo != ''">AND trade_no = #{tradeNo}</if>
+                <if test="refundNo != null and refundNo != ''">AND refund_no = #{refundNo}</if>
+            </trim>
+        </where>
+        ORDER BY id DESC
+        <if test="offset == null and limit != null">
+            limit #{limit}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </sql>
+
+    <!-- 查询总数 -->
+    <select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT count(id)
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <!-- 查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
+    <select id="selectByRefundNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE refund_no = #{refundNo} ORDER BY id DESC LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeOrderRefundRecord" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        (
+        id,
+        trade_no,
+        refund_no,
+        amount,
+        refund_reason,
+        reason,
+        create_time,
+        finish_time,
+        state
+        )
+        VALUES
+        (
+        #{id},
+        #{tradeNo},
+        #{refundNo},
+        #{amount},
+        #{refundReason},
+        #{reason},
+        #{createTime},
+        #{finishTime},
+        #{state}
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="table"/>
+        (
+        id,
+        trade_no,
+        refund_no,
+        amount,
+        refund_reason,
+        reason,
+        create_time,
+        finish_time,
+        state
+        )
+        VALUES
+        <foreach collection="list" item="cm" index="index" separator=",">
+            (
+            #{cm.id},
+            #{cm.tradeNo},
+            #{cm.refundNo},
+            #{cm.amount},
+            #{cm.refundReason},
+            #{cm.reason},
+            #{cm.createTime},
+            #{cm.finishTime},
+            #{cm.state}
+            )
+        </foreach>
+    </insert>
+
+    <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeOrderRefundRecord">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="reason != null and reason != ''">reason = #{reason},</if>
+            <if test="finishTime != null">finish_time = #{finishTime},</if>
+            <if test="state != null">state = #{state},</if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+</mapper>

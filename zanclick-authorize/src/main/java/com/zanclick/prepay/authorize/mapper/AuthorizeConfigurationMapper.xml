@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zanclick.prepay.authorize.mapper.AuthorizeConfigurationMapper">
+
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.AuthorizeConfiguration">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="isv_appid" property="isv_appid" jdbcType="VARCHAR"/>
+        <result column="isv_uid" property="isv_uid" jdbcType="VARCHAR"/>
+        <result column="sign_type" property="sign_type" jdbcType="VARCHAR"/>
+        <result column="gateway" property="gateway" jdbcType="VARCHAR"/>
+        <result column="private_key" property="private_key" jdbcType="VARCHAR"/>
+        <result column="public_key" property="public_key" jdbcType="VARCHAR"/>
+        <result column="royalty_uid" property="royalty_uid" jdbcType="VARCHAR"/>
+        <result column="isv_number" property="isv_number" jdbcType="VARCHAR"/>
+        <result column="fee_backuid" property="fee_backuid" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="is_default" property="is_default" jdbcType="INTEGER"/>
+        <result column="seller_no" property="seller_no" jdbcType="VARCHAR"/>
+        <result column="appid" property="appid" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="table">aurthorize_configuration</sql>
+
+    <sql id="Base_Column_List">
+        id,
+        isv_appid,
+        isv_uid,
+        sign_type,
+        gateway,
+        private_key,
+        public_key,
+        royalty_uid,
+        isv_number,
+        fee_backuid,
+        status,
+        is_default,
+        seller_no,
+        appid,
+        `name`
+    </sql>
+
+    <sql id="Base_Where_Clause">
+        <where>
+            <trim prefixOverrides="and">
+                <if test="id != null">AND id = #{id}</if>
+                <if test="status != null">AND status = #{status}</if>
+                <if test="is_default != null">AND is_default = #{is_default}</if>
+                <if test="appid != null">AND appid = #{appid}</if>
+            </trim>
+        </where>
+        ORDER BY id DESC
+        <if test="offset == null and limit != null">
+            limit #{limit}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </sql>
+
+    <!-- 查询总数 -->
+    <select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT count(id)
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <!-- 查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
+    <select id="selectByIsvAppId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE isv_appid=#{isv_appid} LIMIT 1
+    </select>
+
+    <select id="selectDefaultConfiguration" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE is_default = 1 LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeConfiguration" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO<include refid="table"/>
+        (id,isv_appid,isv_uid,sign_type,gateway,private_key,public_key,royalty_uid,isv_number,fee_backuid,status,is_default,seller_no,appid,`name`)
+        VALUES(#{id},#{isv_appid},#{isv_uid},#{sign_type},#{gateway},#{private_key},#{public_key},#{royalty_uid},#{isv_number},#{fee_backuid},#{status},#{is_default},#{seller_no},#{appid},#{name})
+    </insert>
+
+    <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeConfiguration">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="gateway!=null and gateway!='' ">gateway = #{gateway},</if>
+            <if test="private_key!=null and private_key!='' ">private_key = #{private_key},</if>
+            <if test="public_key!=null and public_key!='' ">public_key = #{public_key},</if>
+            <if test="royalty_uid!=null and royalty_uid!='' ">royalty_uid = #{royalty_uid},</if>
+            <if test="isv_number!=null and isv_number!='' ">isv_number = #{isv_number},</if>
+            <if test="fee_backuid!=null and fee_backuid!='' ">fee_backuid = #{fee_backuid},</if>
+            <if test="status!=null and status!='' ">status = #{status},</if>
+            <if test="is_default!=null and is_default!='' ">is_default = #{is_default},</if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+
+</mapper>
