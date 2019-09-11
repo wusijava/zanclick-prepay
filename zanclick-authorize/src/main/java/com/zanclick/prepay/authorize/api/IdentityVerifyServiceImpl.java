@@ -1,10 +1,8 @@
 package com.zanclick.prepay.authorize.api;
 
-import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.app.entity.AppInfo;
 import com.zanclick.prepay.app.service.AppInfoService;
 import com.zanclick.prepay.authorize.dto.VerifyMerchant;
-import com.zanclick.prepay.common.entity.RequestParam;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.AESUtil;
@@ -19,8 +17,8 @@ import org.springframework.stereotype.Service;
  * @date 2019-7-8 15:28:06
  **/
 @Slf4j
-@Service("comVerifyMerchantInfo")
-public class VerifyMerchantInfoServiceImpl extends AbstractUtil implements ApiRequestResolver {
+@Service("comZanClickVerifyIdentity")
+public class IdentityVerifyServiceImpl extends AbstractUtil implements ApiRequestResolver {
 
     @Autowired
     private AppInfoService appInfoService;

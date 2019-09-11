@@ -1,8 +1,6 @@
 package com.zanclick.prepay.authorize.api;
 
-import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
-import com.zanclick.prepay.common.entity.RequestParam;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +14,9 @@ import org.springframework.stereotype.Service;
  * @date 2019-7-8 15:28:06
  **/
 @Slf4j
-@Service("comZanClickCreateAuthPrePay")
-public class AuthPrePayServiceImpl extends AbstractUtil implements ApiRequestResolver {
-    
+@Service("comZanClickQueryAuthOrderList")
+public class OrderListServiceImpl extends AbstractUtil implements ApiRequestResolver {
+
     @Autowired
     private AuthorizePayService authorizePayService;
 
