@@ -2,7 +2,7 @@ package com.zanclick.prepay.authorize.util;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.response.*;
-import com.zanclick.prepay.authorize.pay.dto.AuthorizeDTO;
+import com.zanclick.prepay.authorize.dto.AuthorizeDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

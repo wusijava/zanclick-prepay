@@ -11,14 +11,6 @@ import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
  **/
 public interface AuthorizeOrderService extends BaseService<AuthorizeOrder, Long> {
 
-    /**
-     * 根据id更新二维码和请求内容
-     *
-     * @param order
-     * @retuan
-     */
-    void updateQrCodeAndContent(AuthorizeOrder order);
-
 
     /**
      * 根据订单号查询订单

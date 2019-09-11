@@ -1,6 +1,7 @@
 package com.zanclick.prepay.authorize.dto;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zanclick.prepay.common.entity.ResponseParam;
 import lombok.Data;
 
 @Data

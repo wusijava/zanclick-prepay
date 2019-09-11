@@ -12,10 +12,12 @@ public interface ApiRequestResolver {
     /**
      * 通用接口
      *
-     * @param request
+     * @param appId 应用ID
+     * @param cipherJson 加密参数
+     * @param request 请求内容
      * @return
      */
-     String resolve(String request);
+     String resolve(String appId,String cipherJson, String request);
 
     /**
      * json字符串，转实体类

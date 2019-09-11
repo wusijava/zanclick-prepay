@@ -14,7 +14,7 @@ public class ApiResponseCode {
     /**
      * 成功响应码
      */
-    public static String SUCCESS = "10000";
+    public static String SUCCESS = "20000";
 
     /**
      * 失败响应码

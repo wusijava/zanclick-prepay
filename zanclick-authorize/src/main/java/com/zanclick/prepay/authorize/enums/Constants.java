@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.dto;
+package com.zanclick.prepay.authorize.enums;
 
 /**
  * @author lvlu

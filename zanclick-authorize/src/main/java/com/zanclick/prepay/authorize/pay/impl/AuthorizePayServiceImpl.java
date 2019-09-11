@@ -2,13 +2,11 @@ package com.zanclick.prepay.authorize.pay.impl;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.response.*;
-import com.zanclick.prepay.authorize.dto.AliConstants;
-import com.zanclick.prepay.authorize.dto.CalculateDetail;
-import com.zanclick.prepay.authorize.dto.Constants;
-import com.zanclick.prepay.authorize.dto.PayWay;
+import com.zanclick.prepay.authorize.dto.*;
 import com.zanclick.prepay.authorize.entity.*;
+import com.zanclick.prepay.authorize.enums.AliConstants;
+import com.zanclick.prepay.authorize.enums.Constants;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
-import com.zanclick.prepay.authorize.pay.dto.*;
 import com.zanclick.prepay.authorize.service.*;
 import com.zanclick.prepay.authorize.util.AuthorizePayUtil;
 import com.zanclick.prepay.authorize.util.AuthorizeUtil;
@@ -104,7 +102,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             result.setFail();
             result.setMessage(createResponse.getSubMsg());
         }
-        authorizeOrderService.updateQrCodeAndContent(order);
+        authorizeOrderService.updateById(order);
         return result;
     }
 
@@ -553,7 +551,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setOutTradeNo(dto.getOutOrderNo());
         order.setMerchantNo(dto.getMerchantNo());
         order.setTimeout(getTimeOut());
-        order.setTitle(dto.getTitle());
+        order.setTitle(dto.getDesc());
         order.setDealType(AuthorizeOrder.DealType.SCAN.getCode());
         order.setPayWay(getPayWay(dto.getPayWay()));
         order.setSettleDate(getSettleDate());

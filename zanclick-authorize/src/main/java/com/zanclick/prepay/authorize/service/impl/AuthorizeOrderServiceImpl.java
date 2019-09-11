@@ -5,7 +5,7 @@ import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrderFee;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrderRecord;
 import com.zanclick.prepay.authorize.mapper.AuthorizeOrderMapper;
-import com.zanclick.prepay.authorize.pay.dto.AuthorizeDTO;
+import com.zanclick.prepay.authorize.dto.AuthorizeDTO;
 import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.service.AuthorizeOrderFeeService;
 import com.zanclick.prepay.authorize.service.AuthorizeOrderRecordService;
@@ -59,11 +59,6 @@ public class AuthorizeOrderServiceImpl extends BaseMybatisServiceImpl<AuthorizeO
         authorizeOrderFeeService.insert(entity.getFee());
         getBaseMapper().insert(entity);
         return entity;
-    }
-
-    @Override
-    public void updateQrCodeAndContent(AuthorizeOrder order) {
-        authorizeOrderMapper.updateQrCodeAndContent(order);
     }
 
     @Override

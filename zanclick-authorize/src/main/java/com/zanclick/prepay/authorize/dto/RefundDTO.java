@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.pay.dto;
+package com.zanclick.prepay.authorize.dto;
 
 import com.zanclick.prepay.common.entity.RequestParam;
 import lombok.Data;
@@ -10,26 +10,21 @@ import lombok.Data;
  * @date 2019-7-10 16:25:22
  */
 @Data
-public class PayRefundDTO extends RequestParam {
+public class RefundDTO extends RequestParam {
 
     /**
-     * 预授权订单外部订单号
+     * 订单号 （第三方产生）
      */
     private String outTradeNo;
 
     /**
-     * 预授权订单自己生成的订单号
+     * 订单号 （自己生成 对应RequestNo）
      */
     private String tradeNo;
 
     /**
-     * 转支付时生成的订单号
+     * 退款订单号 （第三方生成）
      */
-    private String payTradeNo;
-
-    /**
-     * 退款订单号（可不传）
-     * */
     private String refundNo;
 
     /**
@@ -42,8 +37,8 @@ public class PayRefundDTO extends RequestParam {
         if (checkNull(outTradeNo) && checkNull(tradeNo)) {
             return "请至少传入一个订单号";
         }
-        if (checkNull(checkNull(payTradeNo))) {
-            return "缺少入转支付订单号";
+        if (checkNull(checkNull(refundNo))) {
+            return "缺少入退款订单号";
         }
         return null;
     }

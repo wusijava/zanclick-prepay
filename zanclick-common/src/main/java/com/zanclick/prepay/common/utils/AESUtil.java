@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class AESUtil {
-    private static String key = "qwertyuiasdfghjk";
+    private static String key = "12345678qwertyui";
 
     /**
      * 加密
@@ -62,9 +62,7 @@ public class AESUtil {
         return null;
     }
 
-
     public static void main(String[] args) {
-        System.err.println(Encrypt("小说",key));
+        System.err.println(Decrypt("zypPzTmb8zpKGqXZ1Yz1yLoT5WtRIJQr4X2VOnexRW2FXzZfS3mZGdy3LHljxXr01UodLlEFSggfcdnEZK0ArjhvoM/eZFkiFIwkiVVtuvpug6mPxRsbO/nFcWKDx8JN"));
     }
-
 }

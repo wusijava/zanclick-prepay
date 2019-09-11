@@ -70,6 +70,12 @@ public class AuthorizeMerchant implements Identifiable<Long> {
      */
     private String storeCounty;
 
+    private String storeProvinceCode;
+
+    private String storeCityCode;
+
+    private String storeCountyCode;
+
     /**
      * 支付宝返回的供应商编号
      */

@@ -12,5 +12,9 @@ public class RequestContent {
 
     private String method;
 
+    private String appId;
+
     private String cipherJson;
+
+    private String content;
 }

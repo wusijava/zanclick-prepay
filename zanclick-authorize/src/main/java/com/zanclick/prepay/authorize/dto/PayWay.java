@@ -1,7 +1,5 @@
 package com.zanclick.prepay.authorize.dto;
 
-import com.zanclick.prepay.authorize.pay.dto.PayChannelType;
-
 import java.util.HashMap;
 import java.util.Map;
 

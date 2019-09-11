@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.pay.dto;
+package com.zanclick.prepay.authorize.dto;
 
 import lombok.Data;
 
@@ -11,7 +11,7 @@ import java.util.Date;
  * @date 2019-7-5 10:32:07
  */
 @Data
-public class PayRefundResult extends AuthorizeResponseParam {
+public class RefundResult extends AuthorizeResponseParam {
 
     /**
      * 订单号 （第三方产生）

@@ -14,16 +14,15 @@ import org.springframework.stereotype.Service;
  * @date 2019-7-8 15:28:06
  **/
 @Slf4j
-@Service("comZanClickQueryAuthOrderList")
-public class OrderListServiceImpl extends AbstractUtil implements ApiRequestResolver {
+@Service("comZanclickQueryAuthOrderList")
+public class OrderListServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
 
     @Autowired
     private AuthorizePayService authorizePayService;
 
     @Override
-    public String resolve(String request) {
+    public String resolve(String appId, String cipherJson, String request) {
         ResponseParam param = new ResponseParam();
         return param.toString();
     }
-
 }

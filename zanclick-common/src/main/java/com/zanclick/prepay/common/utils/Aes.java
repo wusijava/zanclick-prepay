@@ -8,14 +8,22 @@ package com.zanclick.prepay.common.utils;
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import org.apache.commons.codec.binary.Base64;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+
+import java.security.Security;
 
 public class Aes {
     public Aes() {
     }
 
-    private static String AES_RULE = "AES/ECB/PKCS5Padding";
+    private static String AES_RULE = "AES/ECB/PKCS7Padding";
     private static String CHARSET = "UTF-8";
     private static String AES = "AES";
+
+    static {
+        Security.addProvider(new BouncyCastleProvider());
+    }
+
 
     public static String Encrypt(String sSrc, String sKey) throws Exception {
         byte[] raw = sKey.getBytes(CHARSET);

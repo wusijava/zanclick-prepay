@@ -18,10 +18,14 @@ public class ResponseParam extends Param implements Serializable {
 
     private String message;
 
-    private String content;
+    private String data;
 
     public void setSuccess(){
         this.code = ApiResponseCode.SUCCESS;
+    }
+
+    public boolean isSuccess(){
+        return ApiResponseCode.SUCCESS.equals(code);
     }
 
     public void setFail(){

@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.pay.dto;
+package com.zanclick.prepay.authorize.dto;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.Data;

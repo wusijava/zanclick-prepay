@@ -1,25 +1,18 @@
-package com.zanclick.prepay.authorize.dto;
+package com.zanclick.prepay.authorize.dto.api;
 
 import com.zanclick.prepay.common.entity.Param;
 import lombok.Data;
 
 /**
- * 商户信息验证
- *
+ * 网关请求必定会含有的两个参数
  * @author duchong
- * @date 2019-7-8 15:49:20
+ * @date
  */
 @Data
-public class VerifyMerchant extends Param {
+public class ApiCommonRequest extends Param {
 
-    /**
-     * 应用ID
-     */
     private String appId;
 
-    /**
-     * 加密信息
-     */
     private String cipherJson;
 
     public String check() {

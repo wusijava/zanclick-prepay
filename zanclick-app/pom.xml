@@ -10,6 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>zanclick-app</artifactId>
+    <name>应用模块</name>
+    <description>应用</description>
 
     <dependencies>
         <dependency>

@@ -1,5 +1,6 @@
-package com.zanclick.prepay.authorize.pay.dto;
+package com.zanclick.prepay.authorize.dto;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.entity.RequestParam;
 import lombok.Data;
 
@@ -14,7 +15,9 @@ public class PayDTO extends RequestParam {
     /**
      * 商品描述
      */
-    private String title;
+    private String desc;
+
+    private Integer num;
 
     /**
      * 金额
@@ -49,22 +52,30 @@ public class PayDTO extends RequestParam {
         if (checkNull(amount)) {
             return "缺少交易金额";
         }
-
         if (checkMoneyFormat(amount)) {
             return "金额格式不正确";
         }
-
         if (checkMoney(amount, "1000000", "0.01")) {
             return "金额范围超出限制";
         }
-
-        if (checkNull(title)) {
-            return "缺少商品标题";
+        if (checkNull(desc)) {
+            return "缺少商品描述";
         }
-
-        if (checkLength(title, 256)) {
-            return "订单标题长度过长";
+        if (checkLength(desc, 256)) {
+            return "商品描述过长";
+        }
+        if (this.payWay == null){
+            this.payWay = 2;
+        }
+        if (this.num == null){
+            this.num = 0;
         }
         return null;
+    }
+
+    public static void main(String[] args) {
+        JSONObject object = new JSONObject();
+        object.put("method","com.zanclick.create.auth.prePay");
+        System.err.println(object.toJSONString());
     }
 }

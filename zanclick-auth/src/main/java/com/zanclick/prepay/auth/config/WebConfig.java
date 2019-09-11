@@ -34,19 +34,6 @@ public class WebConfig extends WebMvcConfigurationSupport {
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("Authorization")
-                .exposedHeaders("Authorization");
+                .allowedHeaders("Content-Type");
     }
-
-
-//    @Override
-//    public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(gateWayInterceptor()).addPathPatterns("/gateway.do");
-//        super.addInterceptors(registry);
-//    }
-//
-//    @Bean
-//    public GateWayInterceptor gateWayInterceptor() {
-//        return new GateWayInterceptor();
-//    }
 }

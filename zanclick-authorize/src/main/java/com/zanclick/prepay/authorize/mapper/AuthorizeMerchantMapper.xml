@@ -18,6 +18,9 @@
             <result column="store_province" property="storeProvince" jdbcType="VARCHAR"/>
             <result column="store_city" property="storeCity" jdbcType="VARCHAR"/>
             <result column="store_county" property="storeCounty" jdbcType="VARCHAR"/>
+            <result column="store_province_code" property="storeProvinceCode" jdbcType="VARCHAR"/>
+            <result column="store_city_code" property="storeCityCode" jdbcType="VARCHAR"/>
+            <result column="store_county_code" property="storeCountyCode" jdbcType="VARCHAR"/>
             <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR"/>
             <result column="reason" property="reason" jdbcType="VARCHAR"/>
             <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
@@ -43,6 +46,9 @@
             `store_province`,
             `store_city`,
             `store_county`,
+            `store_province_code`,
+            `store_city_code`,
+            `store_county_code`,
             `supplier_no`,
             `reason`,
             `create_time`,
@@ -99,6 +105,15 @@
                     </if>
                     <if test="storeCounty != null and storeCounty != ''">
                         AND `store_county`=#{storeCounty}
+                    </if>
+                    <if test="storeProvinceCode != null and storeProvinceCode != ''">
+                        AND `store_province_code`=#{storeProvinceCode}
+                    </if>
+                    <if test="storeCityCode != null and storeCityCode != ''">
+                        AND `store_city_code`=#{storeCityCode}
+                    </if>
+                    <if test="storeCountyCode != null and storeCountyCode != ''">
+                        AND `store_county_code`=#{storeCountyCode}
                     </if>
                     <if test="supplierNo != null and supplierNo != ''">
                         AND `supplier_no`=#{supplierNo}
@@ -163,6 +178,9 @@
             `store_province`,
             `store_city`,
             `store_county`,
+            `store_province_code`,
+            `store_city_code`,
+            `store_county_code`,
             `supplier_no`,
             `reason`,
             `create_time`,
@@ -186,6 +204,9 @@
             #{storeProvince},
             #{storeCity},
             #{storeCounty},
+            #{storeProvinceCode},
+            #{storeCityCode},
+            #{storeCountyCode},
             #{supplierNo},
             #{reason},
             #{createTime},
@@ -214,6 +235,9 @@
             `store_province`,
             `store_city`,
             `store_county`,
+            `store_province_code`,
+            `store_city_code`,
+            `store_county_code`,
             `supplier_no`,
             `reason`,
             `create_time`,
@@ -239,6 +263,9 @@
             #{cm.storeProvince},
             #{cm.storeCity},
             #{cm.storeCounty},
+            #{cm.storeProvinceCode},
+            #{cm.storeCityCode},
+            #{cm.storeCountyCode},
             #{cm.supplierNo},
             #{cm.reason},
             #{cm.createTime},
@@ -312,6 +339,15 @@
             </if>
             <if test="storeCounty != null and storeCounty != ''">
                  `store_county`=#{storeCounty},
+            </if>
+            <if test="storeProvinceCode != null and storeProvinceCode != ''">
+                 `store_province_code`=#{storeProvinceCode},
+            </if>
+            <if test="storeCityCode != null and storeCityCode != ''">
+                 `store_city_code`=#{storeCityCode},
+            </if>
+            <if test="storeCountyCode != null and storeCountyCode != ''">
+                 `store_county_code`=#{storeCountyCode},
             </if>
             <if test="supplierNo != null and supplierNo != ''">
                  `supplier_no`=#{supplierNo},

@@ -1,16 +1,16 @@
 package com.zanclick.prepay.authorize.service.impl;
 
 import com.alipay.api.response.MybankCreditSupplychainFactoringSupplierCreateResponse;
+import com.zanclick.prepay.authorize.dto.MerchantResult;
+import com.zanclick.prepay.authorize.dto.MerchantUpdateDTO;
+import com.zanclick.prepay.authorize.dto.RegisterMerchant;
+import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
+import com.zanclick.prepay.authorize.mapper.AuthorizeMerchantMapper;
+import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
-import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
-import com.zanclick.prepay.authorize.dto.RegisterMerchant;
-import com.zanclick.prepay.authorize.dto.MerchantResult;
-import com.zanclick.prepay.authorize.dto.MerchantUpdateDTO;
-import com.zanclick.prepay.authorize.mapper.AuthorizeMerchantMapper;
-import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.supplychain.util.SupplyChainUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +83,9 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         merchant.setStoreProvince(dto.getStoreProvince());
         merchant.setStoreCity(dto.getStoreCity());
         merchant.setStoreCounty(dto.getStoreCounty());
+        merchant.setStoreProvinceCode(dto.getStoreProvinceCode());
+        merchant.setStoreCityCode(dto.getStoreCityCode());
+        merchant.setStoreCountyCode(dto.getStoreCountyCode());
         merchant.setSellerNo(dto.getSellerNo());
         merchant.setState(AuthorizeMerchant.State.waiting.getCode());
         this.insert(merchant);

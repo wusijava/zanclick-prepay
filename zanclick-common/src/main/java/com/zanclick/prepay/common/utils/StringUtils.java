@@ -110,7 +110,15 @@ public class StringUtils {
     }
 
     public static void main(String[] args) {
-        System.err.println(getAppId());
+       JSONObject object = new JSONObject();
+       String s1 = "{\"method\":\"com.zanclick.query.auth.orderList\",\"content\":{\"appId\":\"应用ID\",\"cipherJson\":\"加密参数\",\"nextIndex\":0}}";
+       String s2 = "{\"method\":\"com.zanclick.query.auth.orderList\",\"content\":{\"appId\":\"201909101656231203575\",\"cipherJson\":\"yY3ZWp6aAh9jxhWNH5r3DI/lGCPOY6Dl+jt9Ngczd4s9VqSivtnxXAUzV2coLsszcGupdxidCsrJVdAywHezPQ==\",\"nextIndex\":0}}";
+       object.put("参数说明",JSONObject.parseObject(s1));
+       object.put("参数样例",JSONObject.parseObject(s2));
+       object.put("外层秘钥","qwertyuiasdfghjk");
+       object.put("应用秘钥","12345678qwertyui");
+       object.put("应用ID","201909101656231203575");
+        System.err.println(object.toJSONString());
     }
 
     /**
@@ -221,9 +229,6 @@ public class StringUtils {
             } else {
                 sb.append(s);
             }
-        }
-        if (DataUtil.isNotEmpty(sb)) {
-            sb.append("Resolver");
         }
         return sb.toString();
     }

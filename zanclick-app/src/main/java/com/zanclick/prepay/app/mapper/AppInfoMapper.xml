@@ -121,6 +121,14 @@
         WHERE id=#{id}
     </select>
 
+    <select id="selectByAppId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE app_id = #{appId} ORDER BY id DESC LIMIT 1
+    </select>
+
     <update id="updateById" parameterType="com.zanclick.prepay.app.entity.AppInfo">
         UPDATE
         <include refid="table"/>

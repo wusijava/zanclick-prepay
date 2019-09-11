@@ -1,6 +1,6 @@
 package com.zanclick.prepay.authorize.pay;
 
-import com.zanclick.prepay.authorize.pay.dto.*;
+import com.zanclick.prepay.authorize.dto.*;
 
 /**
  * 预授权支付
