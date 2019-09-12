@@ -1,15 +1,18 @@
 package com.zanclick.prepay.authorize.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.app.entity.AppInfo;
-import com.zanclick.prepay.app.service.AppInfoService;
-import com.zanclick.prepay.authorize.dto.PayResult;
-import com.zanclick.prepay.authorize.dto.api.ApiPay;
+import com.zanclick.prepay.authorize.dto.QueryDTO;
+import com.zanclick.prepay.authorize.dto.QueryResult;
+import com.zanclick.prepay.authorize.dto.RefundDTO;
+import com.zanclick.prepay.authorize.dto.RefundResult;
+import com.zanclick.prepay.authorize.dto.api.ApiPayQuery;
+import com.zanclick.prepay.authorize.dto.api.ApiPayRefund;
+import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
-import com.zanclick.prepay.common.utils.AESUtil;
+import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +24,8 @@ import org.springframework.stereotype.Service;
  * @date 2019-7-8 15:28:06
  **/
 @Slf4j
-@Service("comZanclickCreateAuthPrePay")
-public class AuthPrePayServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
-    
+@Service("comZanclickRefundAuthPay")
+public class AuthPayRefundServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
     @Autowired
     private AuthorizePayService authorizePayService;
 
@@ -31,15 +33,18 @@ public class AuthPrePayServiceImpl extends AbstractCommonMethod implements ApiRe
     public String resolve(String appId, String cipherJson, String request) {
         ResponseParam param = new ResponseParam();
         param.setSuccess();
-        param.setMessage("创建成功");
+        param.setMessage("退款成功");
         try {
-            String decrypt = verifyCipherJson(appId,cipherJson);
-            ApiPay dto = parser(decrypt, ApiPay.class);
-            PayResult result = authorizePayService.prePay(dto);
-            if (result.isSuccess()){
+            verifyCipherJson(appId,cipherJson);
+            ApiPayRefund query = parser(request,ApiPayRefund.class);
+            RefundDTO dto = new RefundDTO();
+            dto.setTradeNo(query.getOrderNo());
+            dto.setRefundNo(StringUtils.getTradeNo());
+            RefundResult result = authorizePayService.refund(dto);
+            if (result.isSuccess() && result.getIsChange() != null && result.getIsChange().equals("Y")){
                 JSONObject object = new JSONObject();
-                object.put("orderNo",result.getTradeNo());
-                object.put("qrCodeUrl",result.getQrCodeUrl());
+                object.put("orderNo",query.getOrderNo());
+                object.put("orderStatus",getApiPayStatus(result.getState()));
                 param.setData(object.toJSONString());
                 return param.toString();
             }
@@ -47,11 +52,12 @@ public class AuthPrePayServiceImpl extends AbstractCommonMethod implements ApiRe
         }catch (BizException be){
             param.setMessage(be.getMessage());
             log.error("查询异常:{}",be);
-        }catch (Exception e) {
+        }catch (Exception e){
             param.setMessage("系统异常，请稍后再试");
-            log.error("系统异常:{}",3);
+            log.error("系统异常:{}",e);
         }
         param.setFail();
         return param.toString();
     }
+
 }

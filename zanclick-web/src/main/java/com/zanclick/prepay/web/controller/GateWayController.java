@@ -1,6 +1,7 @@
 package com.zanclick.prepay.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zanclick.prepay.common.entity.Method;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.AESUtil;
@@ -24,15 +25,21 @@ public class GateWayController {
 
     @PostMapping(value = "/gateway.do",produces = "application/json;charset=utf-8")
     public String param(@RequestBody String encrypt) {
+        ResponseParam param = new ResponseParam();
         String decrypt = AESUtil.Decrypt(encrypt);
         if (decrypt == null){
-            ResponseParam param = new ResponseParam();
             param.setFail();
             param.setMessage("解密失败");
             return param.toString();
         }
         RequestContent content = JSONObject.parseObject(decrypt,RequestContent.class);
         String method = StringUtils.getMethodName(content.getMethod());
+        boolean hasMethod = Method.hasMethod(method);
+        if (!hasMethod){
+            param.setFail();
+            param.setMessage("无法识别的方法名");
+            return param.toString();
+        }
         ApiRequestResolver resolver = (ApiRequestResolver) ApplicationContextProvider.getBean(method);
         String result = resolver.resolve(content.getAppId(),content.getCipherJson(),content.getContent());
         return AESUtil.Encrypt(result);

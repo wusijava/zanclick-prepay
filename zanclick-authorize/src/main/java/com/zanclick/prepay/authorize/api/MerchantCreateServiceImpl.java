@@ -27,18 +27,11 @@ public class MerchantCreateServiceImpl extends AbstractCommonMethod implements A
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
 
-    @Autowired
-    private AppInfoService appInfoService;
-
     @Override
     public String resolve(String appId, String cipherJson, String request) {
         ResponseParam param = new ResponseParam();
-        AppInfo appInfo = appInfoService.queryByAppId(appId);
-        if (appInfo == null || appInfo.getState().equals(AppInfo.State.close.getCode())) {
-            param.setFail();
-            param.setMessage("应用信息异常");
-            return param.toString();
-        }
+        param.setSuccess();
+        param.setMessage("签约成功");
         ApiRegisterMerchant apiMerchant = parser(request, ApiRegisterMerchant.class);
         String check = apiMerchant.check();
         if (check != null) {
@@ -46,14 +39,8 @@ public class MerchantCreateServiceImpl extends AbstractCommonMethod implements A
             param.setMessage(check);
             return param.toString();
         }
-        String decrypt = AESUtil.Decrypt(cipherJson, appInfo.getKey());
-        if (decrypt == null) {
-            param.setFail();
-            param.setMessage("商户信息验证失败");
-            return param.toString();
-        }
-        JSONObject object = JSONObject.parseObject(decrypt);
         try {
+            JSONObject object = JSONObject.parseObject(verifyCipherJson(appId,cipherJson));
             RegisterMerchant merchant = new RegisterMerchant();
             merchant.setMerchantNo(object.getString("merchantNo"));
             merchant.setStoreNo(object.getString("storeNo"));
@@ -70,8 +57,6 @@ public class MerchantCreateServiceImpl extends AbstractCommonMethod implements A
             merchant.setName(apiMerchant.getName());
             merchant.setSellerNo(apiMerchant.getSellerNo());
             authorizeMerchantService.createMerchant(merchant);
-            param.setSuccess();
-            param.setMessage("签约成功");
             return param.toString();
         } catch (BizException be) {
             log.error("商户创建业务异常:{}", be);
