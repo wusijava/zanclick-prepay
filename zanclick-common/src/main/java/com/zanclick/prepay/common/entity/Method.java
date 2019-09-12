@@ -20,6 +20,7 @@ public class Method {
         methods.add("comZanclickRefundAuthPay");
         methods.add("comZanclickQueryAuthPay");
         methods.add("comZanclickCreateAuthPrePay");
+        methods.add("comZanclickQueryAuthOrderDetail");
     }
 
     public static boolean  hasMethod(String methodName){

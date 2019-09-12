@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
  **/
 @Slf4j
 @Service("comZanclickQueryAuthPay")
-public class AuthPayQueryServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
+public class AuthPayQueryServiceImpl extends AbstractCommonService implements ApiRequestResolver {
     @Autowired
     private AuthorizePayService authorizePayService;
 

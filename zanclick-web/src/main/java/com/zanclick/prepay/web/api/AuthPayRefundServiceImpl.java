@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
  **/
 @Slf4j
 @Service("comZanclickRefundAuthPay")
-public class AuthPayRefundServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
+public class AuthPayRefundServiceImpl extends AbstractCommonService implements ApiRequestResolver {
     @Autowired
     private AuthorizePayService authorizePayService;
 

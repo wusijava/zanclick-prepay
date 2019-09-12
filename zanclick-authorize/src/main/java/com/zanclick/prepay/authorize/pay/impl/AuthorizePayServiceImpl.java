@@ -552,6 +552,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setMerchantNo(dto.getMerchantNo());
         order.setTimeout(getTimeOut());
         order.setTitle(dto.getDesc());
+        order.setStoreNo(dto.getStoreNo());
         order.setDealType(AuthorizeOrder.DealType.SCAN.getCode());
         order.setPayWay(getPayWay(dto.getPayWay()));
         order.setSettleDate(getSettleDate());
@@ -567,7 +568,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setSettleType(AuthorizeOrder.SettleType.NO.getCode() );
         order.setConfigurationId(configuration.getId());
         order.setAppId(merchant.getAppId());
-
         createOrderFee(order);
         authorizeOrderService.insert(order);
         return order;

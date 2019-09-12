@@ -23,7 +23,7 @@ import java.util.Map;
 @Controller
 @RequestMapping
 @Slf4j
-public class GateWayController extends BaseController {
+public class PreAuthController extends BaseController {
 
     @RequestMapping(value = "/preAuth")
     @ResponseBody

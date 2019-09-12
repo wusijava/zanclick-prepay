@@ -7,7 +7,7 @@ import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.AESUtil;
 import com.zanclick.prepay.common.utils.ApplicationContextProvider;
 import com.zanclick.prepay.common.utils.StringUtils;
-import com.zanclick.prepay.web.dto.RequestContent;
+import com.zanclick.prepay.web.dto.ApiRequestContent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,7 +32,7 @@ public class GateWayController {
             param.setMessage("解密失败");
             return param.toString();
         }
-        RequestContent content = JSONObject.parseObject(decrypt,RequestContent.class);
+        ApiRequestContent content = JSONObject.parseObject(decrypt,ApiRequestContent.class);
         String method = StringUtils.getMethodName(content.getMethod());
         boolean hasMethod = Method.hasMethod(method);
         if (!hasMethod){

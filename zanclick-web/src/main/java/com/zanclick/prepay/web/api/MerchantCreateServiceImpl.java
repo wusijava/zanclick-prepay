@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  **/
 @Slf4j
 @Service("comZanclickCreateMerchant")
-public class MerchantCreateServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
+public class MerchantCreateServiceImpl extends AbstractCommonService implements ApiRequestResolver {
 
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;

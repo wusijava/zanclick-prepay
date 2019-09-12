@@ -16,7 +16,7 @@ import org.springframework.stereotype.Service;
  * @date 2019-7-8 15:28:06
  **/
 @Service
-public abstract class AbstractCommonMethod {
+public abstract class AbstractCommonService {
 
     @Autowired
     private AppInfoService appInfoService;
@@ -43,6 +43,31 @@ public abstract class AbstractCommonMethod {
             return "PAY_REFUND";
         }else {
             return "WAIT_PAY";
+        }
+    }
+
+
+    /**
+     * 获取状态描述
+     *
+     * @param state
+     * @return
+     */
+    public String getStateDesc(Integer state) {
+        if (state.equals(-1) || state.equals(-2)) {
+            return "已关闭";
+        } else if (state.equals(1)) {
+            return "已支付";
+        } else if (state.equals(2)) {
+            return "支付中";
+        } else if (state.equals(3)) {
+            return "结算中";
+        } else if (state.equals(4)) {
+            return "已结算";
+        } else if (state.equals(5)) {
+            return "已退款";
+        } else {
+            return "待支付";
         }
     }
 

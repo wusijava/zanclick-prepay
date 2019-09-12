@@ -3,6 +3,7 @@ package com.zanclick.prepay.web.dto;
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.dto.PayDTO;
 import com.zanclick.prepay.common.utils.AESUtil;
+import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.Data;
 
 import java.io.UnsupportedEncodingException;
@@ -29,8 +30,8 @@ public class ApiPay extends PayDTO {
         dto.setMerchantNo("201909111719241201158791");
         dto.setDesc("交易描述");
         dto.setNum(0);
-        dto.setAmount("100.00");
-        dto.setOutOrderNo("123456789");
+        dto.setAmount("1.00");
+        dto.setOutOrderNo(StringUtils.getTradeNo());
         dto.setPayWay(2);
         dto.setStoreNo("GZ785264135689");
         String encrypt = AESUtil.Encrypt(JSONObject.toJSONString(dto), "12345679qwertyui");

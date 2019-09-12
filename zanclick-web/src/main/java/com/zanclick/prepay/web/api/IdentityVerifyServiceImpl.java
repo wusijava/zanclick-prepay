@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
  **/
 @Slf4j
 @Service("comZanclickVerifyIdentity")
-public class IdentityVerifyServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
+public class IdentityVerifyServiceImpl extends AbstractCommonService implements ApiRequestResolver {
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
