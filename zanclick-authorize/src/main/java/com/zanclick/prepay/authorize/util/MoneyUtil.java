@@ -204,7 +204,7 @@ public class MoneyUtil {
      * @param money2 金额2
      */
     public static String add(String money1, String money2) {
-        BigDecimal total = new BigDecimal(money1).add(new BigDecimal(money2));
+        BigDecimal total = new BigDecimal(money1).add(new BigDecimal(money2)).setScale(2, BigDecimal.ROUND_HALF_EVEN);
         return total.toString();
     }
 

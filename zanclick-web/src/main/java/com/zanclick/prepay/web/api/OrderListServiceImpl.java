@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.api;
+package com.zanclick.prepay.web.api;
 
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;

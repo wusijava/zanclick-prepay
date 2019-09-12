@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.dto.api;
+package com.zanclick.prepay.web.dto;
 
 import lombok.Data;
 
@@ -9,7 +9,7 @@ import lombok.Data;
  * @date 2019-7-8 15:49:20
  */
 @Data
-public class ApiPayRefund {
+public class ApiPayQuery{
 
     private String orderNo;
 }

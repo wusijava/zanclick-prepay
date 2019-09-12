@@ -530,8 +530,8 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         dto.setPay_timeout(order.getTimeout() + "m");
         dto.setExtra_param(getExtendParam());
         dto.setProduct_code("PRE_AUTH");
-        dto.setTrans_currency("USD");
-        dto.setSettle_currency("USD");
+//        dto.setTrans_currency("USD");
+//        dto.setSettle_currency("USD");
         dto.setEnable_pay_channels(PayWay.typeList.get(order.getPayWay()));
         return dto;
     }

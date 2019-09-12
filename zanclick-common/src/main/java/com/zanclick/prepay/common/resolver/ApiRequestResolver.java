@@ -19,14 +19,4 @@ public interface ApiRequestResolver {
      */
      String resolve(String appId,String cipherJson, String request);
 
-    /**
-     * json字符串，转实体类
-     *
-     * @param content
-     * @param tClass
-     * @return
-     */
-//    public <T> T parser(String content, Class<T> tClass){
-//        return JSONObject.parseObject(content,tClass);
-//    }
 }

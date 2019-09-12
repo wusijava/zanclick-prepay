@@ -12,13 +12,13 @@ import java.io.Serializable;
  * @date 2019-7-5 10:25:29
  */
 @Data
-public class ResponseParam extends Param implements Serializable {
+public class ResponseParam<T> extends Param implements Serializable {
 
     private String code;
 
     private String message;
 
-    private String data;
+    private T data;
 
     public void setSuccess(){
         this.code = ApiResponseCode.SUCCESS;

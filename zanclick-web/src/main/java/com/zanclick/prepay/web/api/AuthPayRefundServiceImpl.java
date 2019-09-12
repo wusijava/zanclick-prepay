@@ -1,19 +1,14 @@
-package com.zanclick.prepay.authorize.api;
+package com.zanclick.prepay.web.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.app.entity.AppInfo;
-import com.zanclick.prepay.app.service.AppInfoService;
-import com.zanclick.prepay.authorize.dto.PayResult;
-import com.zanclick.prepay.authorize.dto.QueryDTO;
-import com.zanclick.prepay.authorize.dto.QueryResult;
-import com.zanclick.prepay.authorize.dto.api.ApiPay;
-import com.zanclick.prepay.authorize.dto.api.ApiPayQuery;
-import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
+import com.zanclick.prepay.authorize.dto.RefundDTO;
+import com.zanclick.prepay.authorize.dto.RefundResult;
+import com.zanclick.prepay.web.dto.ApiPayRefund;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
-import com.zanclick.prepay.common.utils.AESUtil;
+import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +20,8 @@ import org.springframework.stereotype.Service;
  * @date 2019-7-8 15:28:06
  **/
 @Slf4j
-@Service("comZanclickQueryAuthPay")
-public class AuthPayQueryServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
+@Service("comZanclickRefundAuthPay")
+public class AuthPayRefundServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
     @Autowired
     private AuthorizePayService authorizePayService;
 
@@ -34,14 +29,15 @@ public class AuthPayQueryServiceImpl extends AbstractCommonMethod implements Api
     public String resolve(String appId, String cipherJson, String request) {
         ResponseParam param = new ResponseParam();
         param.setSuccess();
-        param.setMessage("查询成功");
+        param.setMessage("退款成功");
         try {
             verifyCipherJson(appId,cipherJson);
-            ApiPayQuery query = parser(request,ApiPayQuery.class);
-            QueryDTO dto = new QueryDTO();
+            ApiPayRefund query = parser(request,ApiPayRefund.class);
+            RefundDTO dto = new RefundDTO();
             dto.setTradeNo(query.getOrderNo());
-            QueryResult result = authorizePayService.query(dto);
-            if (result.isSuccess()){
+            dto.setRefundNo(StringUtils.getTradeNo());
+            RefundResult result = authorizePayService.refund(dto);
+            if (result.isSuccess() && result.getIsChange() != null && result.getIsChange().equals("Y")){
                 JSONObject object = new JSONObject();
                 object.put("orderNo",query.getOrderNo());
                 object.put("orderStatus",getApiPayStatus(result.getState()));
@@ -59,4 +55,5 @@ public class AuthPayQueryServiceImpl extends AbstractCommonMethod implements Api
         param.setFail();
         return param.toString();
     }
+
 }

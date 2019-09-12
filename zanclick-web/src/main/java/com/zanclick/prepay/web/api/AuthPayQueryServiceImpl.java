@@ -1,18 +1,13 @@
-package com.zanclick.prepay.authorize.api;
+package com.zanclick.prepay.web.api;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.dto.QueryDTO;
 import com.zanclick.prepay.authorize.dto.QueryResult;
-import com.zanclick.prepay.authorize.dto.RefundDTO;
-import com.zanclick.prepay.authorize.dto.RefundResult;
-import com.zanclick.prepay.authorize.dto.api.ApiPayQuery;
-import com.zanclick.prepay.authorize.dto.api.ApiPayRefund;
-import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
+import com.zanclick.prepay.web.dto.ApiPayQuery;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
-import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,8 +19,8 @@ import org.springframework.stereotype.Service;
  * @date 2019-7-8 15:28:06
  **/
 @Slf4j
-@Service("comZanclickRefundAuthPay")
-public class AuthPayRefundServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
+@Service("comZanclickQueryAuthPay")
+public class AuthPayQueryServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
     @Autowired
     private AuthorizePayService authorizePayService;
 
@@ -33,19 +28,18 @@ public class AuthPayRefundServiceImpl extends AbstractCommonMethod implements Ap
     public String resolve(String appId, String cipherJson, String request) {
         ResponseParam param = new ResponseParam();
         param.setSuccess();
-        param.setMessage("退款成功");
+        param.setMessage("查询成功");
         try {
             verifyCipherJson(appId,cipherJson);
-            ApiPayRefund query = parser(request,ApiPayRefund.class);
-            RefundDTO dto = new RefundDTO();
+            ApiPayQuery query = parser(request,ApiPayQuery.class);
+            QueryDTO dto = new QueryDTO();
             dto.setTradeNo(query.getOrderNo());
-            dto.setRefundNo(StringUtils.getTradeNo());
-            RefundResult result = authorizePayService.refund(dto);
-            if (result.isSuccess() && result.getIsChange() != null && result.getIsChange().equals("Y")){
+            QueryResult result = authorizePayService.query(dto);
+            if (result.isSuccess()){
                 JSONObject object = new JSONObject();
                 object.put("orderNo",query.getOrderNo());
                 object.put("orderStatus",getApiPayStatus(result.getState()));
-                param.setData(object.toJSONString());
+                param.setData(object);
                 return param.toString();
             }
             param.setMessage(result.getMessage());
@@ -59,5 +53,4 @@ public class AuthPayRefundServiceImpl extends AbstractCommonMethod implements Ap
         param.setFail();
         return param.toString();
     }
-
 }

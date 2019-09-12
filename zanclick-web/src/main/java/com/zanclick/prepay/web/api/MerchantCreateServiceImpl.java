@@ -1,15 +1,12 @@
-package com.zanclick.prepay.authorize.api;
+package com.zanclick.prepay.web.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.app.entity.AppInfo;
-import com.zanclick.prepay.app.service.AppInfoService;
 import com.zanclick.prepay.authorize.dto.RegisterMerchant;
-import com.zanclick.prepay.authorize.dto.api.ApiRegisterMerchant;
+import com.zanclick.prepay.web.dto.ApiRegisterMerchant;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
-import com.zanclick.prepay.common.utils.AESUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

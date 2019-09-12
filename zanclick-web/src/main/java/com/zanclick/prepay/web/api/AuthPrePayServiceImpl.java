@@ -1,15 +1,12 @@
-package com.zanclick.prepay.authorize.api;
+package com.zanclick.prepay.web.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.app.entity.AppInfo;
-import com.zanclick.prepay.app.service.AppInfoService;
 import com.zanclick.prepay.authorize.dto.PayResult;
-import com.zanclick.prepay.authorize.dto.api.ApiPay;
+import com.zanclick.prepay.web.dto.ApiPay;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
-import com.zanclick.prepay.common.utils.AESUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,7 +37,7 @@ public class AuthPrePayServiceImpl extends AbstractCommonMethod implements ApiRe
                 JSONObject object = new JSONObject();
                 object.put("orderNo",result.getTradeNo());
                 object.put("qrCodeUrl",result.getQrCodeUrl());
-                param.setData(object.toJSONString());
+                param.setData(object);
                 return param.toString();
             }
             param.setMessage(result.getMessage());
