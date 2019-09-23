@@ -63,6 +63,6 @@ public class AESUtil {
     }
 
     public static void main(String[] args) {
-        System.err.println(Decrypt("zypPzTmb8zpKGqXZ1Yz1yLoT5WtRIJQr4X2VOnexRW2FXzZfS3mZGdy3LHljxXr01UodLlEFSggfcdnEZK0ArjhvoM/eZFkiFIwkiVVtuvpug6mPxRsbO/nFcWKDx8JN"));
+        System.err.println("dianzankeji09200".length());
     }
 }

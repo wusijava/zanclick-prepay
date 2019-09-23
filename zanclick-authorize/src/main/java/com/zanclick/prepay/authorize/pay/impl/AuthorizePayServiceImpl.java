@@ -327,11 +327,12 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         AlipayClient client = authorizeConfigurationService.queryAlipayClientById(order.getConfigurationId());
-        List<AuthorizeOrderRecord> recordList = authorizeOrderRecordService.queryWaitByAuthNo(order.getAuthNo());
-        if (DataUtil.isEmpty(recordList)) {
-            recordList = authorizeOrderRecordService.createAuthorizeOrderRecord(order);
-        }
-        String refundMoney = getRefundMoney(recordList);
+//        List<AuthorizeOrderRecord> recordList = authorizeOrderRecordService.queryWaitByAuthNo(order.getAuthNo());
+//        if (DataUtil.isEmpty(recordList)) {
+//            recordList = authorizeOrderRecordService.createAuthorizeOrderRecord(order);
+//        }
+//        String refundMoney = getRefundMoney(recordList);
+        String refundMoney = order.getFee().getOrderRealMoney();
         if (!MoneyUtil.zeroMoney(refundMoney)) {
             result.setMessage("可退款金额为0");
             result.setFail();
@@ -352,7 +353,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         authorizeRefundOrderService.refundSuccess(refund);
-        authorizeOrderRecordService.handleRecordList(recordList, AuthorizeOrderRecord.State.unfreed.getCode(), dto.getRefundNo());
+//        authorizeOrderRecordService.handleRecordList(recordList, AuthorizeOrderRecord.State.unfreed.getCode(), dto.getRefundNo());
         order.setState(AuthorizeOrder.State.refund.getCode());
         authorizeOrderService.handleAuthorizeOrder(order);
         result.setAmount(order.getFee().getMoney());
