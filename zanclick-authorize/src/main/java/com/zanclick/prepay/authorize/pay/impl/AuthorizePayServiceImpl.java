@@ -531,8 +531,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         dto.setPay_timeout(order.getTimeout() + "m");
         dto.setExtra_param(getExtendParam());
         dto.setProduct_code("PRE_AUTH");
-//        dto.setTrans_currency("USD");
-//        dto.setSettle_currency("USD");
         dto.setEnable_pay_channels(PayWay.typeList.get(order.getPayWay()));
         return dto;
     }
@@ -553,7 +551,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setMerchantNo(dto.getMerchantNo());
         order.setTimeout(getTimeOut());
         order.setTitle(dto.getDesc());
-        order.setStoreNo(dto.getStoreNo());
+        order.setStoreNo(merchant.getStoreNo());
         order.setDealType(AuthorizeOrder.DealType.SCAN.getCode());
         order.setPayWay(getPayWay(dto.getPayWay()));
         order.setSettleDate(getSettleDate());

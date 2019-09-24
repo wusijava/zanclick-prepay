@@ -10,7 +10,6 @@ import com.zanclick.prepay.common.utils.DataUtil;
  */
 public class ApiResponseCode {
 
-
     /**
      * 成功响应码
      */

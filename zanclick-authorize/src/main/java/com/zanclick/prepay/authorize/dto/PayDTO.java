@@ -34,8 +34,6 @@ public class PayDTO extends RequestParam {
      */
     private String merchantNo;
 
-    private String storeNo;
-
     /**
      * 支持的支付方式 (0-花呗 1-余额宝 2-全部)
      */
@@ -58,7 +56,7 @@ public class PayDTO extends RequestParam {
         if (checkMoney(amount, "1000000", "0.01")) {
             return "金额范围超出限制";
         }
-        if (checkNull(desc)) {
+        if (checkNull(desc)){
             return "缺少商品描述";
         }
         if (checkLength(desc, 256)) {

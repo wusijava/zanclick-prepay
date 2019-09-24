@@ -6,8 +6,13 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.util.Assert;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,7 +22,11 @@ import java.util.regex.Pattern;
  * @author lvlu
  * @date 2018-01-15 10:13
  **/
-public class StringUtils {
+public class StringUtils extends org.apache.commons.lang.StringUtils {
+    /**
+     * 缓存配置文件
+     */
+    final static Map<String, Properties> propMap = new HashMap<String, Properties>();
 
     private static  final Pattern BLANKPATTERN = Pattern.compile("\\s*|\t|\r|\n");
 
@@ -107,18 +116,6 @@ public class StringUtils {
         sb.append(sdf.format(new Date()));
         sb.append(createRandom(true,4));
         return sb.toString();
-    }
-
-    public static void main(String[] args) {
-       JSONObject object = new JSONObject();
-       String s1 = "{\"method\":\"com.zanclick.query.auth.orderList\",\"content\":{\"appId\":\"应用ID\",\"cipherJson\":\"加密参数\",\"nextIndex\":0}}";
-       String s2 = "{\"method\":\"com.zanclick.query.auth.orderList\",\"content\":{\"appId\":\"201909101656231203575\",\"cipherJson\":\"yY3ZWp6aAh9jxhWNH5r3DI/lGCPOY6Dl+jt9Ngczd4s9VqSivtnxXAUzV2coLsszcGupdxidCsrJVdAywHezPQ==\",\"nextIndex\":0}}";
-       object.put("参数说明",JSONObject.parseObject(s1));
-       object.put("参数样例",JSONObject.parseObject(s2));
-       object.put("外层秘钥","qwertyuiasdfghjk");
-       object.put("应用秘钥","12345678qwertyui");
-       object.put("应用ID","201909101656231203575");
-        System.err.println(object.toJSONString());
     }
 
     /**
@@ -269,5 +266,37 @@ public class StringUtils {
 
     public static String trimToEmpty(String str) {
         return str == null ? EMPTY : str.trim();
+    }
+
+    /**
+     * 获取configFile配置文件下的proKey对应值
+     *
+     * @param configFile
+     * @param proKey
+     * @return
+     */
+    public static String getProperty(String configFile, String proKey) {
+        Properties prop = propMap.get(configFile);
+        if (prop != null) {
+            return prop.getProperty(proKey);
+        }
+        InputStream in = null;
+        try {
+            in = StringUtils.class.getClassLoader().getResource(configFile).openStream();
+            prop = new Properties();
+            prop.load(in);
+            propMap.put(configFile, prop);
+            return prop.getProperty(proKey);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        } finally {
+            if (null != in) {
+                try {
+                    in.close();
+                } catch (IOException e) {
+                }
+            }
+        }
     }
 }

@@ -63,6 +63,7 @@ public class AESUtil {
     }
 
     public static void main(String[] args) {
-        System.err.println("dianzankeji09200".length());
+        String s = "dianzankeji09200";
+        System.err.println(Encrypt("http://wap.gd.10086.cn/test?t=1",s));
     }
 }

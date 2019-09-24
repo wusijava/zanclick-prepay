@@ -40,7 +40,7 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
             JSONObject object = JSONObject.parseObject(verifyCipherJson(appId,cipherJson));
             RegisterMerchant merchant = new RegisterMerchant();
             merchant.setMerchantNo(object.getString("merchantNo"));
-            merchant.setStoreNo(object.getString("storeNo"));
+            merchant.setStoreNo(apiMerchant.getStoreNo());
             merchant.setStoreSubjectName(apiMerchant.getStoreSubjectName());
             merchant.setStoreSubjectCertNo(apiMerchant.getStoreSubjectCertNo());
             merchant.setStoreName(apiMerchant.getStoreName());

@@ -37,6 +37,10 @@ public class ApiRegisterMerchant extends Param {
      */
     private String sellerNo;
 
+    /**
+     * 门店名称
+     * */
+    private String storeNo;
 
     /**
      * 门店名称
@@ -83,6 +87,12 @@ public class ApiRegisterMerchant extends Param {
         }
         if (checkNull(sellerNo)) {
             return "缺少收款支付宝账号";
+        }
+        if(checkNull(storeNo)){
+            return "缺少门店编号";
+        }
+        if(checkNull(storeName)){
+            return "缺少门店名称";
         }
         if (checkNull(storeSubjectName)) {
             return "缺少营业执照名称";
