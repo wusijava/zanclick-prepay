@@ -23,7 +23,6 @@
         <module>zanclick-supplychain</module>
         <module>zanclick-authorize</module>
         <module>zanclick-web</module>
-        <module>zanclick-auth</module>
         <module>zanclick-app</module>
         <module>zanclick-setmeal</module>
     </modules>

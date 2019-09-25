@@ -1,4 +1,4 @@
-package com.zanclick.prepay.auth.config;
+package com.zanclick.prepay.web.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
