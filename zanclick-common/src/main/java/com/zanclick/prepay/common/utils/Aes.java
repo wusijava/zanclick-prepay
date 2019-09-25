@@ -29,7 +29,7 @@ public class Aes {
         byte[] raw = sKey.getBytes(CHARSET);
         SecretKeySpec spec = new SecretKeySpec(raw, AES);
         Cipher cipher = Cipher.getInstance(AES_RULE);
-        cipher.init(1, spec);
+        cipher.init(Cipher.ENCRYPT_MODE, spec);
         byte[] encrypted = cipher.doFinal(sSrc.getBytes(CHARSET));
         return (new Base64()).encodeToString(encrypted);
     }
@@ -39,7 +39,7 @@ public class Aes {
             byte[] raw = sKey.getBytes(CHARSET);
             SecretKeySpec spec = new SecretKeySpec(raw, AES);
             Cipher cipher = Cipher.getInstance(AES_RULE);
-            cipher.init(2, spec);
+            cipher.init(Cipher.DECRYPT_MODE, spec);
             byte[] encrypted1 = (new Base64()).decode(sSrc);
 
             try {
