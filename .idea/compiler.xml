@@ -7,12 +7,15 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="zanclick-app" />
-        <module name="zanclick-auth" />
         <module name="zanclick-authorize" />
         <module name="zanclick-common" />
+        <module name="zanclick-setmeal" />
         <module name="zanclick-supplychain" />
         <module name="zanclick-web" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="zanclick-auth" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
