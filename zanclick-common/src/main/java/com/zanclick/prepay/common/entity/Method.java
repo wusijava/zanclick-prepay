@@ -16,6 +16,7 @@ public class Method {
     static {
         methods.add("comZanclickVerifyIdentity");
         methods.add("comZanclickCreateMerchant");
+        methods.add("comZanclickVerifyMerchant");
         methods.add("comZanclickQueryAuthOrderList");
         methods.add("comZanclickRefundAuthPay");
         methods.add("comZanclickQueryAuthPay");
@@ -23,7 +24,7 @@ public class Method {
         methods.add("comZanclickQueryAuthOrderDetail");
     }
 
-    public static boolean  hasMethod(String methodName){
+    public static boolean hasMethod(String methodName){
         return methods.contains(methodName);
     }
 }
