@@ -1,7 +1,7 @@
 spring:
   datasource:
     username: prepay
-    password: PrePay2019.
+    password: Prepay2019.
     url: jdbc:mysql://localhost:13306/zanclick_prepay?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
