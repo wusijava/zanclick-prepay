@@ -2,7 +2,7 @@ package com.zanclick.prepay.web.dto;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.entity.Param;
-import com.zanclick.prepay.common.utils.AESUtil;
+import com.zanclick.prepay.common.utils.AesUtil;
 import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.Data;
 
@@ -52,7 +52,7 @@ public class ApiPay extends Param {
         ApiPay dto = new ApiPay();
         dto.setMerchantNo("201909111719241201158791");
         dto.setOutOrderNo(StringUtils.getTradeNo());
-        String encrypt = AESUtil.Encrypt(JSONObject.toJSONString(dto), "12345679qwertyui");
+        String encrypt = AesUtil.Encrypt(JSONObject.toJSONString(dto), "12345679qwertyui");
 
         StringBuffer sb = new StringBuffer();
         String s = null;

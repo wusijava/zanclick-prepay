@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username: lvlu
-    password: Lvlu2018.
-    url: jdbc:mysql://localhost/zanclick_prepay?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&useSSL=false
+    username: prepay
+    password: PrePay2019.
+    url: jdbc:mysql://localhost:13306/zanclick_prepay?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -33,9 +33,9 @@ spring:
         stat:
           slow-sql-millis: 5000
   redis:
-    host: localhost
-    port: 6379
-    password: tuchuan2017
+    host: 127.0.0.1
+    port: 16379
+    password: zanclick2019
     timeout: 3000ms
     database: 6
     lettuce:
@@ -47,18 +47,13 @@ spring:
 
 #预授权通知接口
 authorize:
-  notify: http://api.ngrok.zanclick.cn/api/open/authorize/notify
+  notify: http://112.35.84.241:18080/api/open/authorize/notify
 
 # H5接口访问密钥
 h5:
- visit:
-  key: qwertyuiasdfghjk
+  key: 12345678qwertyui
 
  #支付超时时间
 timeout:
   authorize:
     prepay: 10
-
-mybatis:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

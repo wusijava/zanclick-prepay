@@ -5,7 +5,7 @@ import com.zanclick.prepay.app.entity.AppInfo;
 import com.zanclick.prepay.app.service.AppInfoService;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.common.exception.BizException;
-import com.zanclick.prepay.common.utils.AESUtil;
+import com.zanclick.prepay.common.utils.AesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +26,7 @@ public abstract class AbstractCommonService {
         if (appInfo == null || appInfo.getState().equals(AppInfo.State.close.getCode())) {
             throw new BizException("应用信息异常");
         }
-        String decrypt = AESUtil.Decrypt(cipherJson, appInfo.getKey());
+        String decrypt = AesUtil.Decrypt(cipherJson, appInfo.getKey());
         if (decrypt == null) {
             throw new BizException("商户信息验证失败");
         }

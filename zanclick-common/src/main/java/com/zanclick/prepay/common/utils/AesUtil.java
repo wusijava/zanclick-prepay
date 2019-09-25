@@ -9,28 +9,29 @@ import lombok.extern.slf4j.Slf4j;
  * @date 2017/6/19 15:45
  */
 @Slf4j
-public class AESUtil {
-    private static String key = "12345678qwertyui";
+public class AesUtil {
 
-    /**
-     * 加密
-     *
-     * @param value
-     * @return
-     **/
-    public static String Encrypt(String value) {
-        return Encrypt(value,key);
-    }
-
-    /**
-     * 解密
-     *
-     * @param value
-     * @return
-     */
-    public static String Decrypt(String value) {
-        return Decrypt(value,key);
-    }
+//    private static String key = "12345678qwertyui";
+//
+//    /**
+//     * 加密
+//     *
+//     * @param value
+//     * @return
+//     **/
+//    public static String Encrypt(String value) {
+//        return Encrypt(value,key);
+//    }
+//
+//    /**
+//     * 解密
+//     *
+//     * @param value
+//     * @return
+//     */
+//    public static String Decrypt(String value) {
+//        return Decrypt(value,key);
+//    }
 
     /**
      * 加密
@@ -60,10 +61,5 @@ public class AESUtil {
             log.error("解密错误:{}",e);
         }
         return null;
-    }
-
-    public static void main(String[] args) {
-//        String s = "dianzankeji09200";
-        System.err.println(Encrypt("http://wap.gd.10086.cn/test?t=1"));
     }
 }

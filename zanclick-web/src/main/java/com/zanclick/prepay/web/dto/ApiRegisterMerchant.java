@@ -1,9 +1,6 @@
 package com.zanclick.prepay.web.dto;
 
-import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.entity.Param;
-import com.zanclick.prepay.common.utils.AESUtil;
-import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.Data;
 
 import java.io.UnsupportedEncodingException;
