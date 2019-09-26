@@ -83,6 +83,10 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
      * @return
      */
     private PayOrder getPayOrder(ApiPay pay, String appId) {
+        PayOrder payOrder = payOrderService.queryByOutOrderNo(pay.getOutOrderNo());
+        if (DataUtil.isNotEmpty(payOrder) && DataUtil.isNotEmpty(payOrder.isPayed())){
+            throw new BizException("交易已支付");
+        }
         SetMeal meal = setMealService.queryByPackageNo(pay.getPackageNo());
         if (DataUtil.isEmpty(meal)) {
             throw new BizException("套餐编码错误");
@@ -90,7 +94,7 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         if (SetMeal.State.closed.getCode().equals(meal.getState())) {
             throw new BizException("套餐已下架");
         }
-        PayOrder payOrder = new PayOrder();
+        payOrder = new PayOrder();
         payOrder.setPackageNo(pay.getPackageNo());
         payOrder.setAmount(meal.getTotalAmount());
         payOrder.setAppId(appId);

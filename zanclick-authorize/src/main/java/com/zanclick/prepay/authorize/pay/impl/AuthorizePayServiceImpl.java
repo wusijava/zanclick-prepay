@@ -672,7 +672,8 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         AuthorizeOrderFee orderFee = new AuthorizeOrderFee();
         orderFee.setMoney(order.getMoney());
         orderFee.setServiceMoney(serviceFee);
-        orderFee.setOrderRealMoney(MoneyUtil.add(order.getMoney(),serviceFee));
+        orderFee.setOrderRealMoney(order.getMoney());
+//        orderFee.setOrderRealMoney(MoneyUtil.add(order.getMoney(),serviceFee));
         orderFee.setOrderNo(order.getOrderNo());
         orderFee.setRequestNo(order.getRequestNo());
         order.setFee(orderFee);

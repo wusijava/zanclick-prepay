@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * @author Administrator
@@ -63,5 +64,17 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             }
         }
         this.updateById(order);
+    }
+
+    @Override
+    public void handleSuccess(String orderNo) {
+        PayOrder order = payOrderMapper.selectByOrderNo(orderNo);
+        if (order == null){
+            log.error("交易订单异常:{}",orderNo);
+            return;
+        }
+        order.setState(PayOrder.State.payed.getCode());
+        order.setFinishTime(new Date());
+        handlePayOrder(order);
     }
 }

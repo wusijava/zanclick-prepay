@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.controller;
+package com.zanclick.prepay.web.controller;
 
 import com.alipay.api.internal.util.AlipaySignature;
 import com.zanclick.prepay.common.base.controller.BaseController;
@@ -6,6 +6,7 @@ import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.service.AuthorizeOrderService;
+import com.zanclick.prepay.order.service.PayOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,6 +32,8 @@ public class AuthorizeNotifyController extends BaseController {
     private AuthorizeOrderService authorizeOrderService;
     @Autowired
     private AuthorizeConfigurationService authorizeConfigurationService;
+    @Autowired
+    private PayOrderService payOrderService;
 
     @PostMapping(value = "/notify")
     @ResponseBody
@@ -71,6 +74,7 @@ public class AuthorizeNotifyController extends BaseController {
                 order.setBuyerNo(params.get("payer_logon_id"));
                 order.setState(AuthorizeOrder.State.payed.getCode());
                 authorizeOrderService.handleAuthorizeOrder(order);
+                payOrderService.handleSuccess(order.getRequestNo());
             }
         } catch (Exception e) {
             log.error("处理结果失败{}", e);
