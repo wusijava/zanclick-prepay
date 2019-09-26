@@ -3,17 +3,21 @@ package com.zanclick.prepay.web.api;
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.dto.PayDTO;
 import com.zanclick.prepay.authorize.dto.PayResult;
-import com.zanclick.prepay.common.utils.DataUtil;
-import com.zanclick.prepay.setmeal.entity.SetMeal;
-import com.zanclick.prepay.setmeal.service.SetMealService;
-import com.zanclick.prepay.web.dto.ApiPay;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
+import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.order.entity.PayOrder;
+import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.setmeal.entity.SetMeal;
+import com.zanclick.prepay.setmeal.service.SetMealService;
+import com.zanclick.prepay.web.dto.ApiPay;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 /**
  * 预授权二维码支付
@@ -29,6 +33,8 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
     private AuthorizePayService authorizePayService;
     @Autowired
     private SetMealService setMealService;
+    @Autowired
+    private PayOrderService payOrderService;
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
@@ -38,20 +44,26 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         try {
             String decrypt = verifyCipherJson(appId, cipherJson);
             ApiPay dto = parser(decrypt, ApiPay.class);
-            String check  = dto.check();
-            if (check != null){
+            String check = dto.check();
+            if (check != null) {
                 param.setFail();
                 param.setMessage(check);
                 return param.toString();
             }
-            PayResult result = authorizePayService.prePay(getPay(dto));
+            PayOrder order = getPayOrder(dto, appId);
+            PayResult result = authorizePayService.prePay(getPay(order));
             if (result.isSuccess()) {
+                order.setOrderNo(result.getTradeNo());
+                payOrderService.updateById(order);
                 JSONObject object = new JSONObject();
                 object.put("orderNo", result.getTradeNo());
                 object.put("qrCodeUrl", result.getQrCodeUrl());
                 param.setData(object);
                 return param.toString();
             }
+            order.setState(PayOrder.State.closed.getCode());
+            order.setFinishTime(new Date());
+            payOrderService.updateById(order);
             param.setMessage(result.getMessage());
         } catch (BizException be) {
             param.setMessage(be.getMessage());
@@ -64,14 +76,13 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         return param.toString();
     }
 
-
     /**
      * 获取支付封装类
      *
      * @param pay
      * @return
      */
-    private PayDTO getPay(ApiPay pay) {
+    private PayOrder getPayOrder(ApiPay pay, String appId) {
         SetMeal meal = setMealService.queryByPackageNo(pay.getPackageNo());
         if (DataUtil.isEmpty(meal)) {
             throw new BizException("套餐编码错误");
@@ -79,12 +90,35 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         if (SetMeal.State.closed.getCode().equals(meal.getState())) {
             throw new BizException("套餐已下架");
         }
+        PayOrder payOrder = new PayOrder();
+        payOrder.setPackageNo(pay.getPackageNo());
+        payOrder.setAmount(meal.getTotalAmount());
+        payOrder.setAppId(appId);
+        payOrder.setNum(meal.getNum());
+        payOrder.setTitle(meal.getTitle());
+        payOrder.setCreateTime(new Date());
+        payOrder.setMerchantNo(pay.getMerchantNo());
+        payOrder.setOutOrderNo(payOrder.getOutOrderNo());
+        payOrder.setState(PayOrder.State.wait.getCode());
+        payOrder.setPhoneNumber(pay.getPhoneNumber());
+        payOrderService.insert(payOrder);
+        return payOrder;
+    }
+
+
+    /**
+     * 获取支付封装类
+     *
+     * @param order
+     * @return
+     */
+    private PayDTO getPay(PayOrder order) {
         PayDTO dto = new PayDTO();
-        dto.setMerchantNo(pay.getMerchantNo());
-        dto.setAmount(meal.getAmount());
-        dto.setDesc(meal.getTitle());
-        dto.setNum(meal.getNum());
-        dto.setOutOrderNo(pay.getOutOrderNo());
+        dto.setMerchantNo(order.getMerchantNo());
+        dto.setAmount(order.getAmount());
+        dto.setDesc(order.getTitle());
+        dto.setNum(order.getNum());
+        dto.setOutOrderNo(order.getOutOrderNo());
         return dto;
     }
 }

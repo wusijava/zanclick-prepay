@@ -1,4 +1,4 @@
-package com.zanclick.prepay.web.api;
+package com.zanclick.prepay.web.api.h5;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
@@ -8,6 +8,7 @@ import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.web.api.AbstractCommonService;
 import com.zanclick.prepay.web.dto.OrderDetail;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 预授权二维码支付
+ * 直接查的底层订单，需要调整
  *
  * @author duchong
  * @date 2019-7-8 15:28:06

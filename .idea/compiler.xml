@@ -9,6 +9,7 @@
         <module name="zanclick-app" />
         <module name="zanclick-authorize" />
         <module name="zanclick-common" />
+        <module name="zanclick-order" />
         <module name="zanclick-setmeal" />
         <module name="zanclick-supplychain" />
         <module name="zanclick-web" />

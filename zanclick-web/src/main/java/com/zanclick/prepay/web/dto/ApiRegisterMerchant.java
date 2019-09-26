@@ -111,14 +111,4 @@ public class ApiRegisterMerchant extends Param {
         }
         return null;
     }
-
-    public static void main(String[] args) throws UnsupportedEncodingException {
-        JSONObject object = new JSONObject();
-        object.put("merchantNo","201909111719241201158791");
-        String rs = AesUtil.Encrypt(object.toJSONString(),"dianzankeji09200");
-        StringBuffer sb = new StringBuffer();
-        String s = URLEncoder.encode(rs,"UTF-8");
-        sb.append("appId=502004&cipherJson="+s);
-        System.err.println(sb.toString());
-    }
 }

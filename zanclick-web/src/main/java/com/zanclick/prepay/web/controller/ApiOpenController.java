@@ -26,18 +26,11 @@ public class ApiOpenController {
     public Response verifyMerchant(String appId, String cipherJson) {
         String method = "com.zanclick.verify.merchant";
         String methodName = StringUtils.getMethodName(method);
-        try {
-            ApiRequestResolver resolver = (ApiRequestResolver) ApplicationContextProvider.getBean(methodName);
-            String result = resolver.resolve(appId,cipherJson,null);
-            ResponseParam param = JSONObject.parseObject(result,ResponseParam.class);
-            if (param.isSuccess()){
-                return Response.ok(param.getData());
-            }
-            return Response.fail(param.getMessage());
-        }catch (Exception e){
-            log.error("系统异常:{}",e);
-            return Response.fail("系统繁忙，请稍后再试");
+        ResponseParam param = resolver(methodName,appId,cipherJson);
+        if (param.isSuccess()){
+            return Response.ok(param.getData());
         }
+        return Response.fail(param.getMessage());
     }
 
     @GetMapping(value = "/createQr")
@@ -64,17 +57,25 @@ public class ApiOpenController {
     public Response queryOrderList(String appId, String cipherJson) {
         String method = "com.zanclick.verify.merchant";
         String methodName = StringUtils.getMethodName(method);
+        ResponseParam param = resolver(methodName,appId,cipherJson);
+        if (param.isSuccess()){
+            return Response.ok(param.getData());
+        }
+        return Response.fail(param.getMessage());
+    }
+
+    private ResponseParam resolver(String methodName,String appId,String cipherJson){
         try {
             ApiRequestResolver resolver = (ApiRequestResolver) ApplicationContextProvider.getBean(methodName);
             String result = resolver.resolve(appId,cipherJson,null);
             ResponseParam param = JSONObject.parseObject(result,ResponseParam.class);
-            if (param.isSuccess()){
-                return Response.ok(param.getData());
-            }
-            return Response.fail(param.getMessage());
+            return param;
         }catch (Exception e){
             log.error("系统异常:{}",e);
-            return Response.fail("系统繁忙，请稍后再试");
+            ResponseParam param = new ResponseParam();
+            param.setFail();
+            param.setMessage("系统繁忙,请稍后再试");
+            return param;
         }
     }
 }
