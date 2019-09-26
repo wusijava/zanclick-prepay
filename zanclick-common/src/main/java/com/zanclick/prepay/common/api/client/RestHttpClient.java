@@ -4,6 +4,7 @@ import com.zanclick.prepay.common.api.AsiaInfoHashMap;
 import com.zanclick.prepay.common.api.AsiaInfoHeader;
 import com.zanclick.prepay.common.api.sign.RSASignature;
 import com.zanclick.prepay.common.utils.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -28,6 +29,7 @@ import java.util.Set;
  * @author Administrator
  * @date 2019-9-24 10:51:45
  */
+@Slf4j
 public class RestHttpClient {
 
     private static final String HTTPS_URL = StringUtils.getProperty(
@@ -129,8 +131,8 @@ public class RestHttpClient {
             } else {
                 return "请求失败:" + status;
             }
-
         } catch (Exception e) {
+            log.error("能力回调出错：{}",e);
             e.printStackTrace();
         } finally {
             httpclient.getConnectionManager().shutdown();

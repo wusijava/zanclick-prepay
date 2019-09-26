@@ -25,4 +25,7 @@ public interface PayOrderService extends BaseService<PayOrder,Long> {
      */
     PayOrder queryByOutOrderNo(String outOrderNo);
 
+
+    void handlePayOrder(PayOrder order);
+
 }

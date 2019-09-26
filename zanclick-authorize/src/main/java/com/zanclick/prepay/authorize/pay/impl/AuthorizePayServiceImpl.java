@@ -231,6 +231,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             if (cancel) {
                 result.setMessage("交易超时，已撤销");
                 result.setFail();
+                result.setState(order.getState());
                 return result;
             }
             AlipayClient client = authorizeConfigurationService.queryAlipayClientById(order.getConfigurationId());

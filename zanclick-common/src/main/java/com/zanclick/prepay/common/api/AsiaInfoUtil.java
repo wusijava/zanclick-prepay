@@ -14,16 +14,15 @@ public class AsiaInfoUtil {
 
     private static SimpleDateFormat yyyyMMddHHmmssSSS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
-    public static AsiaInfoHeader dev() {
+    public static AsiaInfoHeader dev(String route_value) {
         AsiaInfoHeader header = new AsiaInfoHeader();
         header.setAppId("502004");
         header.setTimestamp(yyyyMMddHHmmssSSS.format(new Date()));
         header.setBusiSerial(busiSerial());
         header.setNonce(nonce());
         header.setSign_method("RSA");
-//        header.setRoute_type("");
-//        header.setRoute_value("");
-//        header.setOperatorid("");
+        header.setRoute_type("1");
+        header.setRoute_value(route_value);
         return header;
     }
 
