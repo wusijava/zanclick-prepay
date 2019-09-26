@@ -210,7 +210,7 @@
         WHERE out_order_no = #{orderNo} ORDER BY id DESC LIMIT 1
     </select>
 
-    <select id="selectByOutOrderNo" resultMap="BaseResultMap" parameterType="java.lang.Long">
+    <select id="selectByOutOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String">
         SELECT
         <include refid="Base_Column_List"/>
         FROM

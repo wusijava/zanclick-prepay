@@ -12,6 +12,8 @@ import lombok.Data;
 @Data
 public class ApiPayResult extends Param {
 
+    private Integer state;
+
     /**
      * 订单号
      */
@@ -21,4 +23,12 @@ public class ApiPayResult extends Param {
      * 二维码链接
      */
     private String qrCodeUrl;
+
+    private Integer num;
+
+    private String eachMoney;
+
+    private String totalMoney;
+
+    private String title;
 }

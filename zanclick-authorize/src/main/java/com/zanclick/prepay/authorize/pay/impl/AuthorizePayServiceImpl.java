@@ -90,7 +90,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         AlipayFundAuthOrderVoucherCreateResponse createResponse = AuthorizePayUtil.qrFreeze(client, NOTIFY_URL, payModal);
         if (createResponse.isSuccess()) {
             order.setQrCodeUrl(createResponse.getCodeValue());
-
             result.setQrCodeUrl(order.getQrCodeUrl());
             result.setEachMoney(order.getFee().getEachMoney());
             result.setFirstMoney(order.getFee().getFirstMoney());
@@ -567,7 +566,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setSettleType(AuthorizeOrder.SettleType.NO.getCode() );
         order.setConfigurationId(configuration.getId());
         order.setAppId(merchant.getAppId());
-        createOrderFee(order);
+        createOrderFee(order,dto);
         authorizeOrderService.insert(order);
         return order;
     }
@@ -666,13 +665,15 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
      * @param order
      * @return
      */
-    private void createOrderFee(AuthorizeOrder order) {
+    private void createOrderFee(AuthorizeOrder order,PayDTO dto) {
         String fee = authorizeFeeService.queryByAppId(order.getAppId());
         String serviceFee = MoneyUtil.multiply(fee,order.getMoney());
         AuthorizeOrderFee orderFee = new AuthorizeOrderFee();
         orderFee.setMoney(order.getMoney());
         orderFee.setServiceMoney(serviceFee);
         orderFee.setOrderRealMoney(order.getMoney());
+        orderFee.setCycle(dto.getNum());
+        orderFee.setEachMoney(MoneyUtil.devide(dto.getAmount(),dto.getNum().toString()));
 //        orderFee.setOrderRealMoney(MoneyUtil.add(order.getMoney(),serviceFee));
         orderFee.setOrderNo(order.getOrderNo());
         orderFee.setRequestNo(order.getRequestNo());

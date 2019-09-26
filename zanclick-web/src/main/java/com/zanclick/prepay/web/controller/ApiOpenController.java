@@ -49,9 +49,21 @@ public class ApiOpenController {
                 return Response.fail(param.getMessage());
             }
             JSONObject object = (JSONObject) param.getData();
+            Integer state = object.getInteger("state");
             StringBuffer sb = new StringBuffer();
-            sb.append("?appId="+appId).append("&cipherJson="+URLEncoder.encode(cipherJson,"utf-8"));
-            sb.append("&qrCodeUrl="+object.getString("qrCodeUrl")).append("&orderNo="+object.getString("orderNo"));
+            if (state.equals(0)){
+                sb.append("/trade/create");
+                sb.append("?appId="+appId).append("&cipherJson="+URLEncoder.encode(cipherJson,"utf-8"));
+                sb.append("&qrCodeUrl="+object.getString("qrCodeUrl")).append("&orderNo="+object.getString("orderNo"));
+                sb.append("&eachMoney="+object.getString("eachMoney")).append("&totalMoney="+object.getString("totalMoney"));
+                sb.append("&num="+object.getInteger("num")).append("&title="+URLEncoder.encode(object.getString("title"),"utf-8"));
+            }else if (state.equals(1)){
+                sb.append("/auth/success");
+                sb.append("?orderNo="+object.getString("orderNo")).append("&title="+URLEncoder.encode(object.getString("title"),"utf-8"));
+                sb.append("&money="+object.getString("money"));
+            }else if (state.equals(-1)){
+                sb.append("/auth/fail");
+            }
             response.sendRedirect(h5Server+sb.toString());
         }catch (Exception e){
             log.error("系统异常:{}",e);
