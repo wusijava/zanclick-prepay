@@ -1,6 +1,5 @@
 package com.zanclick.prepay.web.api;
 
-import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.dto.PayDTO;
 import com.zanclick.prepay.authorize.dto.PayResult;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
@@ -13,6 +12,7 @@ import com.zanclick.prepay.order.service.PayOrderService;
 import com.zanclick.prepay.setmeal.entity.SetMeal;
 import com.zanclick.prepay.setmeal.service.SetMealService;
 import com.zanclick.prepay.web.dto.ApiPay;
+import com.zanclick.prepay.web.dto.ApiPayResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -55,10 +55,10 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
             if (result.isSuccess()) {
                 order.setOrderNo(result.getTradeNo());
                 payOrderService.updateById(order);
-                JSONObject object = new JSONObject();
-                object.put("orderNo", result.getTradeNo());
-                object.put("qrCodeUrl", result.getQrCodeUrl());
-                param.setData(object);
+                ApiPayResult payResult = new ApiPayResult();
+                payResult.setOrderNo(result.getTradeNo());
+                payResult.setQrCodeUrl(result.getQrCodeUrl());
+                param.setData(payResult);
                 return param.toString();
             }
             order.setState(PayOrder.State.closed.getCode());
@@ -70,7 +70,7 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
             log.error("查询异常:{}", be);
         } catch (Exception e) {
             param.setMessage("系统异常，请稍后再试");
-            log.error("系统异常:{}", 3);
+            log.error("系统异常:{}", e);
         }
         param.setFail();
         return param.toString();
@@ -98,7 +98,9 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         payOrder.setTitle(meal.getTitle());
         payOrder.setCreateTime(new Date());
         payOrder.setMerchantNo(pay.getMerchantNo());
-        payOrder.setOutOrderNo(payOrder.getOutOrderNo());
+        payOrder.setOutOrderNo(pay.getOutOrderNo());
+        payOrder.setProvince(pay.getProvince());
+        payOrder.setCity(pay.getCity());
         payOrder.setState(PayOrder.State.wait.getCode());
         payOrder.setPhoneNumber(pay.getPhoneNumber());
         payOrderService.insert(payOrder);
