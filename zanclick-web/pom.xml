@@ -46,7 +46,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <finalName>jd</finalName>
+                    <finalName>prepay</finalName>
                 </configuration>
                 <executions>
                     <execution>

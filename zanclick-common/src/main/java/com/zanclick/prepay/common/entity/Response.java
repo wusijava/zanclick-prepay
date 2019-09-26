@@ -3,6 +3,8 @@ package com.zanclick.prepay.common.entity;
  * Created by lvlu on 2017/12/19.
  */
 
+import com.alibaba.fastjson.JSONObject;
+import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -68,5 +70,16 @@ public class Response<T> implements Serializable{
         } else {
             return false;
         }
+    }
+
+    public static void main(String[] args) {
+        Response response = new Response();
+        response.setCode("20000");
+        response.setMsg("查询成功");
+        JSONObject object = new JSONObject();
+        object.put("orderNo",StringUtils.getTradeNo());
+        object.put("outOrderNo",StringUtils.getTradeNo());
+        response.setData(object);
+        System.err.println(JSONObject.toJSONString(response));
     }
 }

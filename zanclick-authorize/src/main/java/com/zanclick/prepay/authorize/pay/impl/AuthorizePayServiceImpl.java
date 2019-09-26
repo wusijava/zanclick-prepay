@@ -557,7 +557,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setSettleDate(getSettleDate());
         order.setSellerNo(merchant.getSellerNo());
         order.setSellerName(merchant.getName());
-        order.setSellerId(merchant.getSellerId());
         order.setContactName(merchant.getContactName());
         order.setContactPhone(merchant.getContactPhone());
         order.setCreateTime(new Date());

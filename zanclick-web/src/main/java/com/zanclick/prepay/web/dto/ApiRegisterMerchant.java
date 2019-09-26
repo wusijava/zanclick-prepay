@@ -1,6 +1,9 @@
 package com.zanclick.prepay.web.dto;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.entity.Param;
+import com.zanclick.prepay.common.utils.AesUtil;
+import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.Data;
 
 import java.io.UnsupportedEncodingException;
@@ -110,14 +113,12 @@ public class ApiRegisterMerchant extends Param {
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-//        JSONObject object = new JSONObject();
-//        object.put("merchantNo",StringUtils.getMerchantNo());
-//        object.put("storeNo","GZ785264135689");
-//        System.err.println(AESUtil.Encrypt(object.toJSONString(),"12345679qwertyui"));
-
+        JSONObject object = new JSONObject();
+        object.put("merchantNo","201909111719241201158791");
+        String rs = AesUtil.Encrypt(object.toJSONString(),"dianzankeji09200");
         StringBuffer sb = new StringBuffer();
-        String s = URLEncoder.encode("WCQVr+86nB5IjcQMiGYuPatxs04okvrVXKIAIkfhjm6HG5m79C9OBwSEsQDNrK7BGiji7KfKSP9u757daDZVXQS9I3Op8M3w3j/oDHJyuTY=","UTF-8");
-        sb.append("appId=201909101656231203575&cipherJson="+s);
+        String s = URLEncoder.encode(rs,"UTF-8");
+        sb.append("appId=502004&cipherJson="+s);
         System.err.println(sb.toString());
     }
 }

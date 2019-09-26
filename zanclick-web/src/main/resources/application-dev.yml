@@ -52,7 +52,6 @@ authorize:
 
 # H5接口访问密钥
 h5:
- visit:
   key: qwertyuiasdfghjk
 
  #支付超时时间

@@ -82,11 +82,6 @@ public class AuthorizeOrder implements Identifiable<Long> {
      * 收款商户的支付宝账号（并非预授权收款方，为垫资方）
      * */
     private String sellerNo;
-    /**
-     * 收款支付宝账户，以订单产生的时候为准
-     * 收款商户的支付宝UID（并非预授权收款方，为垫资方）
-     * */
-    private String sellerId;
 
     private String contactName;
 

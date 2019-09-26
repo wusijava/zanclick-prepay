@@ -18,6 +18,7 @@ public class Method {
         methods.add("comZanclickCreateMerchant");
         methods.add("comZanclickVerifyMerchant");
         methods.add("comZanclickQueryAuthOrderList");
+        methods.add("comZanclickQueryAuthOrder");
         methods.add("comZanclickRefundAuthPay");
         methods.add("comZanclickQueryAuthPay");
         methods.add("comZanclickCreateAuthPrePay");
