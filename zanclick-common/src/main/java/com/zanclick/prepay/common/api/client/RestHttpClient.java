@@ -109,12 +109,12 @@ public class RestHttpClient {
             AsiaInfoHashMap head = AsiaInfoHashMap.toAsiaInfoHashMap(header);
             HttpPost postMethod = new HttpPost(HTTPS_URL+url);
             String content = RSASignature.getSignContent(RSASignature.getSortedMap(head)) + body;
-            log.error("能力待签字符串:{}");
-            log.error("能力待签秘钥:{}");
-            log.error("能力请求头:{}");
-            log.error("能力内容:{}");
+            log.error("能力待签字符串:{}",content);
+            log.error("能力待签秘钥:{}",SIGN_PRIVATE_KEY);
+            log.error("能力请求头:{}",JSONObject.toJSONString(header));
+            log.error("能力内容:{}",body);
             String signStr = RSASignature.sign(content, SIGN_PRIVATE_KEY);
-
+            log.error("能力签名内容:{}",signStr);
             Set keys = head.keySet();
             Iterator it = keys.iterator();
             while (it.hasNext()) {
@@ -122,8 +122,6 @@ public class RestHttpClient {
                 postMethod.setHeader(a, head.get(a));
             }
             postMethod.setHeader("sign", signStr);
-            System.err.println(signStr);
-
             StringEntity entity = new StringEntity(body, "application/json", "UTF-8");
             postMethod.setEntity(entity);
             HttpResponse response = httpclient.execute(postMethod);
