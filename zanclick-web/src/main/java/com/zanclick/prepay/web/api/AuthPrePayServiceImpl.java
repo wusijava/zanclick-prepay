@@ -51,6 +51,10 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
                 return param.toString();
             }
             PayOrder order = getPayOrder(dto, appId);
+            if (order.isPayed()){
+                param.setData(getPayResult(order,null));
+                return param.toString();
+            }
             PayResult result = authorizePayService.prePay(getPay(order));
             if (result.isSuccess()) {
                 order.setOrderNo(result.getTradeNo());
@@ -121,12 +125,17 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
     private ApiPayResult getPayResult(PayOrder order,PayResult result) {
         ApiPayResult payResult = new ApiPayResult();
         payResult.setState(order.getState());
-        payResult.setOrderNo(result.getTradeNo());
-        payResult.setQrCodeUrl(result.getQrCodeUrl());
-        payResult.setEachMoney(result.getEachMoney());
         payResult.setTotalMoney(order.getAmount());
         payResult.setNum(order.getNum());
         payResult.setTitle(order.getTitle());
+        if (DataUtil.isNotEmpty(result)){
+            payResult.setOrderNo(result.getTradeNo());
+            payResult.setQrCodeUrl(result.getQrCodeUrl());
+            payResult.setEachMoney(result.getEachMoney());
+        }
+        if (order.isPayed()){
+            order.setOrderNo(order.getOrderNo());
+        }
         return payResult;
     }
 

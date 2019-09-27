@@ -59,7 +59,7 @@ public class ApiOpenController {
             }else if (state.equals(1)){
                 sb.append("/auth/success");
                 sb.append("?orderNo="+object.getString("orderNo")).append("&title="+URLEncoder.encode(object.getString("title"),"utf-8"));
-                sb.append("&money="+object.getString("money"));
+                sb.append("&money="+object.getString("totalMoney"));
             }else if (state.equals(-1)){
                 sb.append("/auth/fail");
             }
