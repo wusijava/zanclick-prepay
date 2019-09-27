@@ -6,6 +6,7 @@ import com.zanclick.prepay.app.service.AppInfoService;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.AesUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
  * @author duchong
  * @date 2019-7-8 15:28:06
  **/
+@Slf4j
 @Service
 public abstract class AbstractCommonService {
 
@@ -24,10 +26,12 @@ public abstract class AbstractCommonService {
     public String verifyCipherJson(String appId,String cipherJson){
         AppInfo appInfo = appInfoService.queryByAppId(appId);
         if (appInfo == null || appInfo.getState().equals(AppInfo.State.close.getCode())) {
+            log.error("应用异常,商户提交信息:{},{}",appId,cipherJson);
             throw new BizException("应用信息异常");
         }
         String decrypt = AesUtil.Decrypt(cipherJson, appInfo.getKey());
         if (decrypt == null) {
+            log.error("解密失败,商户提交信息:{},{}",appId,cipherJson);
             throw new BizException("商户信息验证失败");
         }
         return decrypt;
