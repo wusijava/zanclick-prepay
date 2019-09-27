@@ -1,5 +1,6 @@
 package com.zanclick.prepay.common.api.client;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.api.AsiaInfoHashMap;
 import com.zanclick.prepay.common.api.AsiaInfoHeader;
 import com.zanclick.prepay.common.api.sign.RSASignature;
@@ -102,6 +103,7 @@ public class RestHttpClient {
     }
 
     public static String post(AsiaInfoHeader header, String body,String url) throws Exception {
+        log.error("能力回调:{},{},{}",JSONObject.toJSONString(header),body,url);
         HttpClient httpclient = getSSLHttpClient();
         try {
             AsiaInfoHashMap head = AsiaInfoHashMap.toAsiaInfoHashMap(header);
@@ -122,7 +124,7 @@ public class RestHttpClient {
             postMethod.setEntity(entity);
 
             HttpResponse response = httpclient.execute(postMethod);
-
+            log.error("能力回调:{}",response.getAllHeaders());
             StatusLine respHttpStatus = response.getStatusLine();
             int status = respHttpStatus.getStatusCode();
             if (status == 200) {

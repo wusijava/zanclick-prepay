@@ -207,7 +207,7 @@
         <include refid="Base_Column_List"/>
         FROM
         <include refid="table"/>
-        WHERE out_order_no = #{orderNo} ORDER BY id DESC LIMIT 1
+        WHERE order_no = #{orderNo} ORDER BY id DESC LIMIT 1
     </select>
 
     <select id="selectByOutOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -215,7 +215,7 @@
         <include refid="Base_Column_List"/>
         FROM
         <include refid="table"/>
-        WHERE order_no = #{outOrderNo} ORDER BY id DESC LIMIT 1
+        WHERE out_order_no = #{outOrderNo} ORDER BY id DESC LIMIT 1
     </select>
 
     <update id="updateById" parameterType="com.zanclick.prepay.order.entity.PayOrder">
