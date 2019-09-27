@@ -6,7 +6,6 @@ import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.ApplicationContextProvider;
 import com.zanclick.prepay.common.utils.StringUtils;
-import com.zanclick.prepay.web.dto.ApiPayResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;

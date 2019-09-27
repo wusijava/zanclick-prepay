@@ -55,15 +55,7 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
             if (result.isSuccess()) {
                 order.setOrderNo(result.getTradeNo());
                 payOrderService.handlePayOrder(order);
-                ApiPayResult payResult = new ApiPayResult();
-                payResult.setState(order.getState());
-                payResult.setOrderNo(result.getTradeNo());
-                payResult.setQrCodeUrl(result.getQrCodeUrl());
-                payResult.setEachMoney(result.getEachMoney());
-                payResult.setTotalMoney(order.getAmount());
-                payResult.setNum(order.getNum());
-                payResult.setTitle(order.getTitle());
-                param.setData(payResult);
+                param.setData(getPayResult(order,result));
                 return param.toString();
             }
             order.setState(PayOrder.State.closed.getCode());
@@ -119,6 +111,24 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         return payOrder;
     }
 
+    /**
+     * 获取支付封装类
+     *
+     * @param order
+     * @param result
+     * @return
+     */
+    private ApiPayResult getPayResult(PayOrder order,PayResult result) {
+        ApiPayResult payResult = new ApiPayResult();
+        payResult.setState(order.getState());
+        payResult.setOrderNo(result.getTradeNo());
+        payResult.setQrCodeUrl(result.getQrCodeUrl());
+        payResult.setEachMoney(result.getEachMoney());
+        payResult.setTotalMoney(order.getAmount());
+        payResult.setNum(order.getNum());
+        payResult.setTitle(order.getTitle());
+        return payResult;
+    }
 
     /**
      * 获取支付封装类
