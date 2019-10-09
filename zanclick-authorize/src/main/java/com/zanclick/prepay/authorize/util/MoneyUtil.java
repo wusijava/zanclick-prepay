@@ -215,8 +215,12 @@ public class MoneyUtil {
      * @param money2 金额2
      */
     public static String devide(String money1, String money2) {
-        BigDecimal total = new BigDecimal(money1).divide(new BigDecimal(money2)).setScale(2, BigDecimal.ROUND_HALF_EVEN);;
+        BigDecimal total = new BigDecimal(money1).divide(new BigDecimal(money2),2, BigDecimal.ROUND_HALF_EVEN);
         return total.toString();
+    }
+
+    public static void main(String[] args) {
+        System.err.println(devide("2","12"));
     }
 
     /**

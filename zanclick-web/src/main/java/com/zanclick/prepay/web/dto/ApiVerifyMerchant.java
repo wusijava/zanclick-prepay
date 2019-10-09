@@ -1,7 +1,12 @@
 package com.zanclick.prepay.web.dto;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.entity.Param;
+import com.zanclick.prepay.common.utils.AesUtil;
 import lombok.Data;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * 预授权商户创建
@@ -21,5 +26,15 @@ public class ApiVerifyMerchant extends Param {
             return "缺少商户号";
         }
         return null;
+    }
+
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        JSONObject object = new JSONObject();
+        object.put("merchantNo","201909111719241201158791");
+        String rs = AesUtil.Encrypt(object.toJSONString(),"dianzankeji09200");
+        StringBuffer sb = new StringBuffer();
+        String s = URLEncoder.encode(rs,"UTF-8");
+        sb.append("appId=502004&cipherJson="+s);
+        System.err.println(sb.toString());
     }
 }

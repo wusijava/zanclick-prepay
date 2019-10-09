@@ -60,11 +60,11 @@ public class ApiPay extends Param {
     public static void main(String[] args) throws UnsupportedEncodingException {
         JSONObject object = new JSONObject();
         object.put("merchantNo","201909111719241201158791");
-        object.put("packageNo","NB5265897436");
+        object.put("packageNo","808aa5c9-ecb6-3b52-907e-4ab937f15d06");
         object.put("outOrderNo",StringUtils.getTradeNo());
-        object.put("phoneNumber","13027129244");
-        object.put("province","132");
-        object.put("city","456");
+        object.put("phoneNumber","13798157315");
+        object.put("province","200");
+        object.put("city","200");
         String rs = AesUtil.Encrypt(object.toJSONString(),"dianzankeji09200");
         StringBuffer sb = new StringBuffer();
         String s = URLEncoder.encode(rs,"UTF-8");

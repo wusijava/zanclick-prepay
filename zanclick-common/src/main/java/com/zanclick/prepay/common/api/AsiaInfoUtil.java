@@ -21,8 +21,10 @@ public class AsiaInfoUtil {
         header.setBusiSerial(busiSerial());
         header.setNonce(nonce());
         header.setSign_method("RSA");
-        header.setRoute_type("1");
-        header.setRoute_value(route_value);
+//        header.setRoute_type("1");
+//        header.setRoute_value(route_value);
+        header.setRoute_type("0");
+        header.setRoute_value("200");
         return header;
     }
 
