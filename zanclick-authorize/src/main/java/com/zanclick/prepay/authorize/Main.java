@@ -1,6 +1,6 @@
 package com.zanclick.prepay.authorize;
 
-import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
+import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.common.generator.CodeGenerator;
 
 /**
@@ -10,6 +10,6 @@ import com.zanclick.prepay.common.generator.CodeGenerator;
 public class Main {
     public static void main(String[] args) {
         String basePack = Main.class.getPackage().getName();
-        new CodeGenerator().generateMybatisXml(basePack, AuthorizeMerchant.class);
+        new CodeGenerator().generateMybatisXml(basePack, AuthorizeOrder.class);
     }
 }

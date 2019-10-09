@@ -23,8 +23,9 @@
         <module>zanclick-supplychain</module>
         <module>zanclick-authorize</module>
         <module>zanclick-web</module>
-        <module>zanclick-auth</module>
         <module>zanclick-app</module>
+        <module>zanclick-setmeal</module>
+        <module>zanclick-order</module>
     </modules>
 
     <dependencies>
@@ -66,7 +67,6 @@
             <dependency>
                 <groupId>com.zanclick</groupId>
                 <artifactId>zanclick-prepay</artifactId>
-                <version>${jd.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

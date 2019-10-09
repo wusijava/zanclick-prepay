@@ -25,7 +25,6 @@
             <result column="operation_id" property="operationId" jdbcType="VARCHAR"/>
             <result column="seller_name" property="sellerName" jdbcType="VARCHAR"/>
             <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
-            <result column="seller_id" property="sellerId" jdbcType="VARCHAR"/>
             <result column="contact_name" property="contactName" jdbcType="VARCHAR"/>
             <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR"/>
             <result column="request_content" property="requestContent" jdbcType="VARCHAR"/>
@@ -58,7 +57,6 @@
             `operation_id`,
             `seller_name`,
             `seller_no`,
-            `seller_id`,
             `contact_name`,
             `contact_phone`,
             `request_content`,
@@ -137,9 +135,6 @@
                     <if test="sellerNo != null and sellerNo != ''">
                         AND `seller_no`=#{sellerNo}
                     </if>
-                    <if test="sellerId != null and sellerId != ''">
-                        AND `seller_id`=#{sellerId}
-                    </if>
                     <if test="contactName != null and contactName != ''">
                         AND `contact_name`=#{contactName}
                     </if>
@@ -155,8 +150,15 @@
                     <if test="state != null">
                         AND `state`=#{state}
                     </if>
+                <if test="nextIndex != null">
+                    AND `id` &lt; #{nextIndex}
+                </if>
+                <if test="stateIn != null and stateIn != ''">
+                    AND `state` IN (${stateIn})
+                </if>
             </trim>
         </where>
+        ORDER BY id DESC
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
@@ -210,7 +212,6 @@
             `operation_id`,
             `seller_name`,
             `seller_no`,
-            `seller_id`,
             `contact_name`,
             `contact_phone`,
             `request_content`,
@@ -241,7 +242,6 @@
             #{operationId},
             #{sellerName},
             #{sellerNo},
-            #{sellerId},
             #{contactName},
             #{contactPhone},
             #{requestContent},
@@ -277,7 +277,6 @@
             `operation_id`,
             `seller_name`,
             `seller_no`,
-            `seller_id`,
             `contact_name`,
             `contact_phone`,
             `request_content`,
@@ -310,7 +309,6 @@
             #{cm.operationId},
             #{cm.sellerName},
             #{cm.sellerNo},
-            #{cm.sellerId},
             #{cm.contactName},
             #{cm.contactPhone},
             #{cm.requestContent},
@@ -429,9 +427,6 @@
             </if>
             <if test="sellerNo != null and sellerNo != ''">
                  `seller_no`=#{sellerNo},
-            </if>
-            <if test="sellerId != null and sellerId != ''">
-                 `seller_id`=#{sellerId},
             </if>
             <if test="contactName != null and contactName != ''">
                  `contact_name`=#{contactName},

@@ -3,26 +3,31 @@ package com.zanclick.prepay.web.api;
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.dto.QueryDTO;
 import com.zanclick.prepay.authorize.dto.QueryResult;
-import com.zanclick.prepay.web.dto.ApiPayQuery;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
+import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.order.entity.PayOrder;
+import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.web.dto.ApiPayQuery;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 预授权二维码支付
+ * 这里也是直接查询的底层
  *
  * @author duchong
  * @date 2019-7-8 15:28:06
  **/
 @Slf4j
 @Service("comZanclickQueryAuthPay")
-public class AuthPayQueryServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
+public class AuthPayQueryServiceImpl extends AbstractCommonService implements ApiRequestResolver {
     @Autowired
     private AuthorizePayService authorizePayService;
+    @Autowired
+    private PayOrderService payOrderService;
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
@@ -34,10 +39,18 @@ public class AuthPayQueryServiceImpl extends AbstractCommonMethod implements Api
             ApiPayQuery query = parser(request,ApiPayQuery.class);
             QueryDTO dto = new QueryDTO();
             dto.setTradeNo(query.getOrderNo());
+            PayOrder order = payOrderService.queryByOrderNo(query.getOrderNo());
+            if (DataUtil.isEmpty(order)){
+                param.setMessage("交易订号异常");
+                param.setFail();
+                return param.toString();
+            }
             QueryResult result = authorizePayService.query(dto);
             if (result.isSuccess()){
                 JSONObject object = new JSONObject();
                 object.put("orderNo",query.getOrderNo());
+                object.put("title",order.getTitle());
+                object.put("money",order.getAmount());
                 object.put("orderStatus",getApiPayStatus(result.getState()));
                 param.setData(object);
                 return param.toString();

@@ -52,14 +52,13 @@ authorize:
 
 # H5接口访问密钥
 h5:
- visit:
-  key: qwertyuiasdfghjk
-
+  key: 12345678qwertyui
+  server: http://172.16.4.9:8082
  #支付超时时间
 timeout:
   authorize:
     prepay: 10
 
-mybatis:
-  configuration:
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#mybatis:
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

@@ -2,7 +2,7 @@ package com.zanclick.prepay.web.dto;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.entity.Param;
-import com.zanclick.prepay.common.utils.AESUtil;
+import com.zanclick.prepay.common.utils.AesUtil;
 import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.Data;
 
@@ -37,6 +37,10 @@ public class ApiRegisterMerchant extends Param {
      */
     private String sellerNo;
 
+    /**
+     * 门店名称
+     * */
+    private String storeNo;
 
     /**
      * 门店名称
@@ -84,6 +88,12 @@ public class ApiRegisterMerchant extends Param {
         if (checkNull(sellerNo)) {
             return "缺少收款支付宝账号";
         }
+        if(checkNull(storeNo)){
+            return "缺少门店编号";
+        }
+        if(checkNull(storeName)){
+            return "缺少门店名称";
+        }
         if (checkNull(storeSubjectName)) {
             return "缺少营业执照名称";
         }
@@ -100,17 +110,5 @@ public class ApiRegisterMerchant extends Param {
             return "缺少门店所属区县";
         }
         return null;
-    }
-
-    public static void main(String[] args) throws UnsupportedEncodingException {
-//        JSONObject object = new JSONObject();
-//        object.put("merchantNo",StringUtils.getMerchantNo());
-//        object.put("storeNo","GZ785264135689");
-//        System.err.println(AESUtil.Encrypt(object.toJSONString(),"12345679qwertyui"));
-
-        StringBuffer sb = new StringBuffer();
-        String s = URLEncoder.encode("WCQVr+86nB5IjcQMiGYuPatxs04okvrVXKIAIkfhjm6HG5m79C9OBwSEsQDNrK7BGiji7KfKSP9u757daDZVXQS9I3Op8M3w3j/oDHJyuTY=","UTF-8");
-        sb.append("appId=201909101656231203575&cipherJson="+s);
-        System.err.println(sb.toString());
     }
 }

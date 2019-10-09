@@ -90,7 +90,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         AlipayFundAuthOrderVoucherCreateResponse createResponse = AuthorizePayUtil.qrFreeze(client, NOTIFY_URL, payModal);
         if (createResponse.isSuccess()) {
             order.setQrCodeUrl(createResponse.getCodeValue());
-
             result.setQrCodeUrl(order.getQrCodeUrl());
             result.setEachMoney(order.getFee().getEachMoney());
             result.setFirstMoney(order.getFee().getFirstMoney());
@@ -231,6 +230,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             if (cancel) {
                 result.setMessage("交易超时，已撤销");
                 result.setFail();
+                result.setState(order.getState());
                 return result;
             }
             AlipayClient client = authorizeConfigurationService.queryAlipayClientById(order.getConfigurationId());
@@ -327,11 +327,12 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         AlipayClient client = authorizeConfigurationService.queryAlipayClientById(order.getConfigurationId());
-        List<AuthorizeOrderRecord> recordList = authorizeOrderRecordService.queryWaitByAuthNo(order.getAuthNo());
-        if (DataUtil.isEmpty(recordList)) {
-            recordList = authorizeOrderRecordService.createAuthorizeOrderRecord(order);
-        }
-        String refundMoney = getRefundMoney(recordList);
+//        List<AuthorizeOrderRecord> recordList = authorizeOrderRecordService.queryWaitByAuthNo(order.getAuthNo());
+//        if (DataUtil.isEmpty(recordList)) {
+//            recordList = authorizeOrderRecordService.createAuthorizeOrderRecord(order);
+//        }
+//        String refundMoney = getRefundMoney(recordList);
+        String refundMoney = order.getFee().getOrderRealMoney();
         if (!MoneyUtil.zeroMoney(refundMoney)) {
             result.setMessage("可退款金额为0");
             result.setFail();
@@ -352,7 +353,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         authorizeRefundOrderService.refundSuccess(refund);
-        authorizeOrderRecordService.handleRecordList(recordList, AuthorizeOrderRecord.State.unfreed.getCode(), dto.getRefundNo());
+//        authorizeOrderRecordService.handleRecordList(recordList, AuthorizeOrderRecord.State.unfreed.getCode(), dto.getRefundNo());
         order.setState(AuthorizeOrder.State.refund.getCode());
         authorizeOrderService.handleAuthorizeOrder(order);
         result.setAmount(order.getFee().getMoney());
@@ -530,8 +531,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         dto.setPay_timeout(order.getTimeout() + "m");
         dto.setExtra_param(getExtendParam());
         dto.setProduct_code("PRE_AUTH");
-//        dto.setTrans_currency("USD");
-//        dto.setSettle_currency("USD");
         dto.setEnable_pay_channels(PayWay.typeList.get(order.getPayWay()));
         return dto;
     }
@@ -552,12 +551,12 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setMerchantNo(dto.getMerchantNo());
         order.setTimeout(getTimeOut());
         order.setTitle(dto.getDesc());
+        order.setStoreNo(merchant.getStoreNo());
         order.setDealType(AuthorizeOrder.DealType.SCAN.getCode());
         order.setPayWay(getPayWay(dto.getPayWay()));
         order.setSettleDate(getSettleDate());
         order.setSellerNo(merchant.getSellerNo());
         order.setSellerName(merchant.getName());
-        order.setSellerId(merchant.getSellerId());
         order.setContactName(merchant.getContactName());
         order.setContactPhone(merchant.getContactPhone());
         order.setCreateTime(new Date());
@@ -567,8 +566,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setSettleType(AuthorizeOrder.SettleType.NO.getCode() );
         order.setConfigurationId(configuration.getId());
         order.setAppId(merchant.getAppId());
-
-        createOrderFee(order);
+        createOrderFee(order,dto);
         authorizeOrderService.insert(order);
         return order;
     }
@@ -667,13 +665,16 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
      * @param order
      * @return
      */
-    private void createOrderFee(AuthorizeOrder order) {
+    private void createOrderFee(AuthorizeOrder order,PayDTO dto) {
         String fee = authorizeFeeService.queryByAppId(order.getAppId());
         String serviceFee = MoneyUtil.multiply(fee,order.getMoney());
         AuthorizeOrderFee orderFee = new AuthorizeOrderFee();
         orderFee.setMoney(order.getMoney());
         orderFee.setServiceMoney(serviceFee);
-        orderFee.setOrderRealMoney(MoneyUtil.add(order.getMoney(),serviceFee));
+        orderFee.setOrderRealMoney(order.getMoney());
+        orderFee.setCycle(dto.getNum());
+        orderFee.setEachMoney(MoneyUtil.devide(dto.getAmount(),dto.getNum().toString()));
+//        orderFee.setOrderRealMoney(MoneyUtil.add(order.getMoney(),serviceFee));
         orderFee.setOrderNo(order.getOrderNo());
         orderFee.setRequestNo(order.getRequestNo());
         order.setFee(orderFee);

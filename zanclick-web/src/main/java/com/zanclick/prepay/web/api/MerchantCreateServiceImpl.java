@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
  **/
 @Slf4j
 @Service("comZanclickCreateMerchant")
-public class MerchantCreateServiceImpl extends AbstractCommonMethod implements ApiRequestResolver {
+public class MerchantCreateServiceImpl extends AbstractCommonService implements ApiRequestResolver {
 
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
@@ -40,7 +40,7 @@ public class MerchantCreateServiceImpl extends AbstractCommonMethod implements A
             JSONObject object = JSONObject.parseObject(verifyCipherJson(appId,cipherJson));
             RegisterMerchant merchant = new RegisterMerchant();
             merchant.setMerchantNo(object.getString("merchantNo"));
-            merchant.setStoreNo(object.getString("storeNo"));
+            merchant.setStoreNo(apiMerchant.getStoreNo());
             merchant.setStoreSubjectName(apiMerchant.getStoreSubjectName());
             merchant.setStoreSubjectCertNo(apiMerchant.getStoreSubjectCertNo());
             merchant.setStoreName(apiMerchant.getStoreName());

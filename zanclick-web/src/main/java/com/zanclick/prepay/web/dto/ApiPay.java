@@ -1,8 +1,9 @@
 package com.zanclick.prepay.web.dto;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.authorize.dto.PayDTO;
-import com.zanclick.prepay.common.utils.AESUtil;
+import com.zanclick.prepay.common.entity.Param;
+import com.zanclick.prepay.common.utils.AesUtil;
+import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.Data;
 
 import java.io.UnsupportedEncodingException;
@@ -15,34 +16,59 @@ import java.net.URLEncoder;
  * @date 2019-7-8 15:49:20
  */
 @Data
-public class ApiPay extends PayDTO {
+public class ApiPay extends Param {
 
-    @Override
+    /**
+     * 套餐编码
+     */
+    private String packageNo;
+
+    /**
+     * 交易订单号
+     */
+    private String outOrderNo;
+
+    /**
+     * 商户号
+     */
+    private String merchantNo;
+
+    private String phoneNumber;
+
+    private String province;
+
+    private String city;
+
+    private String extJsonStr;
+
     public String check() {
-        return super.check();
+        if (checkNull(packageNo)) {
+            return "缺少套餐编码";
+        }
+        if (checkNull(outOrderNo)) {
+            return "缺少交易订单号";
+        }
+        if (checkNull(merchantNo)) {
+            return "缺少商户号";
+        }
+        if (checkNull(phoneNumber)) {
+            return "缺少套餐号码";
+        }
+        return null;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws UnsupportedEncodingException {
         JSONObject object = new JSONObject();
-        object.put("method", "com.zanclick.create.auth.prePay");
-        ApiPay dto = new ApiPay();
-        dto.setMerchantNo("201909111719241201158791");
-        dto.setDesc("交易描述");
-        dto.setNum(0);
-        dto.setAmount("100.00");
-        dto.setOutOrderNo("123456789");
-        dto.setPayWay(2);
-        dto.setStoreNo("GZ785264135689");
-        String encrypt = AESUtil.Encrypt(JSONObject.toJSONString(dto), "12345679qwertyui");
-
+        object.put("merchantNo","201909111719241201158791");
+        object.put("packageNo","NB5265897436");
+        object.put("outOrderNo",StringUtils.getTradeNo());
+        object.put("phoneNumber","13027129244");
+        object.put("province","132");
+        object.put("city","456");
+        String rs = AesUtil.Encrypt(object.toJSONString(),"dianzankeji09200");
         StringBuffer sb = new StringBuffer();
-        String s = null;
-        try {
-            s = URLEncoder.encode(encrypt, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        sb.append("appId=201909101656231203575&cipherJson=" + s);
+        String s = URLEncoder.encode(rs,"UTF-8");
+        sb.append("appId=502004&cipherJson="+s);
         System.err.println(sb.toString());
     }
 }

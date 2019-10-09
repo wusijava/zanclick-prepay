@@ -16,8 +16,14 @@ public class AuthorizeMerchant implements Identifiable<Long> {
 
     private Long id;
 
+    /**
+     * 商户号
+     */
     private String merchantNo;
 
+    /**
+     * 应用ID
+     */
     private String appId;
 
     /**
@@ -45,14 +51,29 @@ public class AuthorizeMerchant implements Identifiable<Long> {
      */
     private String contactPhone;
 
+    /**
+     * 运营商名称
+     */
     private String operatorName;
 
+    /**
+     * 门店编号
+     */
     private String storeNo;
 
+    /**
+     * 门店名称
+     */
     private String storeName;
 
+    /**
+     * 营业执照名称
+     */
     private String storeSubjectName;
 
+    /**
+     * 营业执照编号
+     */
     private String storeSubjectCertNo;
 
     /**
@@ -60,19 +81,17 @@ public class AuthorizeMerchant implements Identifiable<Long> {
      */
     private String storeProvince;
 
+    private String storeProvinceCode;
     /**
      * 市
      */
     private String storeCity;
 
+    private String storeCityCode;
     /**
      * 区
      */
     private String storeCounty;
-
-    private String storeProvinceCode;
-
-    private String storeCityCode;
 
     private String storeCountyCode;
 
@@ -81,16 +100,16 @@ public class AuthorizeMerchant implements Identifiable<Long> {
      */
     private String supplierNo;
 
-    private String reason;
+    /**
+     * 记录状态
+     **/
+    private Integer state;
 
     private Date createTime;
 
     private Date finishTime;
 
-    /**
-     * 记录状态
-     **/
-    private Integer state;
+    private String reason;
 
     public enum State {
         failed(-1, "创建失败"),
