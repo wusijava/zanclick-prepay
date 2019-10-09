@@ -55,7 +55,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
                 object.put("packageNo", order.getPackageNo());
                 object.put("payTime", sdf.format(order.getFinishTime()));
                 object.put("merchantNo", order.getMerchantNo());
-                object.put("orderStatus", order.getState());
+                object.put("orderStatus", getOrderStatus(order.getState()));
                 String result = RestHttpClient.post(header, object.toJSONString(), "commodity/freezenotify/v1.1.1");
                 log.error("能力回调结果：{}", result);
             } catch (Exception e) {
@@ -76,5 +76,14 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         order.setState(PayOrder.State.payed.getCode());
         order.setFinishTime(new Date());
         handlePayOrder(order);
+    }
+
+    private String getOrderStatus(Integer state){
+        if (PayOrder.State.wait.getCode().equals(state)){
+            return "WAIT_PAY";
+        }else if (PayOrder.State.payed.getCode().equals(state)){
+            return "TRADE_SUCCESS";
+        }
+        return "TRADE_CLOSED";
     }
 }
