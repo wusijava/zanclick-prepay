@@ -14,6 +14,11 @@ public class AsiaInfoUtil {
 
     private static SimpleDateFormat yyyyMMddHHmmssSSS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
+    public static AsiaInfoHeader getHeader(String route_value) {
+        return prod(route_value);
+    }
+
+
     public static AsiaInfoHeader dev(String route_value) {
         AsiaInfoHeader header = new AsiaInfoHeader();
         header.setAppId("502004");
@@ -21,6 +26,21 @@ public class AsiaInfoUtil {
         header.setBusiSerial(busiSerial());
         header.setNonce(nonce());
         header.setSign_method("RSA");
+        header.setOperatorid("");
+        header.setRoute_type("0");
+        header.setRoute_value("200");
+        return header;
+    }
+
+
+    public static AsiaInfoHeader prod(String route_value) {
+        AsiaInfoHeader header = new AsiaInfoHeader();
+        header.setAppId("101102");
+        header.setTimestamp(yyyyMMddHHmmssSSS.format(new Date()));
+        header.setBusiSerial(busiSerial());
+        header.setNonce(nonce());
+        header.setSign_method("RSA");
+        header.setOperatorid("");
 //        header.setRoute_type("1");
 //        header.setRoute_value(route_value);
         header.setRoute_type("0");

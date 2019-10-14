@@ -2,6 +2,7 @@ package com.zanclick.prepay.setmeal.service.impl;
 
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
+import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.setmeal.entity.SetMeal;
 import com.zanclick.prepay.setmeal.mapper.SetMealMapper;
 import com.zanclick.prepay.setmeal.service.SetMealService;
@@ -26,5 +27,12 @@ public class SetMealServiceImpl extends BaseMybatisServiceImpl<SetMeal,Long> imp
     @Override
     public SetMeal queryByPackageNo(String packageNo) {
         return setMealMapper.selectByPackageNo(packageNo);
+    }
+
+    @Override
+    public void unshelveSetMealByAppId(String appId) {
+        if(DataUtil.isNotEmpty(appId)) {
+            setMealMapper.unshelveSetMealByAppId(appId);
+        }
     }
 }

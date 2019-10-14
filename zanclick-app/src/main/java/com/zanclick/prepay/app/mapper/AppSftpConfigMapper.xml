@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zanclick.prepay.app.mapper.AppSftpConfigMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.app.entity.AppSftpConfig">
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="app_id" property="appId" jdbcType="VARCHAR"/>
+            <result column="host" property="host" jdbcType="VARCHAR"/>
+            <result column="port" property="port" jdbcType="INTEGER"/>
+            <result column="username" property="username" jdbcType="VARCHAR"/>
+            <result column="password" property="password" jdbcType="VARCHAR"/>
+            <result column="remote_dir" property="remoteDir" jdbcType="VARCHAR"/>
+            <result column="local_dir" property="localDir" jdbcType="VARCHAR"/>
+            <result column="type" property="type" jdbcType="INTEGER"/>
+            <result column="desc" property="desc" jdbcType="VARCHAR"/>
+            <result column="state" property="state" jdbcType="INTEGER"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="modify_time" property="modifyTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="table">app_sftp_config</sql>
+    <sql id="Base_Column_List">
+            `id`,
+            `app_id`,
+            `host`,
+            `port`,
+            `username`,
+            `password`,
+            `remote_dir`,
+            `local_dir`,
+            `type`,
+            `desc`,
+            `state`,
+            `create_time`,
+            `modify_time`
+    </sql>
+    <sql id="Base_Where_Clause">
+        <where>
+            <trim prefixOverrides="and">
+                    <if test="id != null">
+                        AND `id`=#{id}
+                    </if>
+                    <if test="appId != null and appId != ''">
+                        AND `app_id`=#{appId}
+                    </if>
+                    <if test="host != null and host != ''">
+                        AND `host`=#{host}
+                    </if>
+                    <if test="port != null">
+                        AND `port`=#{port}
+                    </if>
+                    <if test="username != null and username != ''">
+                        AND `username`=#{username}
+                    </if>
+                    <if test="password != null and password != ''">
+                        AND `password`=#{password}
+                    </if>
+                    <if test="remoteDir != null and remoteDir != ''">
+                        AND `remote_dir`=#{remoteDir}
+                    </if>
+                    <if test="localDir != null and localDir != ''">
+                        AND `local_dir`=#{localDir}
+                    </if>
+                    <if test="type != null">
+                        AND `type`=#{type}
+                    </if>
+                    <if test="desc != null and desc != ''">
+                        AND `desc`=#{desc}
+                    </if>
+                    <if test="state != null">
+                        AND `state`=#{state}
+                    </if>
+                    <if test="createTime != null">
+                        AND `create_time`=#{createTime}
+                    </if>
+                    <if test="modifyTime != null">
+                        AND `modify_time`=#{modifyTime}
+                    </if>
+            </trim>
+        </where>
+        <if test="offset == null and limit != null">
+            limit #{limit}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </sql>
+
+    <!-- 查询总数 -->
+    <select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT count(id)
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <!-- 查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.app.entity.AppSftpConfig" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `app_id`,
+            `host`,
+            `port`,
+            `username`,
+            `password`,
+            `remote_dir`,
+            `local_dir`,
+            `type`,
+            `desc`,
+            `state`,
+            `create_time`,
+            `modify_time`
+        )
+        VALUES(
+            #{id},
+            #{appId},
+            #{host},
+            #{port},
+            #{username},
+            #{password},
+            #{remoteDir},
+            #{localDir},
+            #{type},
+            #{desc},
+            #{state},
+            #{createTime},
+            #{modifyTime}
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `app_id`,
+            `host`,
+            `port`,
+            `username`,
+            `password`,
+            `remote_dir`,
+            `local_dir`,
+            `type`,
+            `desc`,
+            `state`,
+            `create_time`,
+            `modify_time`
+        )
+        VALUES
+        <foreach collection="list" item="cm" index="index" separator=",">
+            (
+            #{cm.id},
+            #{cm.appId},
+            #{cm.host},
+            #{cm.port},
+            #{cm.username},
+            #{cm.password},
+            #{cm.remoteDir},
+            #{cm.localDir},
+            #{cm.type},
+            #{cm.desc},
+            #{cm.state},
+            #{cm.createTime},
+            #{cm.modifyTime}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
+    <update id="updateById" parameterType="com.zanclick.prepay.app.entity.AppSftpConfig">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="appId != null and appId != ''">
+                 `app_id`=#{appId},
+            </if>
+            <if test="host != null and host != ''">
+                 `host`=#{host},
+            </if>
+            <if test="port != null">
+                 `port`=#{port},
+            </if>
+            <if test="username != null and username != ''">
+                 `username`=#{username},
+            </if>
+            <if test="password != null and password != ''">
+                 `password`=#{password},
+            </if>
+            <if test="remoteDir != null and remoteDir != ''">
+                 `remote_dir`=#{remoteDir},
+            </if>
+            <if test="localDir != null and localDir != ''">
+                 `local_dir`=#{localDir},
+            </if>
+            <if test="type != null">
+                 `type`=#{type},
+            </if>
+            <if test="desc != null and desc != ''">
+                 `desc`=#{desc},
+            </if>
+            <if test="state != null">
+                 `state`=#{state},
+            </if>
+            <if test="createTime != null">
+                 `create_time`=#{createTime},
+            </if>
+            <if test="modifyTime != null">
+                 `modify_time`=#{modifyTime},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+</mapper>

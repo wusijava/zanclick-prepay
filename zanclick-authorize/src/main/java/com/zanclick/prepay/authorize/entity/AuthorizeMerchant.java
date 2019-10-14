@@ -17,6 +17,11 @@ public class AuthorizeMerchant implements Identifiable<Long> {
     private Long id;
 
     /**
+     * 渠道标识
+     */
+    private String wayId;
+
+    /**
      * 商户号
      */
     private String merchantNo;

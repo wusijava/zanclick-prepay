@@ -68,7 +68,9 @@ public class ApiPay extends Param {
         String rs = AesUtil.Encrypt(object.toJSONString(),"dianzankeji09200");
         StringBuffer sb = new StringBuffer();
         String s = URLEncoder.encode(rs,"UTF-8");
-        sb.append("appId=502004&cipherJson="+s);
+        sb.append("appId=201910091625131208151&cipherJson="+s);
         System.err.println(sb.toString());
+
+        System.out.println(URLEncoder.encode(AesUtil.Encrypt("{\"appId\":\"502004\"}","dianzankeji09200"),"UTF-8"));
     }
 }

@@ -103,7 +103,7 @@ public class RestHttpClient {
     }
 
     public static String post(AsiaInfoHeader header, String body,String url) throws Exception {
-        log.error("能力回调:{},{},{}",JSONObject.toJSONString(header),body,url);
+        log.error("能力回调:{},{},{}",JSONObject.toJSONString(header),body,HTTPS_URL+url);
         HttpClient httpclient = getSSLHttpClient();
         try {
             AsiaInfoHashMap head = AsiaInfoHashMap.toAsiaInfoHashMap(header);

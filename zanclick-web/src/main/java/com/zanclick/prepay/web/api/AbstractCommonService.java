@@ -6,6 +6,7 @@ import com.zanclick.prepay.app.service.AppInfoService;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.AesUtil;
+import com.zanclick.prepay.web.exeption.DecryptException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,7 +33,7 @@ public abstract class AbstractCommonService {
         String decrypt = AesUtil.Decrypt(cipherJson, appInfo.getKey());
         if (decrypt == null) {
             log.error("解密失败,商户提交信息:{},{}",appId,cipherJson);
-            throw new BizException("商户信息验证失败");
+            throw new DecryptException("解密失败,请检查加密信息是否正确");
         }
         return decrypt;
     }

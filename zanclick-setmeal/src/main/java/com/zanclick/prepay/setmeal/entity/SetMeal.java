@@ -20,6 +20,11 @@ public class SetMeal implements Identifiable<Long> {
     private String packageNo;
 
     /**
+     * 电渠商品标识
+     */
+    private String tradeMark;
+
+    /**
      * 应用ID
      */
     private String appId;

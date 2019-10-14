@@ -4,6 +4,7 @@
     <resultMap id="BaseResultMap" type="com.zanclick.prepay.setmeal.entity.SetMeal">
             <id column="id" property="id" jdbcType="BIGINT"/>
             <result column="package_no" property="packageNo" jdbcType="VARCHAR"/>
+            <result column="trade_mark" property="tradeMark" jdbcType="VARCHAR"/>
             <result column="app_id" property="appId" jdbcType="VARCHAR"/>
             <result column="total_amount" property="totalAmount" jdbcType="VARCHAR"/>
             <result column="num" property="num" jdbcType="INTEGER"/>
@@ -16,6 +17,7 @@
     <sql id="Base_Column_List">
             `id`,
             `package_no`,
+            `trade_mark`,
             `app_id`,
             `total_amount`,
             `num`,
@@ -84,6 +86,7 @@
         (
             `id`,
             `package_no`,
+            `trade_mark`,
             `app_id`,
             `total_amount`,
             `num`,
@@ -94,6 +97,7 @@
         VALUES(
             #{id},
             #{packageNo},
+            #{trade_mark},
             #{appId},
             #{totalAmount},
             #{num},
@@ -109,6 +113,7 @@
         (
             `id`,
             `package_no`,
+            `trade_mark`,
             `app_id`,
             `total_amount`,
             `num`,
@@ -121,6 +126,7 @@
             (
             #{cm.id},
             #{cm.packageNo},
+            #{cm.trade_mark},
             #{cm.appId},
             #{cm.totalAmount},
             #{cm.num},
@@ -154,8 +160,11 @@
             <if test="packageNo != null and packageNo != ''">
                  `package_no`=#{packageNo},
             </if>
+            <if test="tradeMark != null and tradeMark != ''">
+                 `trade_mark`=#{tradeMark},
+            </if>
             <if test="appId != null and appId != ''">
-                 `app_id`=#{appId},
+                `app_id`=#{appId},
             </if>
             <if test="totalAmount != null and totalAmount != ''">
                  `total_amount`=#{totalAmount},
@@ -174,5 +183,11 @@
             </if>
         </set>
         WHERE id=#{id}
+    </update>
+
+    <update id="unshelveSetMealByAppId" parameterType="java.lang.String">
+        UPDATE
+        <include refid="table"/>
+        set `state`=0 where `app_id`=#{appId}
     </update>
 </mapper>

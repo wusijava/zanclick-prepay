@@ -70,6 +70,7 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
     private AuthorizeMerchant createAuthorizeMerchant(RegisterMerchant dto) {
         AuthorizeMerchant merchant = new AuthorizeMerchant();
         merchant.setAppId(dto.getAppId());
+        merchant.setWayId(dto.getWayId());
         merchant.setMerchantNo(dto.getMerchantNo());
         merchant.setContactName(dto.getContactName());
         merchant.setContactPhone(dto.getContactPhone());

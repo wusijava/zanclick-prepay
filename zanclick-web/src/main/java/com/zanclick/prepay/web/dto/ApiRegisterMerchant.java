@@ -17,6 +17,17 @@ import java.net.URLEncoder;
  */
 @Data
 public class ApiRegisterMerchant extends Param {
+
+    /**
+     * 渠道标识
+     */
+    private String wayId;
+
+    /**
+     * 商户号
+     */
+    private String merchantNo;
+
     /**
      * 支付宝实名名称
      */
@@ -39,43 +50,50 @@ public class ApiRegisterMerchant extends Param {
 
     /**
      * 门店名称
-     * */
+     */
     private String storeNo;
 
     /**
      * 门店名称
-     * */
+     */
     private String storeName;
 
     /**
      * 营业执照名称
-     * */
+     */
     private String storeSubjectName;
 
     /**
      * 营业执照编号
-     * */
+     */
     private String storeSubjectCertNo;
 
     /**
      * 省
-     * */
+     */
     private String storeProvince;
     private String storeProvinceCode;
 
     /**
      * 市
-     * */
+     */
     private String storeCity;
     private String storeCityCode;
 
     /**
      * 区
-     * */
+     */
     private String storeCounty;
     private String storeCountyCode;
 
     public String check() {
+        if (checkNull(wayId)) {
+            return "缺少渠道标识";
+        }
+        if (checkNull(merchantNo)) {
+            //TODO 商户号生成规则
+            merchantNo = "DZ" + wayId;
+        }
         if (checkNull(name)) {
             return "缺少支付宝实名名称";
         }
@@ -88,10 +106,10 @@ public class ApiRegisterMerchant extends Param {
         if (checkNull(sellerNo)) {
             return "缺少收款支付宝账号";
         }
-        if(checkNull(storeNo)){
+        if (checkNull(storeNo)) {
             return "缺少门店编号";
         }
-        if(checkNull(storeName)){
+        if (checkNull(storeName)) {
             return "缺少门店名称";
         }
         if (checkNull(storeSubjectName)) {

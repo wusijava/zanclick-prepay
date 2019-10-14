@@ -17,4 +17,5 @@ public interface SetMealService extends BaseService<SetMeal, Long> {
      */
     SetMeal queryByPackageNo(String packageNo);
 
+    void unshelveSetMealByAppId(String appId);
 }

@@ -47,7 +47,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     @Override
     public void handlePayOrder(PayOrder order) {
         if (order.isPayed()) {
-            AsiaInfoHeader header = AsiaInfoUtil.dev(order.getPhoneNumber());
+            AsiaInfoHeader header = AsiaInfoUtil.getHeader(order.getPhoneNumber());
             try {
                 JSONObject object = new JSONObject();
                 object.put("orderNo", order.getOrderNo());

@@ -18,4 +18,6 @@ public interface SetMealMapper extends BaseMapper<SetMeal,Long> {
      * @return
      */
     SetMeal selectByPackageNo(String packageNo);
+
+    void unshelveSetMealByAppId(String appId);
 }

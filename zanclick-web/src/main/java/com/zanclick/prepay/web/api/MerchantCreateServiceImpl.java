@@ -37,9 +37,9 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
             return param.toString();
         }
         try {
-            JSONObject object = JSONObject.parseObject(verifyCipherJson(appId,cipherJson));
             RegisterMerchant merchant = new RegisterMerchant();
-            merchant.setMerchantNo(object.getString("merchantNo"));
+            merchant.setWayId(apiMerchant.getWayId());
+            merchant.setMerchantNo(apiMerchant.getMerchantNo());
             merchant.setStoreNo(apiMerchant.getStoreNo());
             merchant.setStoreSubjectName(apiMerchant.getStoreSubjectName());
             merchant.setStoreSubjectCertNo(apiMerchant.getStoreSubjectCertNo());
@@ -54,6 +54,7 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
             merchant.setName(apiMerchant.getName());
             merchant.setSellerNo(apiMerchant.getSellerNo());
             authorizeMerchantService.createMerchant(merchant);
+            param.setData(merchant.getMerchantNo());
             return param.toString();
         } catch (BizException be) {
             log.error("商户创建业务异常:{}", be);

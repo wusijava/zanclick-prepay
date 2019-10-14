@@ -46,6 +46,12 @@ public class Response<T> implements Serializable{
     public static <T> Response<T> fail(String msg){
         return response(ResponseCode.FAIL,msg,null);
     }
+    public static <T> Response<T> unsigned(String msg){
+        return response(ResponseCode.UNSIGNED,msg,null);
+    }
+    public static <T> Response<T> rejected(String msg){
+        return response(ResponseCode.REJECTED,msg,null);
+    }
     public static <T> Response<T> fail(String msg,T data){
         return response(ResponseCode.FAIL,msg,data);
     }
@@ -57,7 +63,9 @@ public class Response<T> implements Serializable{
 
     static class ResponseCode {
         public static String SUCCESS = "20000";
-        public static String FAIL = "40500";
+        public static String UNSIGNED = "40500";
+        public static String REJECTED = "20100";
+        public static String FAIL = "99999";
     }
 
     static class ResponseMsg {

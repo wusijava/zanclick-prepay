@@ -3,6 +3,7 @@
 <mapper namespace="com.zanclick.prepay.authorize.mapper.AuthorizeMerchantMapper">
     <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.AuthorizeMerchant">
             <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
             <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
             <result column="app_id" property="appId" jdbcType="VARCHAR"/>
             <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
@@ -31,6 +32,7 @@
     <sql id="table">authorize_merchant</sql>
     <sql id="Base_Column_List">
             `id`,
+            `way_id`,
             `merchant_no`,
             `app_id`,
             `seller_no`,
@@ -63,6 +65,9 @@
                     </if>
                     <if test="merchantNo != null and merchantNo != ''">
                         AND `merchant_no`=#{merchantNo}
+                    </if>
+                    <if test="wayId != null and wayId != ''">
+                        AND `way_id`=#{wayId}
                     </if>
                     <if test="appId != null and appId != ''">
                         AND `app_id`=#{appId}
@@ -163,6 +168,7 @@
         <include refid="table"/>
         (
             `id`,
+            `way_id`,
             `merchant_no`,
             `app_id`,
             `seller_no`,
@@ -190,6 +196,7 @@
         VALUES(
             #{id},
             #{merchantNo},
+            #{wayId},
             #{appId},
             #{sellerNo},
             #{sellerId},
@@ -220,6 +227,7 @@
         <include refid="table"/>
         (
             `id`,
+            `way_id`,
             `merchant_no`,
             `app_id`,
             `seller_no`,
@@ -248,6 +256,7 @@
         <foreach collection="list" item="cm" index="index" separator=",">
             (
             #{cm.id},
+            #{cm.wayId},
             #{cm.merchantNo},
             #{cm.appId},
             #{cm.sellerNo},
@@ -295,6 +304,9 @@
         UPDATE
         <include refid="table"/>
         <set>
+            <if test="wayId != null">
+                `way_id`=#{wayId},
+            </if>
             <if test="merchantNo != null and merchantNo != ''">
                  `merchant_no`=#{merchantNo},
             </if>

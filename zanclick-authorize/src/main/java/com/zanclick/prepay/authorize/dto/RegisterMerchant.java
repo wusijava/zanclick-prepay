@@ -14,6 +14,11 @@ import lombok.Data;
 public class RegisterMerchant extends Param {
 
     /**
+     * 渠道标识
+     */
+    private String wayId;
+
+    /**
      * 支付宝实名名称
      */
     private String name;
@@ -90,6 +95,9 @@ public class RegisterMerchant extends Param {
     private String storeProvinceCode;
 
     public String check() {
+        if (checkNull(wayId)) {
+            return "缺少渠道标识";
+        }
         if (checkNull(merchantNo)) {
             return "缺少商户号";
         }
