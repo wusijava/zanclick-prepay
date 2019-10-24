@@ -10,7 +10,6 @@ import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.common.exception.BizException;
-import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.supplychain.util.SupplyChainUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,10 +41,31 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         if (repeat != null) {
             throw new BizException(repeat);
         }
+        AuthorizeMerchant oldMerchant = authorizeMerchantMapper.selectByAliPayLoginNo(register.getSellerNo());
+        if (oldMerchant != null && oldMerchant.getState() != null) {
+            if (oldMerchant.getState().equals(AuthorizeMerchant.State.waiting.getCode())) {
+                throw new BizException("资料已提交，请耐心等待审核");
+            }
+            if (oldMerchant.getState().equals(AuthorizeMerchant.State.success.getCode())) {
+                if (oldMerchant.getStoreNo() != null && oldMerchant.getStoreNo().equals(register.getStoreNo())){
+                    throw new BizException("门店编号重复");
+                }
+                if (oldMerchant.getStoreName() != null && oldMerchant.getStoreName().equals(register.getStoreName())){
+                    throw new BizException("门店名称重复");
+                }
+            }
+        }
         AuthorizeMerchant merchant = createAuthorizeMerchant(register);
-        createSupplier(merchant);
-        if (merchant.isFail()) {
-            throw new BizException(merchant.getReason());
+        if (oldMerchant == null || oldMerchant.getState().equals(AuthorizeMerchant.State.failed.getCode())){
+            createSupplier(merchant);
+            if (merchant.isFail()) {
+                throw new BizException(merchant.getReason());
+            }
+        }else {
+            merchant.setState(AuthorizeMerchant.State.success.getCode());
+            merchant.setSupplierNo(oldMerchant.getSupplierNo());
+            merchant.setFinishTime(new Date());
+            authorizeMerchantMapper.updateById(merchant);
         }
     }
 
@@ -93,32 +113,6 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         return merchant;
     }
 
-    /**
-     * 查询是否有正在审核中的商户
-     *
-     * @param dto
-     * @return
-     */
-    private AuthorizeMerchant updateAuthorizeMerchant(MerchantUpdateDTO dto) {
-        AuthorizeMerchant merchant = queryMerchant(dto.getMerchantNo());
-        if (DataUtil.isNotEmpty(dto.getName())) {
-            merchant.setName(dto.getName());
-        }
-        if (DataUtil.isNotEmpty(dto.getContactName())) {
-            merchant.setContactName(dto.getContactName());
-        }
-        if (DataUtil.isNotEmpty(dto.getContactPhone())) {
-            merchant.setContactPhone(dto.getContactPhone());
-        }
-        if (DataUtil.isNotEmpty(dto.getSellerId())) {
-            merchant.setSellerId(dto.getSellerId());
-        }
-        if (DataUtil.isNotEmpty(dto.getSellerNo())) {
-            merchant.setSellerNo(dto.getSellerNo());
-        }
-        return merchant;
-    }
-
     private static final String OPRATORCHANNEL = "中国移动";
 
     /**
@@ -152,35 +146,6 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         }
         merchant.setFinishTime(new Date());
         this.updateById(merchant);
-    }
-
-    /**
-     * 签约商户
-     *
-     * @param merchant
-     * @return （原因）没有返回，则为签约成功
-     */
-    private String updateSupplier(AuthorizeMerchant merchant) {
-        MybankCreditSupplychainFactoringSupplierCreateResponse response = SupplyChainUtils.createSupplier(
-                merchant.getSellerNo(),
-                merchant.getName(),
-                merchant.getContactName(),
-                merchant.getContactPhone(),
-                null,
-                merchant.getOperatorName(),
-                merchant.getStoreNo(),
-                merchant.getStoreName(),
-                merchant.getStoreSubjectName(),
-                merchant.getStoreSubjectCertNo(),
-                merchant.getStoreProvince(),
-                merchant.getStoreCity(),
-                merchant.getStoreCounty()
-        );
-        if (response.isSuccess()) {
-            merchant.setSupplierNo(response.getSupplierNo());
-            this.updateById(merchant);
-        }
-        return response.getSubMsg();
     }
 
     /**

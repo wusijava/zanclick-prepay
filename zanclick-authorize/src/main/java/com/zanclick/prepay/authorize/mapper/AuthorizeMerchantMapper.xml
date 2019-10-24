@@ -300,6 +300,14 @@
         WHERE merchant_no = #{merchantNo} ORDER BY id DESC LIMIT 1
     </select>
 
+    <select id="selectByAliPayLoginNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE seller_no = #{sellerNo} ORDER BY id DESC LIMIT 1
+    </select>
+
     <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeMerchant">
         UPDATE
         <include refid="table"/>
