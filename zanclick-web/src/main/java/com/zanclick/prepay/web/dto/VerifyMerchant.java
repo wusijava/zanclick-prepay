@@ -24,4 +24,6 @@ public class VerifyMerchant extends Param {
 
     private String managerMobile;
 
+    private String wayid;
+
 }

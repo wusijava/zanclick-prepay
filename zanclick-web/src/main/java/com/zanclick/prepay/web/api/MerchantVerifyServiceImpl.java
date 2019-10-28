@@ -44,12 +44,18 @@ public class MerchantVerifyServiceImpl extends AbstractCommonService implements 
                 param.setMessage("商户未签约");
                 return param.toString();
             }
+            if (merchant.getWayId() == null || merchant.getWayId().equals(apiVerifyMerchant.getWayid())){
+                param.setFail();
+                param.setMessage("渠道编号与商户号对应有误");
+                return param.toString();
+            }
             VerifyMerchant verifyMerchant = new VerifyMerchant();
             verifyMerchant.setManagerMobile(merchant.getContactPhone());
             verifyMerchant.setManagerName(merchant.getContactName());
             verifyMerchant.setMerchantName(merchant.getStoreSubjectName());
             verifyMerchant.setMerchantNo(merchant.getMerchantNo());
             verifyMerchant.setRegisterStatus(getRegisterStatus(merchant.getState()));
+            verifyMerchant.setWayid(merchant.getWayId());
             param.setData(verifyMerchant);
             return param.toString();
         } catch (BizException be) {

@@ -21,6 +21,11 @@ public class ApiVerifyMerchant extends Param {
      */
     private String merchantNo;
 
+    /**
+     * 渠道编号
+     * */
+    private String wayid;
+
     public String check() {
         if (checkNull(merchantNo)) {
             return "缺少商户号";
