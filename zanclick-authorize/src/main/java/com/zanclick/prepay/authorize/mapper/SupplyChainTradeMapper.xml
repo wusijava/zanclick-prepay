@@ -1,0 +1,466 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zanclick.prepay.authorize.mapper.SupplyChainTradeMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.SupplyChainTrade">
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="auth_no" property="authNo" jdbcType="VARCHAR"/>
+            <result column="op_id" property="opId" jdbcType="VARCHAR"/>
+            <result column="freeze_user_id" property="freezeUserId" jdbcType="VARCHAR"/>
+            <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>
+            <result column="out_request_no" property="outRequestNo" jdbcType="VARCHAR"/>
+            <result column="total_amount" property="totalAmount" jdbcType="VARCHAR"/>
+            <result column="fq_num" property="fqNum" jdbcType="INTEGER"/>
+            <result column="freeze_date" property="freezeDate" jdbcType="TIMESTAMP"/>
+            <result column="expire_date" property="expireDate" jdbcType="TIMESTAMP"/>
+            <result column="title" property="title" jdbcType="VARCHAR"/>
+            <result column="rcv_login_id" property="rcvLoginId" jdbcType="VARCHAR"/>
+            <result column="rcv_alipay_name" property="rcvAlipayName" jdbcType="VARCHAR"/>
+            <result column="rcv_contact_name" property="rcvContactName" jdbcType="VARCHAR"/>
+            <result column="rcv_contact_phone" property="rcvContactPhone" jdbcType="VARCHAR"/>
+            <result column="rcv_contact_email" property="rcvContactEmail" jdbcType="VARCHAR"/>
+            <result column="amount" property="amount" jdbcType="VARCHAR"/>
+            <result column="mybank_fee" property="mybankFee" jdbcType="VARCHAR"/>
+            <result column="click_fee" property="clickFee" jdbcType="VARCHAR"/>
+            <result column="request_id" property="requestId" jdbcType="VARCHAR"/>
+            <result column="trade_no" property="tradeNo" jdbcType="VARCHAR"/>
+            <result column="factoring_no" property="factoringNo" jdbcType="VARCHAR"/>
+            <result column="factoring_amt" property="factoringAmt" jdbcType="BIGINT"/>
+            <result column="currency" property="currency" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="loan_time" property="loanTime" jdbcType="TIMESTAMP"/>
+            <result column="next_pay_time" property="nextPayTime" jdbcType="TIMESTAMP"/>
+            <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
+            <result column="clear_date" property="clearDate" jdbcType="VARCHAR"/>
+            <result column="state" property="state" jdbcType="INTEGER"/>
+            <result column="configuration_id" property="configurationId" jdbcType="BIGINT"/>
+            <result column="fail_reason" property="failReason" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="table">supply_chain_trade</sql>
+    <sql id="Base_Column_List">
+            `id`,
+            `auth_no`,
+            `op_id`,
+            `freeze_user_id`,
+            `out_trade_no`,
+            `out_request_no`,
+            `total_amount`,
+            `fq_num`,
+            `freeze_date`,
+            `expire_date`,
+            `title`,
+            `rcv_login_id`,
+            `rcv_alipay_name`,
+            `rcv_contact_name`,
+            `rcv_contact_phone`,
+            `rcv_contact_email`,
+            `amount`,
+            `mybank_fee`,
+            `click_fee`,
+            `request_id`,
+            `trade_no`,
+            `factoring_no`,
+            `factoring_amt`,
+            `currency`,
+            `create_time`,
+            `loan_time`,
+            `next_pay_time`,
+            `finish_time`,
+            `clear_date`,
+            `state`,
+            `configuration_id`,
+            `fail_reason`
+    </sql>
+    <sql id="Base_Where_Clause">
+        <where>
+            <trim prefixOverrides="and">
+                    <if test="id != null">
+                        AND `id`=#{id}
+                    </if>
+                    <if test="authNo != null and authNo != ''">
+                        AND `auth_no`=#{authNo}
+                    </if>
+                    <if test="opId != null and opId != ''">
+                        AND `op_id`=#{opId}
+                    </if>
+                    <if test="freezeUserId != null and freezeUserId != ''">
+                        AND `freeze_user_id`=#{freezeUserId}
+                    </if>
+                    <if test="outTradeNo != null and outTradeNo != ''">
+                        AND `out_trade_no`=#{outTradeNo}
+                    </if>
+                    <if test="outRequestNo != null and outRequestNo != ''">
+                        AND `out_request_no`=#{outRequestNo}
+                    </if>
+                    <if test="totalAmount != null and totalAmount != ''">
+                        AND `total_amount`=#{totalAmount}
+                    </if>
+                    <if test="fqNum != null">
+                        AND `fq_num`=#{fqNum}
+                    </if>
+                    <if test="freezeDate != null">
+                        AND `freeze_date`=#{freezeDate}
+                    </if>
+                    <if test="expireDate != null">
+                        AND `expire_date`=#{expireDate}
+                    </if>
+                    <if test="title != null and title != ''">
+                        AND `title`=#{title}
+                    </if>
+                    <if test="rcvLoginId != null and rcvLoginId != ''">
+                        AND `rcv_login_id`=#{rcvLoginId}
+                    </if>
+                    <if test="rcvAlipayName != null and rcvAlipayName != ''">
+                        AND `rcv_alipay_name`=#{rcvAlipayName}
+                    </if>
+                    <if test="rcvContactName != null and rcvContactName != ''">
+                        AND `rcv_contact_name`=#{rcvContactName}
+                    </if>
+                    <if test="rcvContactPhone != null and rcvContactPhone != ''">
+                        AND `rcv_contact_phone`=#{rcvContactPhone}
+                    </if>
+                    <if test="rcvContactEmail != null and rcvContactEmail != ''">
+                        AND `rcv_contact_email`=#{rcvContactEmail}
+                    </if>
+                    <if test="amount != null and amount != ''">
+                        AND `amount`=#{amount}
+                    </if>
+                    <if test="mybankFee != null and mybankFee != ''">
+                        AND `mybank_fee`=#{mybankFee}
+                    </if>
+                    <if test="clickFee != null and clickFee != ''">
+                        AND `click_fee`=#{clickFee}
+                    </if>
+                    <if test="requestId != null and requestId != ''">
+                        AND `request_id`=#{requestId}
+                    </if>
+                    <if test="tradeNo != null and tradeNo != ''">
+                        AND `trade_no`=#{tradeNo}
+                    </if>
+                    <if test="factoringNo != null and factoringNo != ''">
+                        AND `factoring_no`=#{factoringNo}
+                    </if>
+                    <if test="factoringAmt != null">
+                        AND `factoring_amt`=#{factoringAmt}
+                    </if>
+                    <if test="currency != null and currency != ''">
+                        AND `currency`=#{currency}
+                    </if>
+                    <if test="createTime != null">
+                        AND `create_time`=#{createTime}
+                    </if>
+                    <if test="loanTime != null">
+                        AND `loan_time`=#{loanTime}
+                    </if>
+                    <if test="nextPayTime != null">
+                        AND `next_pay_time`=#{nextPayTime}
+                    </if>
+                    <if test="finishTime != null">
+                        AND `finish_time`=#{finishTime}
+                    </if>
+                    <if test="clearDate != null and clearDate != ''">
+                        AND `clear_date`=#{clearDate}
+                    </if>
+                    <if test="state != null">
+                        AND `state`=#{state}
+                    </if>
+                    <if test="configurationId != null">
+                        AND `configuration_id`=#{configurationId}
+                    </if>
+                    <if test="failReason != null and failReason != ''">
+                        AND `fail_reason`=#{failReason}
+                    </if>
+            </trim>
+        </where>
+        <if test="offset == null and limit != null">
+            limit #{limit}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </sql>
+
+    <!-- 查询总数 -->
+    <select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT count(id)
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <!-- 查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <select id="selectByAuthNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE  auth_no = #{authNo} ORDER BY id DESC LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.SupplyChainTrade" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `auth_no`,
+            `op_id`,
+            `freeze_user_id`,
+            `out_trade_no`,
+            `out_request_no`,
+            `total_amount`,
+            `fq_num`,
+            `freeze_date`,
+            `expire_date`,
+            `title`,
+            `rcv_login_id`,
+            `rcv_alipay_name`,
+            `rcv_contact_name`,
+            `rcv_contact_phone`,
+            `rcv_contact_email`,
+            `amount`,
+            `mybank_fee`,
+            `click_fee`,
+            `request_id`,
+            `trade_no`,
+            `factoring_no`,
+            `factoring_amt`,
+            `currency`,
+            `create_time`,
+            `loan_time`,
+            `next_pay_time`,
+            `finish_time`,
+            `clear_date`,
+            `state`,
+            `configuration_id`,
+            `fail_reason`
+        )
+        VALUES(
+            #{id},
+            #{authNo},
+            #{opId},
+            #{freezeUserId},
+            #{outTradeNo},
+            #{outRequestNo},
+            #{totalAmount},
+            #{fqNum},
+            #{freezeDate},
+            #{expireDate},
+            #{title},
+            #{rcvLoginId},
+            #{rcvAlipayName},
+            #{rcvContactName},
+            #{rcvContactPhone},
+            #{rcvContactEmail},
+            #{amount},
+            #{mybankFee},
+            #{clickFee},
+            #{requestId},
+            #{tradeNo},
+            #{factoringNo},
+            #{factoringAmt},
+            #{currency},
+            #{createTime},
+            #{loanTime},
+            #{nextPayTime},
+            #{finishTime},
+            #{clearDate},
+            #{state},
+            #{configurationId},
+            #{failReason}
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `auth_no`,
+            `op_id`,
+            `freeze_user_id`,
+            `out_trade_no`,
+            `out_request_no`,
+            `total_amount`,
+            `fq_num`,
+            `freeze_date`,
+            `expire_date`,
+            `title`,
+            `rcv_login_id`,
+            `rcv_alipay_name`,
+            `rcv_contact_name`,
+            `rcv_contact_phone`,
+            `rcv_contact_email`,
+            `amount`,
+            `mybank_fee`,
+            `click_fee`,
+            `request_id`,
+            `trade_no`,
+            `factoring_no`,
+            `factoring_amt`,
+            `currency`,
+            `create_time`,
+            `loan_time`,
+            `next_pay_time`,
+            `finish_time`,
+            `clear_date`,
+            `state`,
+            `configuration_id`,
+            `fail_reason`
+        )
+        VALUES
+        <foreach collection="list" item="cm" index="index" separator=",">
+            (
+            #{cm.id},
+            #{cm.authNo},
+            #{cm.opId},
+            #{cm.freezeUserId},
+            #{cm.outTradeNo},
+            #{cm.outRequestNo},
+            #{cm.totalAmount},
+            #{cm.fqNum},
+            #{cm.freezeDate},
+            #{cm.expireDate},
+            #{cm.title},
+            #{cm.rcvLoginId},
+            #{cm.rcvAlipayName},
+            #{cm.rcvContactName},
+            #{cm.rcvContactPhone},
+            #{cm.rcvContactEmail},
+            #{cm.amount},
+            #{cm.mybankFee},
+            #{cm.clickFee},
+            #{cm.requestId},
+            #{cm.tradeNo},
+            #{cm.factoringNo},
+            #{cm.factoringAmt},
+            #{cm.currency},
+            #{cm.createTime},
+            #{cm.loanTime},
+            #{cm.nextPayTime},
+            #{cm.finishTime},
+            #{cm.clearDate},
+            #{cm.state},
+            #{cm.configurationId},
+            #{cm.failReason}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
+    <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.SupplyChainTrade">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="authNo != null and authNo != ''">
+                 `auth_no`=#{authNo},
+            </if>
+            <if test="opId != null and opId != ''">
+                 `op_id`=#{opId},
+            </if>
+            <if test="freezeUserId != null and freezeUserId != ''">
+                 `freeze_user_id`=#{freezeUserId},
+            </if>
+            <if test="outTradeNo != null and outTradeNo != ''">
+                 `out_trade_no`=#{outTradeNo},
+            </if>
+            <if test="outRequestNo != null and outRequestNo != ''">
+                 `out_request_no`=#{outRequestNo},
+            </if>
+            <if test="totalAmount != null and totalAmount != ''">
+                 `total_amount`=#{totalAmount},
+            </if>
+            <if test="fqNum != null">
+                 `fq_num`=#{fqNum},
+            </if>
+            <if test="freezeDate != null">
+                 `freeze_date`=#{freezeDate},
+            </if>
+            <if test="expireDate != null">
+                 `expire_date`=#{expireDate},
+            </if>
+            <if test="title != null and title != ''">
+                 `title`=#{title},
+            </if>
+            <if test="rcvLoginId != null and rcvLoginId != ''">
+                 `rcv_login_id`=#{rcvLoginId},
+            </if>
+            <if test="rcvAlipayName != null and rcvAlipayName != ''">
+                 `rcv_alipay_name`=#{rcvAlipayName},
+            </if>
+            <if test="rcvContactName != null and rcvContactName != ''">
+                 `rcv_contact_name`=#{rcvContactName},
+            </if>
+            <if test="rcvContactPhone != null and rcvContactPhone != ''">
+                 `rcv_contact_phone`=#{rcvContactPhone},
+            </if>
+            <if test="rcvContactEmail != null and rcvContactEmail != ''">
+                 `rcv_contact_email`=#{rcvContactEmail},
+            </if>
+            <if test="amount != null and amount != ''">
+                 `amount`=#{amount},
+            </if>
+            <if test="mybankFee != null and mybankFee != ''">
+                 `mybank_fee`=#{mybankFee},
+            </if>
+            <if test="clickFee != null and clickFee != ''">
+                 `click_fee`=#{clickFee},
+            </if>
+            <if test="requestId != null and requestId != ''">
+                 `request_id`=#{requestId},
+            </if>
+            <if test="tradeNo != null and tradeNo != ''">
+                 `trade_no`=#{tradeNo},
+            </if>
+            <if test="factoringNo != null and factoringNo != ''">
+                 `factoring_no`=#{factoringNo},
+            </if>
+            <if test="factoringAmt != null">
+                 `factoring_amt`=#{factoringAmt},
+            </if>
+            <if test="currency != null and currency != ''">
+                 `currency`=#{currency},
+            </if>
+            <if test="createTime != null">
+                 `create_time`=#{createTime},
+            </if>
+            <if test="loanTime != null">
+                 `loan_time`=#{loanTime},
+            </if>
+            <if test="nextPayTime != null">
+                 `next_pay_time`=#{nextPayTime},
+            </if>
+            <if test="finishTime != null">
+                 `finish_time`=#{finishTime},
+            </if>
+            <if test="clearDate != null and clearDate != ''">
+                 `clear_date`=#{clearDate},
+            </if>
+            <if test="state != null">
+                 `state`=#{state},
+            </if>
+            <if test="configurationId != null">
+                 `configuration_id`=#{configurationId},
+            </if>
+            <if test="failReason != null and failReason != ''">
+                 `fail_reason`=#{failReason},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+</mapper>
