@@ -20,7 +20,6 @@
 
     <modules>
         <module>zanclick-common</module>
-        <module>zanclick-supplychain</module>
         <module>zanclick-authorize</module>
         <module>zanclick-web</module>
         <module>zanclick-app</module>
