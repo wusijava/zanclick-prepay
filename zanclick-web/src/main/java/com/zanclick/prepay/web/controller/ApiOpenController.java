@@ -81,9 +81,7 @@ public class ApiOpenController {
     public Response createQr(String appId, String cipherJson, HttpServletResponse response) {
         log.error("接收到支付创建请求：appId:{},cipherJson:{}",appId,cipherJson);
         String method = "com.zanclick.create.auth.prePay";
-        String methodName = StringUtils.getMethodName(method);
         try {
-//            ApiRequestResolver resolver = (ApiRequestResolver) ApplicationContextProvider.getBean(methodName);
             ResponseParam param = resolver(method,appId, cipherJson);
             if (!param.isSuccess()) {
                 return Response.fail(param.getMessage());
