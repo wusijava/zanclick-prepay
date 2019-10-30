@@ -13,20 +13,23 @@ import lombok.Data;
 public class AuthorizeConfiguration implements Identifiable<Long> {
     private Long id;
 
+    /**
+     * 账号名称
+     * */
     private String name;
 
     /**
      * 应用appid
      */
-    private String isv_appid;
+    private String isvAppId;
     /**
      * isv用户id
      */
-    private String isv_uid;
+    private String isvUid;
     /**
      * 签名类型
      */
-    private String sign_type;
+    private String signType;
 
     /**
      * 支付宝网关
@@ -35,26 +38,51 @@ public class AuthorizeConfiguration implements Identifiable<Long> {
     /**
      * 私钥
      */
-    private String private_key;
+    private String privateKey;
     /**
      * 公钥
      */
-    private String public_key;
+    private String publicKey;
 
     /**
      * 分账uid
      */
-    private String royalty_uid;
+    private String royaltyUid;
 
     /**
      * isv联系电话
      */
-    private String isv_number;
+    private String isvNumber;
 
     /**
      * 分佣
      */
-    private String fee_backuid;
+    private String feeBackUid;
+
+    /**
+     * 服务商ID
+     * */
+    private String serviceProviderId;
+
+    /**
+     * 网商垫资专用
+     * */
+    private String ipId;
+
+    /**
+     * 网商垫资专用
+     * */
+    private String roleId;
+
+
+    /**
+     * 支付宝账号
+     */
+    private String sellerNo;
+
+    private String format;
+
+    private String charset;
 
     /**
      * 当前状态0关闭1启用
@@ -64,13 +92,8 @@ public class AuthorizeConfiguration implements Identifiable<Long> {
     /**
      * 是否默认收款|提现(1默认)
      */
-    private Integer is_default;
+    private Integer isDefault;
 
-    /**
-     * 支付宝账号
-     */
-    private String seller_no;
 
-    private Long appid;
 }
 

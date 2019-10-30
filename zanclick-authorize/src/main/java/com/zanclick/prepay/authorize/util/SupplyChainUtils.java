@@ -9,11 +9,14 @@ import com.alipay.api.domain.*;
 import com.alipay.api.request.*;
 import com.alipay.api.response.*;
 import com.zanclick.prepay.authorize.config.SupplyChainConfig;
+import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.exception.SupplyChainException;
+import com.zanclick.prepay.authorize.vo.SupplyChainCreate;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
@@ -23,77 +26,28 @@ import java.util.Date;
  * @author lvlu
  * @date 2019-05-05 13:45
  **/
+@Slf4j
 public class SupplyChainUtils {
 
     private static final String SALE_PD_CODE = "01025200002000003643";
     private static final Integer BILL_DATE = 28;
 
     public static void main(String[] args) {
-
-//        sandboxcreate();
-//        sanboxQuery("2019082310002001250513966919");
-        sandboxCancel("2019082610002001250516974473");
-//        sandboxpay();
-//        sandboxCancel();
-//        System.err.println(queryLimit());
-//        createSupplier("13600552905","扮乞卵","扮乞卵","15871350349","15871350349@163.com");
     }
 
-
-    private static String  createNo(int len){
-         String date = DateUtil.formatDate(new Date(), DateUtil.PATTERN_YYYYMMDDHHMMSS);
-        return date + StringUtils.createRandom(true,len-14);
-    }
-
-
-
-    public static void sandboxpay() {
-        String auth_no = "2019051311103033360294138484";
-        String amount = "110";
-        System.out.println(tradePay(auth_no, amount));
-    }
-
-    public static void sandboxCancel(String auth_no) {
-        System.out.println(tradeCancel(auth_no));
-    }
 
 
 
     /**
      * 网商垫资交易创建
      *
-     * @param auth_no            预授权冻结时支付宝返回的28位预授权编号
-     * @param freeze_alipay_id   预授权顾客支付宝账户id
-     * @param out_merch_order_no 预授权外部订单号
-     * @param operation_id       预授权冻结时支付宝返回的operation_id
-     * @param out_request_no     预授权冻结时请求的out_request_no
-     * @param amount             冻结金额
-     * @param fq_num             期数
-     * @param freeze_date        冻结开始时间
-     * @param title              交易订单标题
-     * @param rcvLoginId         收款门店支付宝账号
-     * @param rcvAlipayName      收款门店支付宝实名认证用户名
-     * @param rcvContactName     收款门店联系人
-     * @param rcvContactPhone    收款门店联系人电话
-     * @param rcvContactEmail    收款门店联系人邮箱
+     * @param create            预授权冻结时支付宝返回的28位预授权编号
+     * @param configuration   预授权顾客支付宝账户id
      * @return ev_seq_no 业务事件受理的流水号，作为异步回调的业务处理参数依据
      */
-    public static String tradeCreate(String auth_no,
-                                     String freeze_alipay_id,
-                                     String out_merch_order_no,
-                                     String operation_id,
-                                     String out_request_no,
-                                     String amount,
-                                     Integer fq_num,
-                                     Date freeze_date,
-                                     Date expireDate,
-                                     String title,
-                                     String rcvLoginId,
-                                     String rcvAlipayName,
-                                     String rcvContactName,
-                                     String rcvContactPhone,
-                                     String rcvContactEmail) throws SupplyChainException {
-        Member seller = createSeller(null, rcvLoginId);
+    public static String tradeCreate(SupplyChainCreate create, AuthorizeConfiguration configuration) throws SupplyChainException {
+
+        Member seller = createSeller(null, create.getRcvLoginId());
         Member buyer = createBuyer();
         MybankCreditSupplychainTradeCreateModel model = new MybankCreditSupplychainTradeCreateModel();
         model.setTradeType("FACTORING");
@@ -101,41 +55,37 @@ public class SupplyChainUtils {
         model.setSeller(seller);
         model.setBuyer(buyer);
         model.setPayAccount(createPayAccount());
-        model.setRcvAccount(createRcvAccount(rcvLoginId, rcvAlipayName));
-        model.setOutOrderTitle(title);
+        model.setRcvAccount(createRcvAccount(create.getRcvLoginId(), create.getRcvAliPayName()));
+        model.setOutOrderTitle(create.getTitle());
         model.setSalePdCode(SALE_PD_CODE);
-        model.setOutOrderNo(createOutOrderNo(auth_no));
+        model.setOutOrderNo(createOutOrderNo(create.getAuthNo()));
         model.setChannel("FQZBL");
-        model.setExpireDate(getExpireDate(fq_num));
-        model.setTradeAmount(amount);
+        model.setExpireDate(getExpireDate(create.getFqNum()));
+        model.setTradeAmount(create.getAmount());
         TradeCreateExtData extData = new TradeCreateExtData();
-        extData.setRcv_login_id(rcvLoginId);
-        extData.setRcv_name(rcvAlipayName);
-        extData.setRcv_contact_name(rcvContactName);
-        extData.setRcv_contact_phone(rcvContactPhone);
-        extData.setRcv_contact_email(rcvContactEmail);
-        extData.setAuth_no(auth_no);
-        extData.setOut_merch_order_no(out_merch_order_no);
-        extData.setOperation_id(operation_id);
-        extData.setOut_request_no(out_request_no);
-        BigDecimal freezeAmount = new BigDecimal(amount).multiply(new BigDecimal("1.1")).setScale(2, BigDecimal.ROUND_HALF_EVEN);
+        extData.setRcv_login_id(create.getRcvLoginId());
+        extData.setRcv_name(create.getRcvAliPayName());
+        extData.setRcv_contact_name(create.getRcvContactName());
+        extData.setRcv_contact_phone(create.getRcvContactPhone());
+        extData.setRcv_contact_email(create.getRcvContactEmail());
+        extData.setAuth_no(create.getAuthNo());
+        extData.setOut_merch_order_no(create.getOutMerOrderNo());
+        extData.setOperation_id(create.getOperationId());
+        extData.setOut_request_no(create.getOutRequestNo());
+        BigDecimal freezeAmount = new BigDecimal(create.getAmount()).multiply(new BigDecimal("1.1")).setScale(2, BigDecimal.ROUND_HALF_EVEN);
         extData.setFreeze_amount(freezeAmount.toString());
-        extData.setFreeze_date(DateUtil.formatDate(freeze_date, DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
-        extData.setExpire_date(DateUtil.formatDate(expireDate, DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
-        extData.setFreeze_terms(fq_num);
-        extData.setFreeze_alipay_id(freeze_alipay_id);
+        extData.setFreeze_date(DateUtil.formatDate(create.getFreezeDate(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        extData.setExpire_date(DateUtil.formatDate(create.getExpireDate(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        extData.setFreeze_terms(create.getFqNum());
+        extData.setFreeze_alipay_id(create.getFreezeAliPayId());
         model.setExtData(JSON.toJSONString(extData));
         MybankCreditSupplychainTradeCreateRequest request = new MybankCreditSupplychainTradeCreateRequest();
         request.setBizModel(model);
         AlipayClient alipayClient = getAlipayClient();
         try {
-            System.out.println("------------创建垫资请求开始----------");
-            System.out.println(JSONObject.toJSONString(request));
-            System.out.println("------------创建垫资请求结束----------");
+            log.error("开始垫资:{}",JSONObject.toJSONString(request));
             MybankCreditSupplychainTradeCreateResponse response = alipayClient.execute(request);
-            System.out.println("------------创建垫资返回开始----------");
-            System.out.println(JSONObject.toJSONString(response));
-            System.out.println("------------创建垫资返回结束----------");
+            log.error("结束垫资:{}",JSONObject.toJSONString(response));
             if (response.isSuccess()) {
                 return model.getRequestId();
             } else {
@@ -199,8 +149,6 @@ public class SupplyChainUtils {
         AlipayClient alipayClient = getAlipayClient();
         try {
             MybankCreditSupplychainTradeCancelResponse response = alipayClient.execute(request);
-            System.out.println("------------取消垫资返回----------");
-            System.out.println(response);
             if (response.isSuccess()) {
                 return model.getRequestId();
             } else {
@@ -220,14 +168,14 @@ public class SupplyChainUtils {
             String rcvContactName,
             String rcvContactPhone,
             String rcvContactEmail,
-            String operator_name,
-            String store_no,
-            String store_name,
-            String store_subject_name,
-            String store_subject_cert_no,
-            String store_province,
-            String store_city,
-            String store_county) throws SupplyChainException{
+            String operatorName,
+            String storeNo,
+            String storeName,
+            String storeSubjectName,
+            String storeSubjectCertNo,
+            String storeProvince,
+            String storeCity,
+            String storeCounty) throws SupplyChainException{
         MybankCreditSupplychainFactoringSupplierCreateResponse response = null;
         MybankCreditSupplychainFactoringSupplierCreateRequest request = new MybankCreditSupplychainFactoringSupplierCreateRequest();
         MybankCreditSupplychainFactoringSupplierCreateModel model = new MybankCreditSupplychainFactoringSupplierCreateModel();
@@ -242,14 +190,14 @@ public class SupplyChainUtils {
         model.setSellerContactPhone(rcvContactPhone);
         model.setRcvAccountType("ALIPAY");
         model.setSellerBankAccName(sellerName);
-        model.setOperatorName(operator_name);
-        model.setStoreNo(store_no);
-        model.setStoreName(store_name);
-        model.setStoreSubjectName(store_subject_name);
-        model.setStoreSubjectCertNo(store_subject_cert_no);
-        model.setStoreProvince(store_province);
-        model.setStoreCity(store_city);
-        model.setStoreCounty(store_county);
+        model.setOperatorName(operatorName);
+        model.setStoreNo(storeNo);
+        model.setStoreName(storeName);
+        model.setStoreSubjectName(storeSubjectName);
+        model.setStoreSubjectCertNo(storeSubjectCertNo);
+        model.setStoreProvince(storeProvince);
+        model.setStoreCity(storeCity);
+        model.setStoreCounty(storeCounty);
         request.setBizModel(model);
         AlipayClient alipayClient = getAlipayClient();
         try {

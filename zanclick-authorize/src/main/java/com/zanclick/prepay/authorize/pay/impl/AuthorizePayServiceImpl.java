@@ -82,7 +82,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         AuthorizeConfiguration configuration = authorizeConfigurationService.queryById(order.getConfigurationId());
         AlipayClient client = authorizeConfigurationService.getAlipayClient(configuration);
         AuthorizeDTO payModal = createPayModal(order);
-        payModal.setPayee_user_id(configuration.getIsv_uid());
+        payModal.setPayee_user_id(configuration.getIsvUid());
         order.setRequestContent(payModal.toString());
         AlipayFundAuthOrderVoucherCreateResponse createResponse = AuthorizePayUtil.qrFreeze(client, NOTIFY_URL, payModal);
         if (createResponse.isSuccess()) {
@@ -499,7 +499,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
     private AlipayTradePayResponse createPay(AuthorizeOrder order, UnFreezeDTO dto, String money, AlipayClient client, AuthorizeConfiguration configuration) {
         AuthorizeDTO modal = new AuthorizeDTO();
         modal.setAuth_no(order.getAuthNo());
-        modal.setSeller_id(configuration.getIsv_uid());
+        modal.setSeller_id(configuration.getIsvUid());
         modal.setOut_trade_no(dto.getOrderNo());
         modal.setAuth_confirm_mode("NOT_COMPLETE");
         modal.setProduct_code("PRE_AUTH");

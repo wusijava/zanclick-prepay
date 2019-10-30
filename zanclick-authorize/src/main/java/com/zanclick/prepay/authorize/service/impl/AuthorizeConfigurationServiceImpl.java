@@ -80,6 +80,6 @@ public class AuthorizeConfigurationServiceImpl extends BaseMybatisServiceImpl<Au
     }
 
     private AlipayClient getAliPayClient(AuthorizeConfiguration configuration) {
-        return new DefaultAlipayClient(configuration.getGateway(), configuration.getIsv_appid(), configuration.getPrivate_key(), "json", "utf-8", configuration.getPublic_key(), configuration.getSign_type());
+        return new DefaultAlipayClient(configuration.getGateway(), configuration.getIsvAppId(), configuration.getPrivateKey(), "json", "utf-8", configuration.getPublicKey(), configuration.getSignType());
     }
 }

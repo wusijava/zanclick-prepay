@@ -10,6 +10,7 @@ import com.zanclick.prepay.authorize.service.MyBankSupplyChainService;
 import com.zanclick.prepay.authorize.service.SupplyChainBillService;
 import com.zanclick.prepay.authorize.service.SupplyChainTradeService;
 import com.zanclick.prepay.authorize.util.SupplyChainUtils;
+import com.zanclick.prepay.authorize.vo.SupplyChainCreate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -38,8 +39,7 @@ public class MyBankSupplyChainServiceImpl implements MyBankSupplyChainService {
         trade.setState(TradeStateEnum.CREATED.getCode());
         supplyChainTradeService.insert(trade);
         try {
-            String requestId = SupplyChainUtils.tradeCreate(trade.getAuthNo(), trade.getFreezeUserId(), trade.getOutTradeNo(), trade.getOpId(), trade.getOutRequestNo(), trade.getAmount(), trade.getFqNum(), trade.getFreezeDate(), trade.getExpireDate(), trade.getTitle()
-                    , trade.getRcvLoginId(), trade.getRcvAlipayName(), trade.getRcvContactName(), trade.getRcvContactPhone(), trade.getRcvContactEmail());
+            String requestId = SupplyChainUtils.tradeCreate(chainCreate(trade),null);
             trade.setRequestId(requestId);
             supplyChainTradeService.updateById(trade);
         }catch (SupplyChainException e){
@@ -100,6 +100,26 @@ public class MyBankSupplyChainServiceImpl implements MyBankSupplyChainService {
         bill.setFailReason(e.getMsg());
         bill.setState(BillStateEnum.UNCREATED.getCode());
         supplyChainBillService.updateById(bill);
+    }
+
+    private SupplyChainCreate chainCreate(SupplyChainTrade trade) {
+        SupplyChainCreate create = new SupplyChainCreate();
+        create.setAuthNo(trade.getAuthNo());
+        create.setFreezeAliPayId(trade.getFreezeUserId());
+        create.setOutMerOrderNo(trade.getOutTradeNo());
+        create.setOperationId(trade.getOpId());
+        create.setOutRequestNo(trade.getOutRequestNo());
+        create.setAmount(trade.getAmount());
+        create.setFqNum(trade.getFqNum());
+        create.setFreezeDate(trade.getFreezeDate());
+        create.setExpireDate(trade.getExpireDate());
+        create.setTitle(trade.getTitle());
+        create.setRcvLoginId(trade.getRcvLoginId());
+        create.setRcvAliPayName(trade.getRcvAlipayName());
+        create.setRcvContactName(trade.getRcvContactName());
+        create.setRcvContactPhone(trade.getRcvContactPhone());
+        create.setRcvContactEmail(trade.getRcvContactEmail());
+        return create;
     }
 
 }

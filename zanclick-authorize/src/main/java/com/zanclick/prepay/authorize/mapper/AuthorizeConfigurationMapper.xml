@@ -1,55 +1,112 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zanclick.prepay.authorize.mapper.AuthorizeConfigurationMapper">
-
     <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.AuthorizeConfiguration">
-        <id column="id" property="id" jdbcType="BIGINT"/>
-        <result column="isv_appid" property="isv_appid" jdbcType="VARCHAR"/>
-        <result column="isv_uid" property="isv_uid" jdbcType="VARCHAR"/>
-        <result column="sign_type" property="sign_type" jdbcType="VARCHAR"/>
-        <result column="gateway" property="gateway" jdbcType="VARCHAR"/>
-        <result column="private_key" property="private_key" jdbcType="VARCHAR"/>
-        <result column="public_key" property="public_key" jdbcType="VARCHAR"/>
-        <result column="royalty_uid" property="royalty_uid" jdbcType="VARCHAR"/>
-        <result column="isv_number" property="isv_number" jdbcType="VARCHAR"/>
-        <result column="fee_backuid" property="fee_backuid" jdbcType="VARCHAR"/>
-        <result column="status" property="status" jdbcType="INTEGER"/>
-        <result column="is_default" property="is_default" jdbcType="INTEGER"/>
-        <result column="seller_no" property="seller_no" jdbcType="VARCHAR"/>
-        <result column="appid" property="appid" jdbcType="BIGINT"/>
-        <result column="name" property="name" jdbcType="VARCHAR"/>
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="name" property="name" jdbcType="VARCHAR"/>
+            <result column="isv_app_id" property="isvAppId" jdbcType="VARCHAR"/>
+            <result column="isv_uid" property="isvUid" jdbcType="VARCHAR"/>
+            <result column="sign_type" property="signType" jdbcType="VARCHAR"/>
+            <result column="gateway" property="gateway" jdbcType="VARCHAR"/>
+            <result column="private_key" property="privateKey" jdbcType="VARCHAR"/>
+            <result column="public_key" property="publicKey" jdbcType="VARCHAR"/>
+            <result column="royalty_uid" property="royaltyUid" jdbcType="VARCHAR"/>
+            <result column="isv_number" property="isvNumber" jdbcType="VARCHAR"/>
+            <result column="fee_back_uid" property="feeBackUid" jdbcType="VARCHAR"/>
+            <result column="service_provider_id" property="serviceProviderId" jdbcType="VARCHAR"/>
+            <result column="ip_id" property="ipId" jdbcType="VARCHAR"/>
+            <result column="role_id" property="roleId" jdbcType="VARCHAR"/>
+            <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
+            <result column="format" property="format" jdbcType="VARCHAR"/>
+            <result column="charset" property="charset" jdbcType="VARCHAR"/>
+            <result column="status" property="status" jdbcType="INTEGER"/>
+            <result column="is_default" property="isDefault" jdbcType="INTEGER"/>
     </resultMap>
 
-    <sql id="table">aurthorize_configuration</sql>
-
+    <sql id="table">authorize_configuration</sql>
     <sql id="Base_Column_List">
-        id,
-        isv_appid,
-        isv_uid,
-        sign_type,
-        gateway,
-        private_key,
-        public_key,
-        royalty_uid,
-        isv_number,
-        fee_backuid,
-        status,
-        is_default,
-        seller_no,
-        appid,
-        `name`
+            `id`,
+            `name`,
+            `isv_app_id`,
+            `isv_uid`,
+            `sign_type`,
+            `gateway`,
+            `private_key`,
+            `public_key`,
+            `royalty_uid`,
+            `isv_number`,
+            `fee_back_uid`,
+            `service_provider_id`,
+            `ip_id`,
+            `role_id`,
+            `seller_no`,
+            `format`,
+            `charset`,
+            `status`,
+            `is_default`
     </sql>
-
     <sql id="Base_Where_Clause">
         <where>
             <trim prefixOverrides="and">
-                <if test="id != null">AND id = #{id}</if>
-                <if test="status != null">AND status = #{status}</if>
-                <if test="is_default != null">AND is_default = #{is_default}</if>
-                <if test="appid != null">AND appid = #{appid}</if>
+                    <if test="id != null">
+                        AND `id`=#{id}
+                    </if>
+                    <if test="name != null and name != ''">
+                        AND `name`=#{name}
+                    </if>
+                    <if test="isvAppId != null and isvAppId != ''">
+                        AND `isv_app_id`=#{isvAppId}
+                    </if>
+                    <if test="isvUid != null and isvUid != ''">
+                        AND `isv_uid`=#{isvUid}
+                    </if>
+                    <if test="signType != null and signType != ''">
+                        AND `sign_type`=#{signType}
+                    </if>
+                    <if test="gateway != null and gateway != ''">
+                        AND `gateway`=#{gateway}
+                    </if>
+                    <if test="privateKey != null and privateKey != ''">
+                        AND `private_key`=#{privateKey}
+                    </if>
+                    <if test="publicKey != null and publicKey != ''">
+                        AND `public_key`=#{publicKey}
+                    </if>
+                    <if test="royaltyUid != null and royaltyUid != ''">
+                        AND `royalty_uid`=#{royaltyUid}
+                    </if>
+                    <if test="isvNumber != null and isvNumber != ''">
+                        AND `isv_number`=#{isvNumber}
+                    </if>
+                    <if test="feeBackUid != null and feeBackUid != ''">
+                        AND `fee_back_uid`=#{feeBackUid}
+                    </if>
+                    <if test="serviceProviderId != null and serviceProviderId != ''">
+                        AND `service_provider_id`=#{serviceProviderId}
+                    </if>
+                    <if test="ipId != null and ipId != ''">
+                        AND `ip_id`=#{ipId}
+                    </if>
+                    <if test="roleId != null and roleId != ''">
+                        AND `role_id`=#{roleId}
+                    </if>
+                    <if test="sellerNo != null and sellerNo != ''">
+                        AND `seller_no`=#{sellerNo}
+                    </if>
+                    <if test="format != null and format != ''">
+                        AND `format`=#{format}
+                    </if>
+                    <if test="charset != null and charset != ''">
+                        AND `charset`=#{charset}
+                    </if>
+                    <if test="status != null">
+                        AND `status`=#{status}
+                    </if>
+                    <if test="isDefault != null">
+                        AND `is_default`=#{isDefault}
+                    </if>
             </trim>
         </where>
-        ORDER BY id DESC
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
@@ -75,6 +132,104 @@
         <include refid="Base_Where_Clause"/>
     </select>
 
+    <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeConfiguration" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `name`,
+            `isv_app_id`,
+            `isv_uid`,
+            `sign_type`,
+            `gateway`,
+            `private_key`,
+            `public_key`,
+            `royalty_uid`,
+            `isv_number`,
+            `fee_back_uid`,
+            `service_provider_id`,
+            `ip_id`,
+            `role_id`,
+            `seller_no`,
+            `format`,
+            `charset`,
+            `status`,
+            `is_default`
+        )
+        VALUES(
+            #{id},
+            #{name},
+            #{isvAppId},
+            #{isvUid},
+            #{signType},
+            #{gateway},
+            #{privateKey},
+            #{publicKey},
+            #{royaltyUid},
+            #{isvNumber},
+            #{feeBackUid},
+            #{serviceProviderId},
+            #{ipId},
+            #{roleId},
+            #{sellerNo},
+            #{format},
+            #{charset},
+            #{status},
+            #{isDefault}
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `name`,
+            `isv_app_id`,
+            `isv_uid`,
+            `sign_type`,
+            `gateway`,
+            `private_key`,
+            `public_key`,
+            `royalty_uid`,
+            `isv_number`,
+            `fee_back_uid`,
+            `service_provider_id`,
+            `ip_id`,
+            `role_id`,
+            `seller_no`,
+            `format`,
+            `charset`,
+            `status`,
+            `is_default`
+        )
+        VALUES
+        <foreach collection="list" item="cm" index="index" separator=",">
+            (
+            #{cm.id},
+            #{cm.name},
+            #{cm.isvAppId},
+            #{cm.isvUid},
+            #{cm.signType},
+            #{cm.gateway},
+            #{cm.privateKey},
+            #{cm.publicKey},
+            #{cm.royaltyUid},
+            #{cm.isvNumber},
+            #{cm.feeBackUid},
+            #{cm.serviceProviderId},
+            #{cm.ipId},
+            #{cm.roleId},
+            #{cm.sellerNo},
+            #{cm.format},
+            #{cm.charset},
+            #{cm.status},
+            #{cm.isDefault}
+            )
+        </foreach>
+    </insert>
+
     <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
         SELECT
         <include refid="Base_Column_List"/>
@@ -83,44 +238,73 @@
         WHERE id=#{id}
     </select>
 
-    <select id="selectByIsvAppId" resultMap="BaseResultMap" parameterType="java.lang.String">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM
-        <include refid="table"/>
-        WHERE isv_appid=#{isv_appid} LIMIT 1
-    </select>
-
     <select id="selectDefaultConfiguration" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>
         FROM
         <include refid="table"/>
-        WHERE is_default = 1 LIMIT 1
+        WHERE is_default = 1  ORDER BY id DESC LIMIT 1
     </select>
-
-    <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeConfiguration" useGeneratedKeys="true"
-            keyProperty="id">
-        INSERT INTO<include refid="table"/>
-        (id,isv_appid,isv_uid,sign_type,gateway,private_key,public_key,royalty_uid,isv_number,fee_backuid,status,is_default,seller_no,appid,`name`)
-        VALUES(#{id},#{isv_appid},#{isv_uid},#{sign_type},#{gateway},#{private_key},#{public_key},#{royalty_uid},#{isv_number},#{fee_backuid},#{status},#{is_default},#{seller_no},#{appid},#{name})
-    </insert>
 
     <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeConfiguration">
         UPDATE
         <include refid="table"/>
         <set>
-            <if test="gateway!=null and gateway!='' ">gateway = #{gateway},</if>
-            <if test="private_key!=null and private_key!='' ">private_key = #{private_key},</if>
-            <if test="public_key!=null and public_key!='' ">public_key = #{public_key},</if>
-            <if test="royalty_uid!=null and royalty_uid!='' ">royalty_uid = #{royalty_uid},</if>
-            <if test="isv_number!=null and isv_number!='' ">isv_number = #{isv_number},</if>
-            <if test="fee_backuid!=null and fee_backuid!='' ">fee_backuid = #{fee_backuid},</if>
-            <if test="status!=null and status!='' ">status = #{status},</if>
-            <if test="is_default!=null and is_default!='' ">is_default = #{is_default},</if>
+            <if test="name != null and name != ''">
+                 `name`=#{name},
+            </if>
+            <if test="isvAppId != null and isvAppId != ''">
+                 `isv_app_id`=#{isvAppId},
+            </if>
+            <if test="isvUid != null and isvUid != ''">
+                 `isv_uid`=#{isvUid},
+            </if>
+            <if test="signType != null and signType != ''">
+                 `sign_type`=#{signType},
+            </if>
+            <if test="gateway != null and gateway != ''">
+                 `gateway`=#{gateway},
+            </if>
+            <if test="privateKey != null and privateKey != ''">
+                 `private_key`=#{privateKey},
+            </if>
+            <if test="publicKey != null and publicKey != ''">
+                 `public_key`=#{publicKey},
+            </if>
+            <if test="royaltyUid != null and royaltyUid != ''">
+                 `royalty_uid`=#{royaltyUid},
+            </if>
+            <if test="isvNumber != null and isvNumber != ''">
+                 `isv_number`=#{isvNumber},
+            </if>
+            <if test="feeBackUid != null and feeBackUid != ''">
+                 `fee_back_uid`=#{feeBackUid},
+            </if>
+            <if test="serviceProviderId != null and serviceProviderId != ''">
+                 `service_provider_id`=#{serviceProviderId},
+            </if>
+            <if test="ipId != null and ipId != ''">
+                 `ip_id`=#{ipId},
+            </if>
+            <if test="roleId != null and roleId != ''">
+                 `role_id`=#{roleId},
+            </if>
+            <if test="sellerNo != null and sellerNo != ''">
+                 `seller_no`=#{sellerNo},
+            </if>
+            <if test="format != null and format != ''">
+                 `format`=#{format},
+            </if>
+            <if test="charset != null and charset != ''">
+                 `charset`=#{charset},
+            </if>
+            <if test="status != null">
+                 `status`=#{status},
+            </if>
+            <if test="isDefault != null">
+                 `is_default`=#{isDefault},
+            </if>
         </set>
         WHERE id=#{id}
     </update>
-
-
 </mapper>
