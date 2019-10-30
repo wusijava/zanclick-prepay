@@ -55,9 +55,9 @@ public class AuthorizeNotifyController extends BaseController {
         boolean verify_result = false;
         try {
             verify_result = AlipaySignature.rsaCheckV1(params,
-                    configuration.getPublic_key(),
+                    configuration.getPublicKey(),
                     UTF_8,
-                    configuration.getSign_type());
+                    configuration.getSignType());
         } catch (Exception e) {
             log.warn("预授权验签出错:{},{}", e, out_trade_no);
             return "failure";

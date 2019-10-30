@@ -193,8 +193,6 @@ public class SupplyChainUtils {
         try {
             response = alipayClient.execute(request);
             return response;
-        } catch (AlipayApiException e) {
-            e.printStackTrace();
         }catch (Exception e){
             e.printStackTrace();
         }
