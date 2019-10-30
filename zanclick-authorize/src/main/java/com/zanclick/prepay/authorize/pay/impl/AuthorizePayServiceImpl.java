@@ -45,8 +45,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
     @Autowired
     private AuthorizeOrderRefundRecordService authorizeOrderRefundRecordService;
     @Autowired
-    private AuthorizeOrderRecordService authorizeOrderRecordService;
-    @Autowired
     private MyBankSupplyChainService myBankSupplyChainService;
     @Autowired
     private SupplyChainTradeService supplyChainTradeService;
@@ -148,38 +146,38 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         }
         String desc = dto.isUnFree() ? "解冻" : "转支付";
         result.setOutTradeNo(dto.getOutTradeNo());
-        result.setTradeNo(dto.getTradeNo());
-        AuthorizeOrder order = queryByTradeNoOrOutTradeNo(dto.getTradeNo(), dto.getOutTradeNo());
+        result.setTradeNo(dto.getOrderNo());
+        AuthorizeOrder order = queryByTradeNoOrOutTradeNo(dto.getOrderNo(), dto.getOutTradeNo());
         if (order == null || order.isUnPay()) {
             String message = order == null ? "交易订单号有误" : "订单状态异常，无法进行" + desc;
             result.setMessage(message);
             result.setFail();
             return result;
         }
-        List<AuthorizeOrderRecord> recordList = authorizeOrderRecordService.queryByAuthNoAndNum(order.getAuthNo(), dto.getNum());
-        if (dto.getNum() != 0) {
-            AuthorizeOrderRecord record = recordList.get(0);
-            if (DataUtil.isEmpty(recordList) || !record.isWait()) {
-                String message = record == null ? "期数有误" : dto.getNum() + "期已经进行" + desc + ",无法再次操作";
-                result.setMessage(message);
+        String money = dto.getAmount();
+        AuthorizeRefundOrder refundOrder = authorizeRefundOrderService.queryByOutRequestNo(dto.getOutRequestNo());
+        if (refundOrder == null){
+            refundOrder = authorizeRefundOrderService.createRefundOrder(money,order.getOrderNo(),dto.getOutRequestNo(),dto.getReason());
+        }else {
+            if (refundOrder.isSuccess()){
+                result.setRequestNo(refundOrder.getRequestNo());
+                result.setOutRequestNo(refundOrder.getOutRequestNo());
+                result.setMessage("解冻成功");
+                result.setSuccess();
+                return result;
+            }
+            if (refundOrder.isWait()){
+                result.setMessage("解冻中，请稍后");
                 result.setFail();
                 return result;
             }
+            refundOrder.setAmount(dto.getAmount());
+            refundOrder.setReason(dto.getReason());
         }
-        if (DataUtil.isEmpty(recordList)) {
-            recordList = authorizeOrderRecordService.createAuthorizeOrderRecord(order);
-        }
-        String money = getRefundMoney(recordList);
-        if (!MoneyUtil.zeroMoney(money)) {
-            result.setMessage("可退款金额为0.00");
-            result.setFail();
-            return result;
-        }
+
         AuthorizeConfiguration configuration = authorizeConfigurationService.queryById(order.getConfigurationId());
         AlipayClient client = authorizeConfigurationService.getAlipayClient(configuration);
-        Integer state = null;
         if (dto.isUnFree()) {
-            state = AuthorizeOrderRecord.State.unfreed.getCode();
             AlipayFundAuthOrderUnfreezeResponse unfreezeResponse = createUnFreeze(order, dto.getOrderNo(), dto.getReason(), money, client);
             if (!(unfreezeResponse.isSuccess() && unfreezeResponse.getStatus().equals(Constants.TRADE_SUCCESS))) {
                 result.setMessage(unfreezeResponse.getSubMsg());
@@ -187,7 +185,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
                 return result;
             }
         } else {
-            state = AuthorizeOrderRecord.State.payed.getCode();
             AlipayTradePayResponse payResponse = createPay(order, dto, money, client, configuration);
             if (!payResponse.isSuccess()) {
                 result.setMessage(payResponse.getSubMsg());
@@ -195,12 +192,9 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
                 return result;
             }
         }
-        authorizeOrderRecordService.handleRecordList(recordList, state, dto.getOrderNo());
-        boolean lastRecord = authorizeOrderRecordService.queryListRecord(order.getAuthNo(), dto.getNum());
-        if (lastRecord) {
-            order.setState(AuthorizeOrder.State.settled.getCode());
-            authorizeOrderService.handleAuthorizeOrder(order);
-        }
+        //TODO 这里需要处理一下金额信息
+        order.setState(AuthorizeOrder.State.settled.getCode());
+        authorizeOrderService.handleAuthorizeOrder(order);
         result.setSuccess();
         return result;
     }
@@ -308,7 +302,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             result.setFail();
             return result;
         }
-        AuthorizeRefundOrder refund = authorizeRefundOrderService.queryByRefundNo(dto.getRefundNo());
+        AuthorizeRefundOrder refund = authorizeRefundOrderService.queryByRequestNo(dto.getRefundNo());
         if (refund != null && refund.isSuccess()) {
             result.setAmount(order.getFee().getMoney());
             result.setRefundAmount(refund.getAmount());
@@ -324,11 +318,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         AlipayClient client = authorizeConfigurationService.queryAlipayClientById(order.getConfigurationId());
-//        List<AuthorizeOrderRecord> recordList = authorizeOrderRecordService.queryWaitByAuthNo(order.getAuthNo());
-//        if (DataUtil.isEmpty(recordList)) {
-//            recordList = authorizeOrderRecordService.createAuthorizeOrderRecord(order);
-//        }
-//        String refundMoney = getRefundMoney(recordList);
         String refundMoney = order.getFee().getOrderRealMoney();
         if (!MoneyUtil.zeroMoney(refundMoney)) {
             result.setMessage("可退款金额为0");
@@ -339,7 +328,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         if (DataUtil.isNotEmpty(dto.getReason())) {
             remark = dto.getReason();
         }
-        refund = authorizeRefundOrderService.createRefundOrder(refundMoney, order.getOrderNo(), order.getRequestNo(), dto.getRefundNo(), dto.getReason());
+        refund = authorizeRefundOrderService.createRefundOrder(refundMoney, order.getOrderNo(), null, dto.getReason());
         AlipayFundAuthOrderUnfreezeResponse unfreezeResponse = createUnFreeze(order, dto.getRefundNo(), remark, refundMoney, client);
         if (!(unfreezeResponse.isSuccess() && unfreezeResponse.getStatus().equals(Constants.TRADE_SUCCESS))) {
             refund.setReason(unfreezeResponse.getSubMsg());
@@ -350,7 +339,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         authorizeRefundOrderService.refundSuccess(refund);
-//        authorizeOrderRecordService.handleRecordList(recordList, AuthorizeOrderRecord.State.unfreed.getCode(), dto.getRefundNo());
         order.setState(AuthorizeOrder.State.refund.getCode());
         authorizeOrderService.handleAuthorizeOrder(order);
         result.setAmount(order.getFee().getMoney());
@@ -377,13 +365,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             result.setFail();
             return result;
         }
-        List<AuthorizeOrderRecord> recordList = authorizeOrderRecordService.queryByTradeNo(dto.getPayTradeNo());
-        if (DataUtil.isEmpty(recordList)) {
-            result.setMessage("交易订单号有误");
-            result.setFail();
-            return result;
-        }
-        String refundMoney = getPayRefundMoney(recordList);
+        String refundMoney = dto.getAmount();
         if (!MoneyUtil.zeroMoney(refundMoney)) {
             result.setMessage("可退金额为0.00");
             result.setFail();
@@ -423,7 +405,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         authorizeOrderRefundRecordService.refundSuccess(record);
-        authorizeOrderRecordService.handleRecordList(recordList, AuthorizeOrderRecord.State.refund.getCode(), dto.getRefundNo());
         result.setAmount(record.getAmount());
         result.setIsChange("Y");
         result.setOutTradeNo(order.getOutTradeNo());
@@ -453,7 +434,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             result.setFail();
             return result;
         }
-        AuthorizeRefundOrder refund = authorizeRefundOrderService.queryByRefundNo(dto.getRefundNo());
+        AuthorizeRefundOrder refund = authorizeRefundOrderService.queryByRequestNo(dto.getRefundNo());
         if (refund == null) {
             result.setMessage("退款订单号有误");
             result.setFail();
@@ -617,44 +598,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         return trade;
     }
 
-
-    /**
-     * 获取退款金额
-     *
-     * @param recordList 参数
-     * @return
-     */
-    public String getRefundMoney(List<AuthorizeOrderRecord> recordList) {
-        BigDecimal refundMoney = new BigDecimal("0.00");
-        if (DataUtil.isEmpty(recordList)) {
-            return refundMoney.toString();
-        }
-        for (AuthorizeOrderRecord record : recordList) {
-            if (record.isWait()) {
-                refundMoney = refundMoney.add(new BigDecimal(record.getMoney()));
-            }
-        }
-        return refundMoney.toString();
-    }
-
-    /**
-     * 获取退款金额
-     *
-     * @param recordList 参数
-     * @return
-     */
-    public String getPayRefundMoney(List<AuthorizeOrderRecord> recordList) {
-        BigDecimal refundMoney = new BigDecimal("0.00");
-        if (DataUtil.isEmpty(recordList)) {
-            return refundMoney.toString();
-        }
-        for (AuthorizeOrderRecord record : recordList) {
-            if (record.isWait()) {
-                refundMoney = refundMoney.add(new BigDecimal(record.getMoney()));
-            }
-        }
-        return refundMoney.toString();
-    }
 
     /**
      * 创建预支付费用详情

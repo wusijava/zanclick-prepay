@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 预授权退款订单
+ * 转支付/解冻记录
  *
  * @author duchong
  * @date 2019-7-8 14:19:20
@@ -16,13 +16,13 @@ public class AuthorizeRefundOrder implements Identifiable<Long> {
 
     private Long id;
 
-    private String requestNo;
-
     private String amount;
 
-    private String orderNo;
+    private String outRequestNo;
 
-    private String refundNo;
+    private String requestNo;
+
+    private String orderNo;
 
     /**
      * 退款原因
@@ -43,13 +43,47 @@ public class AuthorizeRefundOrder implements Identifiable<Long> {
      * */
     private Integer state;
 
+    public enum State {
+        success(1, "成功"),
+        fail(-1, "失败"),
+        wait(0, "等待");
+
+        private Integer code;
+        private String desc;
+
+        State(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
 
     public Boolean isSuccess(){
-        return state.equals(1);
+        return State.success.getCode().equals(state);
     }
 
     public Boolean isFail(){
-        return state.equals(-1);
+        return State.fail.getCode().equals(state);
+    }
+
+
+    public Boolean isWait(){
+        return State.wait.getCode().equals(state);
     }
 
 }

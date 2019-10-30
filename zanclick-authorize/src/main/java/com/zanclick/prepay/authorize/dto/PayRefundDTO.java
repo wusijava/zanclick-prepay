@@ -37,6 +37,8 @@ public class PayRefundDTO extends RequestParam {
      */
     private String reason;
 
+    private String amount;
+
     @Override
     public String check() {
         if (checkNull(outTradeNo) && checkNull(tradeNo)) {
@@ -44,6 +46,9 @@ public class PayRefundDTO extends RequestParam {
         }
         if (checkNull(checkNull(payTradeNo))) {
             return "缺少入转支付订单号";
+        }
+        if (checkNull(checkNull(amount))) {
+            return "缺少退款金额";
         }
         return null;
     }

@@ -17,6 +17,14 @@ public interface AuthorizeRefundOrderMapper extends BaseMapper<AuthorizeRefundOr
      * @param refundNo
      * @return
      */
-    AuthorizeRefundOrder selectByRefundNo(String refundNo);
+    AuthorizeRefundOrder selectByRequestNo(String refundNo);
+
+    /**
+     * 根据退款订单号查询退款订单
+     *
+     * @param refundNo
+     * @return
+     */
+    AuthorizeRefundOrder selectByOutRequestNo(String refundNo);
 
 }

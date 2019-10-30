@@ -12,25 +12,32 @@ import com.zanclick.prepay.authorize.entity.AuthorizeRefundOrder;
 public interface AuthorizeRefundOrderService extends BaseService<AuthorizeRefundOrder, Long> {
 
     /**
-     * 根据退款订单号查询退款订单
+     * 根据订单号查询退款订单
      *
-     * @param refundNo
+     * @param requestNo
      * @return
      */
-    AuthorizeRefundOrder queryByRefundNo(String refundNo);
+    AuthorizeRefundOrder queryByRequestNo(String requestNo);
+
+    /**
+     * 根据外部订单号查询退款订单
+     *
+     * @param outRequestNo
+     * @return
+     */
+    AuthorizeRefundOrder queryByOutRequestNo(String outRequestNo);
 
     /**
      * 创建退款订单
      *
-     * @param refundNo
+     * @param outRequestNo
      * @param orderNo
-     * @param requestNo
      * @param amount
      * @param reason
      *
      * @return
      */
-    AuthorizeRefundOrder createRefundOrder(String amount, String orderNo, String requestNo, String refundNo, String reason);
+    AuthorizeRefundOrder createRefundOrder(String amount, String orderNo,String outRequestNo, String reason);
 
     /**
      * 创建退款订单

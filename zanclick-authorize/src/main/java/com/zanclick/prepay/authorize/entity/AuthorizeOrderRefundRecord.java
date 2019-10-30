@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 预期还款计划
+ * 转支付退款记录
  *
  * @author duchong
  * @date 2019-7-8 14:19:20
@@ -16,9 +16,6 @@ public class AuthorizeOrderRefundRecord implements Identifiable<Long> {
 
     private Long id;
 
-    /**
-     * 授权码
-     */
     private Date createTime;
 
     private Date finishTime;
@@ -49,7 +46,7 @@ public class AuthorizeOrderRefundRecord implements Identifiable<Long> {
 
     public enum State {
         /**
-         * 退款
+         * 等待退款
          */
         wait(0),
         /**

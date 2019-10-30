@@ -50,6 +50,6 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      * @param order
      * @return
      */
-    JSONObject sendMessage(PayOrder order);
+    void sendMessage(PayOrder order);
 
 }

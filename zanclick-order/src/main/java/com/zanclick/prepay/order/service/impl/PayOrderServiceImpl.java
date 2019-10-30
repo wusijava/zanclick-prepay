@@ -3,6 +3,7 @@ package com.zanclick.prepay.order.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.api.AsiaInfoHeader;
 import com.zanclick.prepay.common.api.AsiaInfoUtil;
+import com.zanclick.prepay.common.api.RespInfo;
 import com.zanclick.prepay.common.api.client.RestHttpClient;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
@@ -46,7 +47,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     @Override
     public void handlePayOrder(PayOrder order) {
-        if (order.isPayed()){
+        if (order.isPayed()) {
             sendMessage(order);
         }
         this.updateById(order);
@@ -55,8 +56,8 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     @Override
     public void handleSuccess(String orderNo) {
         PayOrder order = payOrderMapper.selectByOrderNo(orderNo);
-        if (order == null){
-            log.error("交易订单异常:{}",orderNo);
+        if (order == null) {
+            log.error("交易订单异常:{}", orderNo);
             return;
         }
         order.setState(PayOrder.State.payed.getCode());
@@ -65,8 +66,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     }
 
     @Override
-    public JSONObject sendMessage(PayOrder order) {
-        String result = "";
+    public void sendMessage(PayOrder order) {
         AsiaInfoHeader header = AsiaInfoUtil.getHeader(order.getPhoneNumber());
         try {
             JSONObject object = new JSONObject();
@@ -76,20 +76,37 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             object.put("payTime", sdf.format(order.getFinishTime()));
             object.put("merchantNo", order.getMerchantNo());
             object.put("orderStatus", getOrderStatus(order.getState()));
-            result = RestHttpClient.post(header, object.toJSONString(), "commodity/freezenotify/v1.1.1");
-            log.error("能力回调结果：{}", result);
+            String result = RestHttpClient.post(header, object.toJSONString(), "commodity/freezenotify/v1.1.1");
+            log.error("通知结果：{}", result);
+            RespInfo info = JSONObject.parseObject(result,RespInfo.class);
+            if (info.isSuccess()){
+                if (info.getResult().isSuccess()){
+
+                }else {
+                    log.error("通知出错:{}",info.getResult().getRetmsg());
+                }
+            }else {
+                log.error("通知出错:{}",info.getRespdesc());
+            }
         } catch (Exception e) {
-            log.error("能力回调出错:{}",e);
-            e.printStackTrace();
+            log.error("通知出错:{}", e);
         }
-        return JSONObject.parseObject(result);
     }
 
-    private String getOrderStatus(Integer state){
-        if (PayOrder.State.wait.getCode().equals(state)){
+
+    /**
+     * 获取交易状态
+     *
+     * @param state
+     * @return
+     */
+    private String getOrderStatus(Integer state) {
+        if (PayOrder.State.wait.getCode().equals(state)) {
             return "WAIT_PAY";
-        }else if (PayOrder.State.payed.getCode().equals(state)){
+        } else if (PayOrder.State.payed.getCode().equals(state)) {
             return "TRADE_SUCCESS";
+        } else if (PayOrder.State.refund.getCode().equals(state)) {
+            return "TRADE_REFUND";
         }
         return "TRADE_CLOSED";
     }

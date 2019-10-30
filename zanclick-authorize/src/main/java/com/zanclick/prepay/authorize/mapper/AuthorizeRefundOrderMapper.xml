@@ -2,44 +2,66 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zanclick.prepay.authorize.mapper.AuthorizeRefundOrderMapper">
     <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.AuthorizeRefundOrder">
-        <id column="id" property="id" jdbcType="BIGINT"/>
-        <result column="request_no" property="requestNo" jdbcType="VARCHAR"/>
-        <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
-        <result column="refund_no" property="refundNo" jdbcType="VARCHAR"/>
-        <result column="amount" property="amount" jdbcType="VARCHAR"/>
-        <result column="refund_reason" property="refundReason" jdbcType="VARCHAR"/>
-        <result column="reason" property="reason" jdbcType="VARCHAR"/>
-        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-        <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
-        <result column="state" property="state" jdbcType="INTEGER"/>
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="amount" property="amount" jdbcType="VARCHAR"/>
+            <result column="out_request_no" property="outRequestNo" jdbcType="VARCHAR"/>
+            <result column="request_no" property="requestNo" jdbcType="VARCHAR"/>
+            <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
+            <result column="refund_reason" property="refundReason" jdbcType="VARCHAR"/>
+            <result column="reason" property="reason" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
+            <result column="state" property="state" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="table">authorize_refund_order</sql>
-
     <sql id="Base_Column_List">
-        id,
-        request_no,
-        order_no,
-        refund_no,
-        amount,
-        refund_reason,
-        reason,
-        create_time,
-        finish_time,
-        state
+            `id`,
+            `amount`,
+            `out_request_no`,
+            `request_no`,
+            `order_no`,
+            `refund_reason`,
+            `reason`,
+            `create_time`,
+            `finish_time`,
+            `state`
     </sql>
-
     <sql id="Base_Where_Clause">
         <where>
             <trim prefixOverrides="and">
-                <if test="id != null">AND id = #{id}</if>
-                <if test="state != null">AND state = #{state}</if>
-                <if test="requestNo != null and requestNo != ''">AND request_no = #{requestNo}</if>
-                <if test="orderNo != null and orderNo != ''">AND order_no = #{orderNo}</if>
-                <if test="refundNo != null and refundNo != ''">AND refund_no = #{refundNo}</if>
+                    <if test="id != null">
+                        AND `id`=#{id}
+                    </if>
+                    <if test="amount != null and amount != ''">
+                        AND `amount`=#{amount}
+                    </if>
+                    <if test="outRequestNo != null and outRequestNo != ''">
+                        AND `out_request_no`=#{outRequestNo}
+                    </if>
+                    <if test="requestNo != null and requestNo != ''">
+                        AND `request_no`=#{requestNo}
+                    </if>
+                    <if test="orderNo != null and orderNo != ''">
+                        AND `order_no`=#{orderNo}
+                    </if>
+                    <if test="refundReason != null and refundReason != ''">
+                        AND `refund_reason`=#{refundReason}
+                    </if>
+                    <if test="reason != null and reason != ''">
+                        AND `reason`=#{reason}
+                    </if>
+                    <if test="createTime != null">
+                        AND `create_time`=#{createTime}
+                    </if>
+                    <if test="finishTime != null">
+                        AND `finish_time`=#{finishTime}
+                    </if>
+                    <if test="state != null">
+                        AND `state`=#{state}
+                    </if>
             </trim>
         </where>
-        ORDER BY id DESC
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
@@ -56,6 +78,22 @@
         <include refid="Base_Where_Clause"/>
     </select>
 
+    <select id="selectByRequestNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE request_no = #{requestNo} ORDER BY id DESC LIMIT 1
+    </select>
+
+    <select id="selectByOutRequestNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE out_request_no = #{outRequestNo} ORDER BY id DESC LIMIT 1
+    </select>
+
     <!-- 查询 -->
     <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
         SELECT
@@ -65,50 +103,33 @@
         <include refid="Base_Where_Clause"/>
     </select>
 
-    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM
-        <include refid="table"/>
-        WHERE id=#{id}
-    </select>
-
-    <select id="selectByRefundNo" resultMap="BaseResultMap" parameterType="java.lang.String">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM
-        <include refid="table"/>
-        WHERE refund_no = #{refundNo} ORDER BY id DESC LIMIT 1
-    </select>
-
     <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeRefundOrder" useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO
         <include refid="table"/>
         (
-        id,
-        request_no,
-        order_no,
-        refund_no,
-        amount,
-        refund_reason,
-        reason,
-        create_time,
-        finish_time,
-        state
+            `id`,
+            `amount`,
+            `out_request_no`,
+            `request_no`,
+            `order_no`,
+            `refund_reason`,
+            `reason`,
+            `create_time`,
+            `finish_time`,
+            `state`
         )
-        VALUES
-        (
-        #{id},
-        #{requestNo},
-        #{orderNo},
-        #{refundNo},
-        #{amount},
-        #{refundReason},
-        #{reason},
-        #{createTime},
-        #{finishTime},
-        #{state}
+        VALUES(
+            #{id},
+            #{amount},
+            #{outRequestNo},
+            #{requestNo},
+            #{orderNo},
+            #{refundReason},
+            #{reason},
+            #{createTime},
+            #{finishTime},
+            #{state}
         )
     </insert>
 
@@ -116,25 +137,25 @@
         INSERT INTO
         <include refid="table"/>
         (
-        id,
-        request_no,
-        order_no,
-        refund_no,
-        amount,
-        refund_reason,
-        reason,
-        create_time,
-        finish_time,
-        state
+            `id`,
+            `amount`,
+            `out_request_no`,
+            `request_no`,
+            `order_no`,
+            `refund_reason`,
+            `reason`,
+            `create_time`,
+            `finish_time`,
+            `state`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
             (
             #{cm.id},
+            #{cm.amount},
+            #{cm.outRequestNo},
             #{cm.requestNo},
             #{cm.orderNo},
-            #{cm.refundNo},
-            #{cm.amount},
             #{cm.refundReason},
             #{cm.reason},
             #{cm.createTime},
@@ -144,15 +165,46 @@
         </foreach>
     </insert>
 
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
     <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeRefundOrder">
         UPDATE
         <include refid="table"/>
         <set>
-            <if test="reason != null and reason != ''">reason = #{reason},</if>
-            <if test="finishTime != null">finish_time = #{finishTime},</if>
-            <if test="state != null">state = #{state},</if>
+            <if test="amount != null and amount != ''">
+                 `amount`=#{amount},
+            </if>
+            <if test="outRequestNo != null and outRequestNo != ''">
+                 `out_request_no`=#{outRequestNo},
+            </if>
+            <if test="requestNo != null and requestNo != ''">
+                 `request_no`=#{requestNo},
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                 `order_no`=#{orderNo},
+            </if>
+            <if test="refundReason != null and refundReason != ''">
+                 `refund_reason`=#{refundReason},
+            </if>
+            <if test="reason != null and reason != ''">
+                 `reason`=#{reason},
+            </if>
+            <if test="createTime != null">
+                 `create_time`=#{createTime},
+            </if>
+            <if test="finishTime != null">
+                 `finish_time`=#{finishTime},
+            </if>
+            <if test="state != null">
+                 `state`=#{state},
+            </if>
         </set>
         WHERE id=#{id}
     </update>
-
 </mapper>

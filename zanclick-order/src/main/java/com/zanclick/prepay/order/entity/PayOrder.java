@@ -17,50 +17,68 @@ public class PayOrder implements Identifiable<Long> {
     private Long id;
 
     /**
-     *
+     * 套餐编码
      */
     private String packageNo;
 
     /**
-     *
+     * 应用ID
      */
     private String appId;
 
     /**
-     *
+     * 商户号
      */
     private String merchantNo;
 
     /**
-     * 分期期数
+     * 订单编号
      **/
     private String orderNo;
 
     /**
-     * 每期金额
+     * 外部编号
      **/
     private String outOrderNo;
 
+    /**
+     * 套餐号码
+     */
     private String phoneNumber;
 
+    /**
+     * 省份
+     */
     private String province;
 
+    /**
+     * 城市
+     */
     private String city;
 
     /**
      * 冻结金额
-     * */
+     */
     private String amount;
 
+    /**
+     * 套餐标题
+     */
     private String title;
 
+    /**
+     * 交易期数
+     */
     private Integer num;
 
     /**
-     * 标题
+     * 创建时间
      */
     private Date createTime;
 
+    /**
+     * 交易结束时间
+     */
     private Date finishTime;
 
     private Integer state;
@@ -68,7 +86,8 @@ public class PayOrder implements Identifiable<Long> {
     public enum State {
         wait(0, "等待支付"),
         closed(-1, "关闭的"),
-        payed(1,"已支付");
+        refund(2, "已退款"),
+        payed(1, "已支付");
 
         private Integer code;
         private String desc;

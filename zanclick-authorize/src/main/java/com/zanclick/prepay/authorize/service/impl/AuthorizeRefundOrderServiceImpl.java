@@ -5,6 +5,7 @@ import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.authorize.entity.AuthorizeRefundOrder;
 import com.zanclick.prepay.authorize.mapper.AuthorizeRefundOrderMapper;
 import com.zanclick.prepay.authorize.service.AuthorizeRefundOrderService;
+import com.zanclick.prepay.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,20 +30,25 @@ public class AuthorizeRefundOrderServiceImpl extends BaseMybatisServiceImpl<Auth
 
 
     @Override
-    public AuthorizeRefundOrder queryByRefundNo(String refundNo) {
-        return authorizeRefundOrderMapper.selectByRefundNo(refundNo);
+    public AuthorizeRefundOrder queryByRequestNo(String requestNo) {
+        return authorizeRefundOrderMapper.selectByRequestNo(requestNo);
     }
 
     @Override
-    public AuthorizeRefundOrder createRefundOrder(String amount,String orderNo,String requestNo,String refundNo,String reason) {
+    public AuthorizeRefundOrder queryByOutRequestNo(String outRequestNo) {
+        return authorizeRefundOrderMapper.selectByOutRequestNo(outRequestNo);
+    }
+
+    @Override
+    public AuthorizeRefundOrder createRefundOrder(String amount,String orderNo,String outRequestNo,String reason) {
         AuthorizeRefundOrder refund = new AuthorizeRefundOrder();
         refund.setCreateTime(new Date());
         refund.setAmount(amount);
         refund.setOrderNo(orderNo);
         refund.setRefundReason(reason);
-        refund.setRefundNo(refundNo);
-        refund.setRequestNo(requestNo);
-        refund.setState(0);
+        refund.setOutRequestNo(outRequestNo);
+        refund.setRequestNo(StringUtils.getTradeNo());
+        refund.setState(AuthorizeRefundOrder.State.wait.getCode());
         getBaseMapper().insert(refund);
         return refund;
     }

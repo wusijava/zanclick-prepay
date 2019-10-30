@@ -62,14 +62,14 @@ public interface AuthorizePayService {
 
 
     /**
-     * 转支付退款（内部测试退款用的）
+     * 转支付退款
      *
      * @param dto
      * @return
      */
     PayRefundResult payRefund(PayRefundDTO dto);
     /**
-     * 退款查询
+     * 转支付退款查询
      *
      * @param dto
      * @return
