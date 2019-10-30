@@ -609,7 +609,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         trade.setOutRequestNo(order.getRequestNo());
         trade.setOpId(order.getOperationId());
         trade.setFreezeUserId(order.getBuyerId());
-
+        trade.setConfigurationId(order.getConfigurationId());
         trade.setFreezeDate(order.getFinishTime());
         trade.setExpireDate(DateUtil.addTime(order.getFinishTime(),3,Calendar.YEAR));
         trade.setMybankFee(order.getFee().getServiceMoney());

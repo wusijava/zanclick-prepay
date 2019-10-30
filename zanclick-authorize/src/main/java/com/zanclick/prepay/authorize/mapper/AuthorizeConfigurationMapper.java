@@ -17,4 +17,15 @@ public interface AuthorizeConfigurationMapper extends BaseMapper<AuthorizeConfig
      * @return
      */
     AuthorizeConfiguration selectDefaultConfiguration();
+
+
+    /**
+     * 根据appId查询
+     *
+     * @param isvAppId
+     * @return
+     */
+    AuthorizeConfiguration selectByIsvAppId(String isvAppId);
+
+
 }

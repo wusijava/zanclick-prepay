@@ -1,16 +1,19 @@
 package com.zanclick.prepay.authorize.service.impl;
 
 import com.alipay.api.response.MybankCreditSupplychainTradeBillrepaybudgetQueryResponse;
+import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.entity.SupplyChainBill;
 import com.zanclick.prepay.authorize.entity.SupplyChainTrade;
 import com.zanclick.prepay.authorize.enums.BillStateEnum;
 import com.zanclick.prepay.authorize.enums.TradeStateEnum;
 import com.zanclick.prepay.authorize.exception.SupplyChainException;
+import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.service.MyBankSupplyChainService;
 import com.zanclick.prepay.authorize.service.SupplyChainBillService;
 import com.zanclick.prepay.authorize.service.SupplyChainTradeService;
 import com.zanclick.prepay.authorize.util.SupplyChainUtils;
 import com.zanclick.prepay.authorize.vo.SupplyChainCreate;
+import com.zanclick.prepay.authorize.vo.SupplyChainPay;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -33,13 +36,17 @@ public class MyBankSupplyChainServiceImpl implements MyBankSupplyChainService {
     @Autowired
     private SupplyChainBillService supplyChainBillService;
 
+    @Autowired
+    private AuthorizeConfigurationService authorizeConfigurationService;
+
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void tradeCreate(SupplyChainTrade trade) {
         trade.setState(TradeStateEnum.CREATED.getCode());
         supplyChainTradeService.insert(trade);
+        AuthorizeConfiguration configuration = authorizeConfigurationService.queryById(trade.getConfigurationId());
         try {
-            String requestId = SupplyChainUtils.tradeCreate(chainCreate(trade),null);
+            String requestId = SupplyChainUtils.tradeCreate(chainCreate(trade),configuration);
             trade.setRequestId(requestId);
             supplyChainTradeService.updateById(trade);
         }catch (SupplyChainException e){
@@ -70,7 +77,7 @@ public class MyBankSupplyChainServiceImpl implements MyBankSupplyChainService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void tradeRepay(String auth_no){
-        MybankCreditSupplychainTradeBillrepaybudgetQueryResponse response = SupplyChainUtils.tradeBillRepayBudgetQuery(auth_no);
+        MybankCreditSupplychainTradeBillrepaybudgetQueryResponse response = SupplyChainUtils.tradeBillRepayBudgetQuery(auth_no,null);
         if(response.isSuccess()){
             SupplyChainBill bill = new SupplyChainBill();
             bill.setTotalAmount(response.getTotalAmt());
@@ -84,7 +91,10 @@ public class MyBankSupplyChainServiceImpl implements MyBankSupplyChainService {
             bill.setState(BillStateEnum.CREATED.getCode());
             supplyChainBillService.insert(bill);
             try {
-                String requestId = SupplyChainUtils.tradePay(auth_no, response.getTotalAmt());
+                SupplyChainPay pay = new SupplyChainPay();
+                pay.setAuthNo(auth_no);
+                pay.setPayAmount(response.getTotalAmt());
+                String requestId = SupplyChainUtils.tradePay(pay,null);
                 bill.setRequestId(requestId);
                 supplyChainBillService.updateById(bill);
             }catch (SupplyChainException e){

@@ -238,6 +238,14 @@
         WHERE id=#{id}
     </select>
 
+    <select id="selectByIsvAppId" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE isv_app_id=#{isvAppId} ORDER BY id DESC LIMIT 1
+    </select>
+
     <select id="selectDefaultConfiguration" resultMap="BaseResultMap">
         SELECT
         <include refid="Base_Column_List"/>

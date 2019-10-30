@@ -2,13 +2,15 @@ package com.zanclick.prepay.authorize.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.zanclick.prepay.authorize.config.SupplyChainConfig;
+import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.event.BaseEventResolver;
 import com.zanclick.prepay.authorize.event.RespInfo;
+import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.utils.ApplicationContextProvider;
 import com.zanclick.prepay.common.utils.DataUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -25,26 +27,33 @@ import java.util.Map;
 @Slf4j
 public class PreAuthController extends BaseController {
 
+    @Autowired
+    private AuthorizeConfigurationService authorizeConfigurationService;
+
     @RequestMapping(value = "/preAuth")
     @ResponseBody
     public RespInfo gateway(HttpServletRequest request){
         Map<String,String> params = getAllRequestParam(request);
         log.error("收到网商垫资异步结果消息:{}",JSON.toJSONString(params));
         String key = params.get("key");
-        String dataobject = params.get("dataobject");
-        String charset = params.get("charset");
+        String dataObject = params.get("dataobject");
         String sign = params.get("sign");
-        String signType = params.get("sign_type");
-        if(DataUtil.isEmpty(key) || DataUtil.isEmpty(dataobject)
-                || DataUtil.isEmpty(sign) || DataUtil.isEmpty(charset) ){
+        String isvAppId = params.get("app_id");
+        if(DataUtil.isEmpty(key) || DataUtil.isEmpty(dataObject)
+                || DataUtil.isEmpty(sign) || DataUtil.isEmpty(isvAppId)){
             log.error("请求参数不完整");
             return RespInfo.fail("请求参数不完整");
+        }
+        AuthorizeConfiguration configuration = authorizeConfigurationService.queryByIsvAppId(isvAppId);
+        if (DataUtil.isEmpty(configuration)){
+            log.error("appId有误:{}",isvAppId);
+            return RespInfo.fail("appId有误");
         }
         boolean verify_result;
         try {
             verify_result = AlipaySignature.rsaCheckV1(params,
-                    SupplyChainConfig.MYBANK_PUBLIC_KEY,
-                    charset, signType);
+                    configuration.getPublicKey(),
+                    configuration.getCharset(), configuration.getSignType());
         }catch (Exception e) {
             log.warn("异步通知接收失败："+e);
             return RespInfo.fail("验签失败");
@@ -58,7 +67,7 @@ public class PreAuthController extends BaseController {
         try {
             String serviceName = key + "Resolver";
             BaseEventResolver eventResolver = ApplicationContextProvider.getBean(serviceName,BaseEventResolver.class);
-            eventResolver.resolveEvent(dataobject);
+            eventResolver.resolveEvent(dataObject);
             return RespInfo.success();
         }catch (Exception e){
             e.printStackTrace();

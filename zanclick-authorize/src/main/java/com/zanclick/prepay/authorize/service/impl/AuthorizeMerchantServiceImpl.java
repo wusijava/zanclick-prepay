@@ -4,10 +4,13 @@ import com.alipay.api.response.MybankCreditSupplychainFactoringSupplierCreateRes
 import com.zanclick.prepay.authorize.dto.MerchantResult;
 import com.zanclick.prepay.authorize.dto.MerchantUpdateDTO;
 import com.zanclick.prepay.authorize.dto.RegisterMerchant;
+import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.mapper.AuthorizeMerchantMapper;
+import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.util.SupplyChainUtils;
+import com.zanclick.prepay.authorize.vo.SuppilerCreate;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.common.exception.BizException;
@@ -29,6 +32,9 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
 
     @Autowired
     private AuthorizeMerchantMapper authorizeMerchantMapper;
+
+    @Autowired
+    private AuthorizeConfigurationService authorizeConfigurationService;
 
     @Override
     protected BaseMapper<AuthorizeMerchant, Long> getBaseMapper() {
@@ -122,21 +128,8 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
      * @return （原因）没有返回，则为签约成功
      */
     private void createSupplier(AuthorizeMerchant merchant) {
-        MybankCreditSupplychainFactoringSupplierCreateResponse response = SupplyChainUtils.createSupplier(
-                merchant.getSellerNo(),
-                merchant.getName(),
-                merchant.getContactName(),
-                merchant.getContactPhone(),
-                null,
-                OPRATORCHANNEL,
-                merchant.getStoreNo(),
-                merchant.getStoreName(),
-                merchant.getStoreSubjectName(),
-                merchant.getStoreSubjectCertNo(),
-                merchant.getStoreProvince(),
-                merchant.getStoreCity(),
-                merchant.getStoreCounty()
-        );
+        AuthorizeConfiguration configuration = authorizeConfigurationService.queryDefaultConfiguration();
+        MybankCreditSupplychainFactoringSupplierCreateResponse response = SupplyChainUtils.createSupplier(create(merchant),configuration);
         if (response.isSuccess()) {
             merchant.setState(AuthorizeMerchant.State.success.getCode());
             merchant.setSupplierNo(response.getSupplierNo());
@@ -146,6 +139,31 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         }
         merchant.setFinishTime(new Date());
         this.updateById(merchant);
+    }
+
+
+    /**
+     * 创建商户
+     *
+     * @param merchant
+     * @return
+     */
+    private SuppilerCreate create(AuthorizeMerchant merchant) {
+        SuppilerCreate create = new SuppilerCreate();
+        create.setStoreNo(merchant.getSellerNo());
+        create.setSellerName(merchant.getName());
+        create.setRcvContactEmail(null);
+        create.setRcvContactName(merchant.getContactName());
+        create.setRcvContactPhone(merchant.getContactPhone());
+        create.setOperatorName(OPRATORCHANNEL);
+        create.setStoreNo(merchant.getStoreNo());
+        create.setStoreName(merchant.getStoreName());
+        create.setStoreSubjectName(merchant.getStoreSubjectName());
+        create.setStoreSubjectCertNo(merchant.getStoreSubjectCertNo());
+        create.setStoreProvince(merchant.getStoreProvince());
+        create.setStoreCity(merchant.getStoreCity());
+        create.setStoreCounty(merchant.getStoreCounty());
+        return create;
     }
 
     /**

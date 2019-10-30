@@ -25,11 +25,11 @@ import java.util.Map;
 public class AuthorizeConfigurationServiceImpl extends BaseMybatisServiceImpl<AuthorizeConfiguration, Long> implements AuthorizeConfigurationService {
 
     @Autowired
-    private AuthorizeConfigurationMapper zftConfigurationMapper;
+    private AuthorizeConfigurationMapper authorizeConfigurationMapper;
 
     @Override
     protected BaseMapper<AuthorizeConfiguration, Long> getBaseMapper() {
-        return zftConfigurationMapper;
+        return authorizeConfigurationMapper;
     }
 
     private static Map<Long, AuthorizeConfiguration> configurationMap = new HashMap<>();
@@ -40,7 +40,7 @@ public class AuthorizeConfigurationServiceImpl extends BaseMybatisServiceImpl<Au
     public AuthorizeConfiguration queryDefaultConfiguration() {
         AuthorizeConfiguration configuration = defaultConfiguration;
         if (configuration == null) {
-            configuration = zftConfigurationMapper.selectDefaultConfiguration();
+            configuration = authorizeConfigurationMapper.selectDefaultConfiguration();
             if (configuration == null) {
                 log.error("缺少默认支付配置");
                 return null;
@@ -49,6 +49,11 @@ public class AuthorizeConfigurationServiceImpl extends BaseMybatisServiceImpl<Au
             defaultConfiguration = configuration;
         }
         return configuration;
+    }
+
+    @Override
+    public AuthorizeConfiguration queryByIsvAppId(String isvAppId) {
+        return authorizeConfigurationMapper.selectByIsvAppId(isvAppId);
     }
 
     @Override

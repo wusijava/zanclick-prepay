@@ -8,10 +8,11 @@ import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.domain.*;
 import com.alipay.api.request.*;
 import com.alipay.api.response.*;
-import com.zanclick.prepay.authorize.config.SupplyChainConfig;
 import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.exception.SupplyChainException;
+import com.zanclick.prepay.authorize.vo.SuppilerCreate;
 import com.zanclick.prepay.authorize.vo.SupplyChainCreate;
+import com.zanclick.prepay.authorize.vo.SupplyChainPay;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.StringUtils;
@@ -48,17 +49,17 @@ public class SupplyChainUtils {
     public static String tradeCreate(SupplyChainCreate create, AuthorizeConfiguration configuration) throws SupplyChainException {
 
         Member seller = createSeller(null, create.getRcvLoginId());
-        Member buyer = createBuyer();
+        Member buyer = createBuyer(configuration);
         MybankCreditSupplychainTradeCreateModel model = new MybankCreditSupplychainTradeCreateModel();
         model.setTradeType("FACTORING");
-        model.setRequestId(createRequestId());
+        model.setRequestId(createRequestId(configuration.getRoleId()));
         model.setSeller(seller);
         model.setBuyer(buyer);
-        model.setPayAccount(createPayAccount());
+        model.setPayAccount(createPayAccount(configuration));
         model.setRcvAccount(createRcvAccount(create.getRcvLoginId(), create.getRcvAliPayName()));
         model.setOutOrderTitle(create.getTitle());
         model.setSalePdCode(SALE_PD_CODE);
-        model.setOutOrderNo(createOutOrderNo(create.getAuthNo()));
+        model.setOutOrderNo(createOutOrderNo(configuration.getRoleId(),create.getAuthNo()));
         model.setChannel("FQZBL");
         model.setExpireDate(getExpireDate(create.getFqNum()));
         model.setTradeAmount(create.getAmount());
@@ -81,7 +82,7 @@ public class SupplyChainUtils {
         model.setExtData(JSON.toJSONString(extData));
         MybankCreditSupplychainTradeCreateRequest request = new MybankCreditSupplychainTradeCreateRequest();
         request.setBizModel(model);
-        AlipayClient alipayClient = getAlipayClient();
+        AlipayClient alipayClient = getAlipayClient(configuration);
         try {
             log.error("开始垫资:{}",JSONObject.toJSONString(request));
             MybankCreditSupplychainTradeCreateResponse response = alipayClient.execute(request);
@@ -99,24 +100,24 @@ public class SupplyChainUtils {
     /**
      * 网点垫资还款支付，需要网商已完成垫资放款，支付宝预授权解冻转支付
      *
-     * @param auth_no   预授权冻结时支付宝返回的28位预授权编号
-     * @param payAmount 还款金额
+     * @param pay   还款支付详情
+     * @param configuration 配置信息
      * @return requestId 业务事件受理的流水号，作为异步回调的业务处理参数依据
      */
-    public static String tradePay(String auth_no, String payAmount) throws SupplyChainException{
-        Member buyer = createBuyer();
+    public static String tradePay(SupplyChainPay pay, AuthorizeConfiguration configuration) throws SupplyChainException{
+        Member buyer = createBuyer(configuration);
         MybankCreditSupplychainTradePayModel model = new MybankCreditSupplychainTradePayModel();
         model.setTradeType("FACTORING");
-        model.setRequestId(createRequestId());
+        model.setRequestId(createRequestId(configuration.getRoleId()));
         model.setBuyer(buyer);
-        model.setPayAmount(payAmount);
+        model.setPayAmount(pay.getPayAmount());
         model.setSalePdCode(SALE_PD_CODE);
-        model.setOutOrderNo(createOutOrderNo(auth_no));
+        model.setOutOrderNo(createOutOrderNo(configuration.getRoleId(),pay.getAuthNo()));
         model.setChannel("FQZBL");
         model.setExtData("{\"payableRepayType\":\"preRepay\"}");
         MybankCreditSupplychainTradePayRequest request = new MybankCreditSupplychainTradePayRequest();
         request.setBizModel(model);
-        AlipayClient alipayClient = getAlipayClient();
+        AlipayClient alipayClient = getAlipayClient(configuration);
         try {
             MybankCreditSupplychainTradePayResponse response = alipayClient.execute(request);
             if (response.isSuccess()) {
@@ -133,20 +134,21 @@ public class SupplyChainUtils {
      * 网点垫资交易取消，需要在交易创建，放款前调用
      *
      * @param auth_no 预授权冻结时支付宝返回的28位预授权编号
+     * @param configuration
      * @return requestId 业务事件受理的流水号，作为异步回调的业务处理参数依据
      */
-    public static String tradeCancel(String auth_no) throws SupplyChainException{
-        Member buyer = createBuyer();
+    public static String tradeCancel(String auth_no,AuthorizeConfiguration configuration) throws SupplyChainException{
+        Member buyer = createBuyer(configuration);
         MybankCreditSupplychainTradeCancelModel model = new MybankCreditSupplychainTradeCancelModel();
         model.setTradeType("FACTORING");
-        model.setRequestId(createRequestId());
+        model.setRequestId(createRequestId(configuration.getRoleId()));
         model.setBuyer(buyer);
         model.setSalePdCode(SALE_PD_CODE);
-        model.setOutOrderNo(createOutOrderNo(auth_no));
+        model.setOutOrderNo(createOutOrderNo(configuration.getRoleId(),auth_no));
         model.setChannel("FQZBL");
         MybankCreditSupplychainTradeCancelRequest request = new MybankCreditSupplychainTradeCancelRequest();
         request.setBizModel(model);
-        AlipayClient alipayClient = getAlipayClient();
+        AlipayClient alipayClient = getAlipayClient(configuration);
         try {
             MybankCreditSupplychainTradeCancelResponse response = alipayClient.execute(request);
             if (response.isSuccess()) {
@@ -163,43 +165,31 @@ public class SupplyChainUtils {
      * 创建供应商
      */
     public static MybankCreditSupplychainFactoringSupplierCreateResponse createSupplier(
-            String rcvLoginId,
-            String sellerName,
-            String rcvContactName,
-            String rcvContactPhone,
-            String rcvContactEmail,
-            String operatorName,
-            String storeNo,
-            String storeName,
-            String storeSubjectName,
-            String storeSubjectCertNo,
-            String storeProvince,
-            String storeCity,
-            String storeCounty) throws SupplyChainException{
+            SuppilerCreate create,AuthorizeConfiguration configuration) throws SupplyChainException{
         MybankCreditSupplychainFactoringSupplierCreateResponse response = null;
         MybankCreditSupplychainFactoringSupplierCreateRequest request = new MybankCreditSupplychainFactoringSupplierCreateRequest();
         MybankCreditSupplychainFactoringSupplierCreateModel model = new MybankCreditSupplychainFactoringSupplierCreateModel();
-        Member buyer = createBuyer();
+        Member buyer = createBuyer(configuration);
         model.setBuyerIpId(buyer.getIpId());
         model.setBuyerIpRoleId(buyer.getIpRoleId());
         model.setBuyerSite(buyer.getSite());
         model.setBuyerSiteUserId(buyer.getSiteUserId());
-        model.setSellerLoginId(rcvLoginId);
-        model.setSellerContactName(rcvContactName);
-        model.setSellerContactEmail(rcvContactEmail);
-        model.setSellerContactPhone(rcvContactPhone);
+        model.setSellerLoginId(create.getRcvLoginId());
+        model.setSellerContactName(create.getRcvContactName());
+        model.setSellerContactEmail(create.getRcvContactEmail());
+        model.setSellerContactPhone(create.getRcvContactPhone());
         model.setRcvAccountType("ALIPAY");
-        model.setSellerBankAccName(sellerName);
-        model.setOperatorName(operatorName);
-        model.setStoreNo(storeNo);
-        model.setStoreName(storeName);
-        model.setStoreSubjectName(storeSubjectName);
-        model.setStoreSubjectCertNo(storeSubjectCertNo);
-        model.setStoreProvince(storeProvince);
-        model.setStoreCity(storeCity);
-        model.setStoreCounty(storeCounty);
+        model.setSellerBankAccName(create.getSellerName());
+        model.setOperatorName(create.getOperatorName());
+        model.setStoreNo(create.getStoreNo());
+        model.setStoreName(create.getStoreName());
+        model.setStoreSubjectName(create.getStoreSubjectName());
+        model.setStoreSubjectCertNo(create.getStoreSubjectCertNo());
+        model.setStoreProvince(create.getStoreProvince());
+        model.setStoreCity(create.getStoreCity());
+        model.setStoreCounty(create.getStoreCounty());
         request.setBizModel(model);
-        AlipayClient alipayClient = getAlipayClient();
+        AlipayClient alipayClient = getAlipayClient(configuration);
         try {
             response = alipayClient.execute(request);
             return response;
@@ -214,18 +204,19 @@ public class SupplyChainUtils {
     /**
      * 查询还款方案
      * @param auth_no
+     * @param configuration
      * @return
      */
-    public static MybankCreditSupplychainTradeBillrepaybudgetQueryResponse tradeBillRepayBudgetQuery(String auth_no) throws SupplyChainException{
-        Member buyer = createBuyer();
+    public static MybankCreditSupplychainTradeBillrepaybudgetQueryResponse tradeBillRepayBudgetQuery(String auth_no,AuthorizeConfiguration configuration) throws SupplyChainException{
+        Member buyer = createBuyer(configuration);
         MybankCreditSupplychainTradeBillrepaybudgetQueryRequest request = new MybankCreditSupplychainTradeBillrepaybudgetQueryRequest();
         MybankCreditSupplychainTradeBillrepaybudgetQueryModel model = new MybankCreditSupplychainTradeBillrepaybudgetQueryModel();
         model.setBuyer(buyer);
         model.setChannel("FQZBL");
         model.setSalePdCode(SALE_PD_CODE);
-        model.setOutOrderNo(createOutOrderNo(auth_no));
+        model.setOutOrderNo(createOutOrderNo(configuration.getRoleId(),auth_no));
         request.setBizModel(model);
-        AlipayClient alipayClient = getAlipayClient();
+        AlipayClient alipayClient = getAlipayClient(configuration);
         try {
             MybankCreditSupplychainTradeBillrepaybudgetQueryResponse response = alipayClient.execute(request);
             return response;
@@ -234,14 +225,14 @@ public class SupplyChainUtils {
         }
     }
 
-    public static String queryLimit(){
+    public static String queryLimit(AuthorizeConfiguration configuration){
         MybankCreditCreditriskGuarschemeQueryRequest request = new MybankCreditCreditriskGuarschemeQueryRequest();
         MybankCreditCreditriskGuarschemeQueryModel model = new MybankCreditCreditriskGuarschemeQueryModel();
         model.setBsnType("TYZBL");
-        model.setUser(createBuyer());
+        model.setUser(createBuyer(configuration));
         model.setSalePdCode(SALE_PD_CODE);
         request.setBizModel(model);
-        AlipayClient alipayClient = getAlipayClient();
+        AlipayClient alipayClient = getAlipayClient(configuration);
         try {
             MybankCreditCreditriskGuarschemeQueryResponse response = alipayClient.execute(request);
             return response.getAvailableAmt();
@@ -274,8 +265,8 @@ public class SupplyChainUtils {
         private String freeze_alipay_id;
     }
 
-    private static Account createPayAccount() {
-        return createAccount(SupplyChainConfig.USER_ID, SupplyChainConfig.ACCOUNT_NAME);
+    private static Account createPayAccount(AuthorizeConfiguration configuration) {
+        return createAccount(configuration.getIsvUid(), configuration.getName());
     }
 
     private static Account createRcvAccount(String uid, String alipayName) {
@@ -290,19 +281,19 @@ public class SupplyChainUtils {
         return account;
     }
 
-    private static Member createBuyer() {
+    private static Member createBuyer(AuthorizeConfiguration configuration) {
         Member buyer = new Member();
-        buyer.setIpId(SupplyChainConfig.IP_ID);
-        buyer.setIpRoleId(SupplyChainConfig.ROLE_ID);
-        buyer.setSiteLoginId(SupplyChainConfig.LOGIN_ACCOUNT);
-        buyer.setSiteUserId(SupplyChainConfig.USER_ID);
+        buyer.setIpId(configuration.getIpId());
+        buyer.setIpRoleId(configuration.getIpId());
+        buyer.setSiteLoginId(configuration.getSellerNo());
+        buyer.setSiteUserId(configuration.getIsvUid());
         buyer.setSite("ALIPAY");
         buyer.setUseType("SITE");
         return buyer;
     }
 
-    private static String createOutOrderNo(String auth_no) {
-        return SupplyChainConfig.ROLE_ID + "_" + auth_no;
+    private static String createOutOrderNo(String role_id, String auth_no) {
+        return role_id + "_" + auth_no;
     }
 
     public static String getAuthNoFromOutOrderNo(String out_order_no){
@@ -324,9 +315,9 @@ public class SupplyChainUtils {
     }
 
 
-    private static AlipayClient getAlipayClient() {
-        return new DefaultAlipayClient(SupplyChainConfig.MYBANK_GATEWAY, SupplyChainConfig.MYBANK_APPID, SupplyChainConfig.MYBANK_PRIVATE_KEY
-                , "json", "UTF-8", SupplyChainConfig.MYBANK_PUBLIC_KEY, "RSA2");
+    private static AlipayClient getAlipayClient(AuthorizeConfiguration configuration) {
+        return new DefaultAlipayClient(configuration.getGateway(), configuration.getIsvAppId(), configuration.getPrivateKey()
+                , configuration.getFormat(), configuration.getCharset(), configuration.getPublicKey(), configuration.getSignType());
     }
 
     /**
@@ -345,10 +336,10 @@ public class SupplyChainUtils {
         return seller;
     }
 
-    private static String createRequestId() {
+    private static String createRequestId(String role_id) {
         String date = DateUtil.formatDate(new Date(), DateUtil.PATTERN_YYYYMMDDHHMMSS);
         String uniqId = StringUtils.createRandom(true, 8);
-        return SupplyChainConfig.ROLE_ID + "_" + date + "_" + uniqId;
+        return role_id + "_" + date + "_" + uniqId;
     }
 
 

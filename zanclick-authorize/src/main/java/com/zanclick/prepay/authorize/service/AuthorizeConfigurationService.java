@@ -19,6 +19,15 @@ public interface AuthorizeConfigurationService extends BaseService<AuthorizeConf
     AuthorizeConfiguration queryDefaultConfiguration();
 
     /**
+     * 根据appId查询
+     *
+     * @param isvAppId
+     * @return
+     */
+    AuthorizeConfiguration queryByIsvAppId(String isvAppId);
+
+
+    /**
      * 获取默认的支付宝配置
      *
      * @return
