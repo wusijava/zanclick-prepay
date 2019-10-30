@@ -1,9 +1,6 @@
 package com.zanclick.prepay.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.common.api.AsiaInfoHeader;
-import com.zanclick.prepay.common.api.AsiaInfoUtil;
-import com.zanclick.prepay.common.api.client.RestHttpClient;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
@@ -20,7 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.net.URLEncoder;
-import java.text.SimpleDateFormat;
 
 /**
  * 中心网关
@@ -52,27 +48,12 @@ public class ApiOpenController {
 
     @GetMapping(value = "/notifyReset", produces = "application/json;charset=utf-8")
     public Response notifyReset(String orderNo) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         PayOrder order = payOrderService.queryByOrderNo(orderNo);
         if (order == null) {
             return Response.fail("订单号有误");
         }
         if (order.isPayed()) {
-            AsiaInfoHeader header = AsiaInfoUtil.getHeader(order.getPhoneNumber());
-            try {
-                JSONObject object = new JSONObject();
-                object.put("orderNo", order.getOrderNo());
-                object.put("outOrderNo", order.getOutOrderNo());
-                object.put("packageNo", order.getPackageNo());
-                object.put("payTime", sdf.format(order.getFinishTime()));
-                object.put("merchantNo", order.getMerchantNo());
-                object.put("orderStatus", getOrderStatus(order.getState()));
-                String result = RestHttpClient.post(header, object.toJSONString(), "commodity/freezenotify/v1.1.1");
-                log.error("能力回调结果：{}", result);
-            } catch (Exception e) {
-                log.error("能力回调出错:{}", e);
-                e.printStackTrace();
-            }
+            payOrderService.sendMessage(order);
         }
         return Response.ok("调用成功");
     }
