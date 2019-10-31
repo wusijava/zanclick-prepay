@@ -8,7 +8,6 @@
             <result column="auth_no" property="authNo" jdbcType="VARCHAR"/>
             <result column="out_request_no" property="outRequestNo" jdbcType="VARCHAR"/>
             <result column="request_no" property="requestNo" jdbcType="VARCHAR"/>
-            <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
             <result column="refund_reason" property="refundReason" jdbcType="VARCHAR"/>
             <result column="reason" property="reason" jdbcType="VARCHAR"/>
             <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
@@ -24,7 +23,6 @@
             `auth_no`,
             `out_request_no`,
             `request_no`,
-            `order_no`,
             `refund_reason`,
             `reason`,
             `create_time`,
@@ -51,9 +49,6 @@
                     </if>
                     <if test="requestNo != null and requestNo != ''">
                         AND `request_no`=#{requestNo}
-                    </if>
-                    <if test="orderNo != null and orderNo != ''">
-                        AND `order_no`=#{orderNo}
                     </if>
                     <if test="refundReason != null and refundReason != ''">
                         AND `refund_reason`=#{refundReason}
@@ -124,7 +119,6 @@
             `auth_no`,
             `out_request_no`,
             `request_no`,
-            `order_no`,
             `refund_reason`,
             `reason`,
             `create_time`,
@@ -138,7 +132,6 @@
             #{authNo},
             #{outRequestNo},
             #{requestNo},
-            #{orderNo},
             #{refundReason},
             #{reason},
             #{createTime},
@@ -157,7 +150,6 @@
             `auth_no`,
             `out_request_no`,
             `request_no`,
-            `order_no`,
             `refund_reason`,
             `reason`,
             `create_time`,
@@ -173,7 +165,6 @@
             #{cm.authNo},
             #{cm.outRequestNo},
             #{cm.requestNo},
-            #{cm.orderNo},
             #{cm.refundReason},
             #{cm.reason},
             #{cm.createTime},
@@ -209,9 +200,6 @@
             </if>
             <if test="requestNo != null and requestNo != ''">
                  `request_no`=#{requestNo},
-            </if>
-            <if test="orderNo != null and orderNo != ''">
-                 `order_no`=#{orderNo},
             </if>
             <if test="refundReason != null and refundReason != ''">
                  `refund_reason`=#{refundReason},
