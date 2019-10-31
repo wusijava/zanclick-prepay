@@ -30,6 +30,8 @@ public class AuthorizeOrder implements Identifiable<Long> {
     /**冻结金额**/
     private String money;
 
+    private String refundMoney;
+
     private String fee;
 
     private Integer num;

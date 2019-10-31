@@ -45,6 +45,22 @@ public class MoneyUtil {
         return false;
     }
 
+    public static boolean equal(String money1, String money2) {
+        if (DataUtil.isEmpty(money1)) {
+            money1 = "0.00";
+        }
+        if (DataUtil.isEmpty(money2)) {
+            money2 = "0.00";
+        }
+        try {
+            Integer result = new BigDecimal(money1).compareTo(new BigDecimal(money2));
+            return result == 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     /**
      * 获取订单金额（花呗分期）
      *
@@ -214,13 +230,13 @@ public class MoneyUtil {
      * @param money1 金额1
      * @param money2 金额2
      */
-    public static String devide(String money1, String money2) {
+    public static String divide(String money1, String money2) {
         BigDecimal total = new BigDecimal(money1).divide(new BigDecimal(money2),2, BigDecimal.ROUND_HALF_EVEN);
         return total.toString();
     }
 
     public static void main(String[] args) {
-        System.err.println(devide("2","12"));
+        System.err.println(divide("2","12"));
     }
 
     /**

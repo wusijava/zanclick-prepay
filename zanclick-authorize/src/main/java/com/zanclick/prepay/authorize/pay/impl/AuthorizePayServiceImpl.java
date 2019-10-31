@@ -9,6 +9,7 @@ import com.zanclick.prepay.authorize.enums.Constants;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.authorize.service.*;
 import com.zanclick.prepay.authorize.util.AuthorizePayUtil;
+import com.zanclick.prepay.authorize.util.MoneyUtil;
 import com.zanclick.prepay.authorize.vo.*;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
@@ -104,11 +105,16 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         result.setOutTradeNo(dto.getOutTradeNo());
-        result.setTradeNo(dto.getTradeNo());
-        AuthorizeOrder order = queryByOrderNoOrOutTradeNo(dto.getTradeNo(), dto.getOutTradeNo());
+        result.setOrderNo(dto.getOrderNo());
+        AuthorizeOrder order = queryByOrderNoOrOutTradeNo(dto.getOrderNo(), dto.getOutTradeNo());
         if (order == null || !order.isPayed()) {
             String message = order == null ? "交易订单号有误" : "订单状态异常，无法结算";
             result.setMessage(message);
+            result.setFail();
+            return result;
+        }
+        if(MoneyUtil.largeMoney(dto.getAmount(),order.getMoney())){
+            result.setMessage("结算金额超出限制");
             result.setFail();
             return result;
         }
@@ -118,7 +124,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             result.setFail();
             return result;
         }
-        trade = createSupplyChainTrade(order);
+        trade = createSupplyChainTrade(dto,order);
         if (trade.isFail()) {
             result.setMessage(trade.getFailReason());
             result.setFail();
@@ -147,10 +153,16 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             result.setFail();
             return result;
         }
-        String money = dto.getAmount();
+        String refundMoney = MoneyUtil.formatMoney(order.getRefundMoney());
+        refundMoney = MoneyUtil.add(refundMoney,dto.getAmount());
+        if (MoneyUtil.largeMoney(refundMoney,order.getMoney())){
+            result.setMessage(desc+"金额超出限制");
+            result.setFail();
+            return result;
+        }
         AuthorizeRefundOrder refundOrder = authorizeRefundOrderService.queryByOutRequestNo(dto.getOutRequestNo());
         if (refundOrder == null){
-            refundOrder = authorizeRefundOrderService.createRefundOrder(money,order.getOrderNo(),dto.getOutRequestNo(),order.getAuthNo(),dto.getType(),dto.getReason());
+            refundOrder = authorizeRefundOrderService.createRefundOrder(dto.getAmount(),order.getOrderNo(),dto.getOutRequestNo(),order.getAuthNo(),dto.getType(),dto.getReason());
         }else {
             if (refundOrder.isSuccess()){
                 result.setRequestNo(refundOrder.getRequestNo());
@@ -191,8 +203,10 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         }
         //TODO 这里需要处理一下金额信息
         authorizeRefundOrderService.refundSuccess(refundOrder);
-        order.setState(AuthorizeOrder.State.settled.getCode());
-        authorizeOrderService.handleAuthorizeOrder(order);
+        if (MoneyUtil.equal(refundMoney,order.getMoney())){
+            order.setState(AuthorizeOrder.State.settled.getCode());
+            authorizeOrderService.handleAuthorizeOrder(order);
+        }
         result.setSuccess();
         result.setRequestNo(refundOrder.getRequestNo());
         result.setOutRequestNo(refundOrder.getOutRequestNo());
@@ -509,9 +523,9 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
      * @param order
      * @return
      */
-    private SupplyChainTrade createSupplyChainTrade(AuthorizeOrder order) {
+    private SupplyChainTrade createSupplyChainTrade(SettleDTO dto, AuthorizeOrder order) {
         SupplyChainTrade trade = new SupplyChainTrade();
-        trade.setAmount(order.getMoney());
+        trade.setAmount(dto.getAmount());
         trade.setAuthNo(order.getAuthNo());
         trade.setCreateTime(new Date());
         trade.setFqNum(order.getNum());

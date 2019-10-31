@@ -80,12 +80,6 @@ public class AuthorizeOrderServiceImpl extends BaseMybatisServiceImpl<AuthorizeO
         if (order.isSettled()) {
             this.updateById(order);
         }
-
-        if (order.isUnPay()) {
-            return;
-        }
-        if (order.isPayed() || order.isFail()) {
-        }
     }
 
     @Override

@@ -10,6 +10,7 @@
         <result column="timeout" property="timeout" jdbcType="VARCHAR"/>
         <result column="qr_code_url" property="qrCodeUrl" jdbcType="VARCHAR"/>
         <result column="money" property="money" jdbcType="VARCHAR"/>
+        <result column="refund_money" property="refundMoney" jdbcType="VARCHAR"/>
         <result column="fee" property="fee" jdbcType="VARCHAR"/>
         <result column="num" property="num" jdbcType="INTEGER"/>
         <result column="deal_type" property="dealType" jdbcType="INTEGER"/>
@@ -42,6 +43,7 @@
             `timeout`,
             `qr_code_url`,
             `money`,
+            `refund_money`,
             `fee`,
             `num`,
             `deal_type`,
@@ -89,6 +91,9 @@
                 </if>
                 <if test="money != null and money != ''">
                     AND `money`=#{money}
+                </if>
+                <if test="refundMoney != null and refundMoney != ''">
+                    AND `refund_money`=#{refundMoney}
                 </if>
                 <if test="fee != null and fee != ''">
                     AND `fee`=#{fee}
@@ -190,6 +195,7 @@
         `timeout`,
         `qr_code_url`,
         `money`,
+        `refund_money`,
         `fee`,
         `num`,
         `deal_type`,
@@ -220,6 +226,7 @@
         #{timeout},
         #{qrCodeUrl},
         #{money},
+        #{refundMoney},
         #{fee},
         #{num},
         #{dealType},
@@ -255,6 +262,7 @@
         `timeout`,
         `qr_code_url`,
         `money`,
+        `refund_money`,
         `fee`,
         `num`,
         `deal_type`,
@@ -287,6 +295,7 @@
             #{cm.timeout},
             #{cm.qrCodeUrl},
             #{cm.money},
+            #{cm.refundMoney},
             #{cm.fee},
             #{cm.num},
             #{cm.dealType},
@@ -375,6 +384,9 @@
             </if>
             <if test="money != null and money != ''">
                 `money`=#{money},
+            </if>
+            <if test="refundMoney != null and refundMoney != ''">
+                `refund_money`=#{refundMoney},
             </if>
             <if test="fee != null and fee != ''">
                 `fee`=#{fee},

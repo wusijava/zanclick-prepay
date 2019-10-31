@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class SettleResult extends ResponseParam {
 
-    private String tradeNo;
+    private String orderNo;
 
     private String outTradeNo;
 
