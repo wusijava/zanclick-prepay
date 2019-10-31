@@ -15,6 +15,7 @@ import com.zanclick.prepay.common.api.client.RestHttpClient;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.common.utils.DateUtil;
+import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.entity.SettleOrder;
 import com.zanclick.prepay.order.mapper.PayOrderMapper;
@@ -40,8 +41,6 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     @Autowired
     private PayOrderMapper payOrderMapper;
-    @Autowired
-    private AuthorizeOrderService authorizeOrderService;
     @Autowired
     private AuthorizePayService authorizePayService;
     @Autowired
@@ -78,15 +77,14 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void handleSuccess(AuthorizeOrder order) {
-        authorizeOrderService.handleAuthorizeOrder(order);
-        PayOrder payOrder = payOrderMapper.selectByOutTradeNo(order.getOutTradeNo());
-        if (order == null) {
-            log.error("交易订单异常:{}", order.getOrderNo());
+    public void handleSuccess(String outTradeNo) {
+        PayOrder payOrder = payOrderMapper.selectByOutTradeNo(outTradeNo);
+        if (payOrder == null) {
+            log.error("交易订单异常:{}", outTradeNo);
             return;
         }
-        order.setState(PayOrder.State.payed.getCode());
-        order.setFinishTime(new Date());
+        payOrder.setState(PayOrder.State.payed.getCode());
+        payOrder.setFinishTime(new Date());
         handlePayOrder(payOrder);
     }
 
@@ -94,7 +92,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     public void sendMessage(PayOrder order) {
         String reason = sendSuccessMessage(order);
         if (reason == null) {
-            settle(order.getRequestNo(), order.getSettleAmount(), order.getMerchantNo());
+            settle(order.getRequestNo(), order.getOutTradeNo(), order.getSettleAmount(), order.getMerchantNo());
         } else {
             asyncSendMessage(order);
         }
@@ -148,7 +146,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
                     }
                     reason = sendSuccessMessage(order);
                     if (reason == null) {
-                        settle(order.getRequestNo(), order.getSettleAmount(), order.getMerchantNo());
+                        settle(order.getRequestNo(), order.getOutTradeNo(),order.getSettleAmount(), order.getMerchantNo());
                     }
                 }
                 if (reason != null) {
@@ -173,7 +171,6 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         order.setReason(reason);
         order.setState(state);
         settleOrderService.insert(order);
-        //TODO 需要考虑一下相关垫资相关问题
     }
 
 
@@ -183,18 +180,20 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
      * @param amount
      * @param merchantNo
      * @param requestNo
+     * @param outTradeNo
      */
-    private void settle(String requestNo, String amount, String merchantNo) {
+    private void settle(String requestNo,String outTradeNo, String amount, String merchantNo) {
         AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(merchantNo);
         if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
             createSettleOrder(requestNo, null, SettleOrder.State.today_sign.getCode());
         } else {
             SettleDTO dto = new SettleDTO();
             dto.setAmount(amount);
-            dto.setOutTradeNo(requestNo);
+            dto.setOutTradeNo(outTradeNo);
             SettleResult settleResult = authorizePayService.settle(dto);
             if (settleResult.isSuccess()) {
-                createSettleOrder(requestNo, null, SettleOrder.State.settle_wait.getCode());
+                createSettleOrder(requestNo, "等待结算", SettleOrder.State.settle_wait.getCode());
+                RedisUtil.lSet("settle",requestNo);
             } else {
                 createSettleOrder(requestNo, settleResult.getMessage(), SettleOrder.State.settle_fail.getCode());
             }

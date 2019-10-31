@@ -73,7 +73,8 @@ public class AuthorizeNotifyController extends BaseController {
                 order.setBuyerId(params.get("payer_user_id"));
                 order.setBuyerNo(params.get("payer_logon_id"));
                 order.setState(AuthorizeOrder.State.payed.getCode());
-                payOrderService.handleSuccess(order);
+                authorizeOrderService.handleAuthorizeOrder(order);
+                payOrderService.handleSuccess(order.getOutTradeNo());
             }
         } catch (Exception e) {
             log.error("处理结果失败{}", e);

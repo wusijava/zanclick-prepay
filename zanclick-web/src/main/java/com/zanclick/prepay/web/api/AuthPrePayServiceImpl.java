@@ -8,6 +8,7 @@ import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.entity.SettleRate;
 import com.zanclick.prepay.order.service.PayOrderService;
@@ -112,6 +113,7 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         payOrder.setCreateTime(new Date());
         payOrder.setMerchantNo(pay.getMerchantNo());
         payOrder.setOutOrderNo(pay.getOutOrderNo());
+        payOrder.setOutTradeNo(StringUtils.getTradeNo());
         payOrder.setProvince(pay.getProvince());
         payOrder.setCity(pay.getCity());
         payOrder.setState(PayOrder.State.wait.getCode());
