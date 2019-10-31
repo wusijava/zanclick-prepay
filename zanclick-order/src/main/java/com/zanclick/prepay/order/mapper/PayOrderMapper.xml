@@ -3,17 +3,20 @@
 <mapper namespace="com.zanclick.prepay.order.mapper.PayOrderMapper">
     <resultMap id="BaseResultMap" type="com.zanclick.prepay.order.entity.PayOrder">
         <id column="id" property="id" jdbcType="BIGINT"/>
-        <result column="package_no" property="packageNo" jdbcType="VARCHAR"/>
         <result column="app_id" property="appId" jdbcType="VARCHAR"/>
         <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
+        <result column="package_no" property="packageNo" jdbcType="VARCHAR"/>
         <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
         <result column="out_order_no" property="outOrderNo" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="VARCHAR"/>
+        <result column="settle_amount" property="settleAmount" jdbcType="VARCHAR"/>
+        <result column="each_money" property="eachMoney" jdbcType="VARCHAR"/>
+        <result column="first_money" property="firstMoney" jdbcType="VARCHAR"/>
+        <result column="num" property="num" jdbcType="INTEGER"/>
         <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR"/>
         <result column="province" property="province" jdbcType="VARCHAR"/>
         <result column="city" property="city" jdbcType="VARCHAR"/>
-        <result column="amount" property="amount" jdbcType="VARCHAR"/>
         <result column="title" property="title" jdbcType="VARCHAR"/>
-        <result column="num" property="num" jdbcType="INTEGER"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
         <result column="state" property="state" jdbcType="INTEGER"/>
@@ -22,17 +25,20 @@
     <sql id="table">pay_order</sql>
     <sql id="Base_Column_List">
             `id`,
-            `package_no`,
             `app_id`,
             `merchant_no`,
+            `package_no`,
             `order_no`,
             `out_order_no`,
+            `amount`,
+            `settle_amount`,
+            `each_money`,
+            `first_money`,
+            `num`,
             `phone_number`,
             `province`,
             `city`,
-            `amount`,
             `title`,
-            `num`,
             `create_time`,
             `finish_time`,
             `state`
@@ -43,20 +49,35 @@
                 <if test="id != null">
                     AND `id`=#{id}
                 </if>
-                <if test="packageNo != null and packageNo != ''">
-                    AND `package_no`=#{packageNo}
-                </if>
                 <if test="appId != null and appId != ''">
                     AND `app_id`=#{appId}
                 </if>
                 <if test="merchantNo != null and merchantNo != ''">
                     AND `merchant_no`=#{merchantNo}
                 </if>
+                <if test="packageNo != null and packageNo != ''">
+                    AND `package_no`=#{packageNo}
+                </if>
                 <if test="orderNo != null and orderNo != ''">
                     AND `order_no`=#{orderNo}
                 </if>
                 <if test="outOrderNo != null and outOrderNo != ''">
                     AND `out_order_no`=#{outOrderNo}
+                </if>
+                <if test="amount != null and amount != ''">
+                    AND `amount`=#{amount}
+                </if>
+                <if test="settleAmount != null and settleAmount != ''">
+                    AND `settle_amount`=#{settleAmount}
+                </if>
+                <if test="eachMoney != null and eachMoney != ''">
+                    AND `each_money`=#{eachMoney}
+                </if>
+                <if test="firstMoney != null and firstMoney != ''">
+                    AND `first_money`=#{firstMoney}
+                </if>
+                <if test="num != null">
+                    AND `num`=#{num}
                 </if>
                 <if test="phoneNumber != null and phoneNumber != ''">
                     AND `phone_number`=#{phoneNumber}
@@ -67,14 +88,8 @@
                 <if test="city != null and city != ''">
                     AND `city`=#{city}
                 </if>
-                <if test="amount != null and amount != ''">
-                    AND `amount`=#{amount}
-                </if>
                 <if test="title != null and title != ''">
                     AND `title`=#{title}
-                </if>
-                <if test="num != null">
-                    AND `num`=#{num}
                 </if>
                 <if test="createTime != null">
                     AND `create_time`=#{createTime}
@@ -118,34 +133,40 @@
         <include refid="table"/>
         (
         `id`,
-        `package_no`,
         `app_id`,
         `merchant_no`,
+        `package_no`,
         `order_no`,
         `out_order_no`,
+        `amount`,
+        `settle_amount`,
+        `each_money`,
+        `first_money`,
+        `num`,
         `phone_number`,
         `province`,
         `city`,
-        `amount`,
         `title`,
-        `num`,
         `create_time`,
         `finish_time`,
         `state`
         )
         VALUES(
         #{id},
-        #{packageNo},
         #{appId},
         #{merchantNo},
+        #{packageNo},
         #{orderNo},
         #{outOrderNo},
+        #{amount},
+        #{settleAmount},
+        #{eachMoney},
+        #{firstMoney},
+        #{num},
         #{phoneNumber},
         #{province},
         #{city},
-        #{amount},
         #{title},
-        #{num},
         #{createTime},
         #{finishTime},
         #{state}
@@ -157,17 +178,20 @@
         <include refid="table"/>
         (
         `id`,
-        `package_no`,
         `app_id`,
         `merchant_no`,
+        `package_no`,
         `order_no`,
         `out_order_no`,
+        `amount`,
+        `settle_amount`,
+        `each_money`,
+        `first_money`,
+        `num`,
         `phone_number`,
         `province`,
         `city`,
-        `amount`,
         `title`,
-        `num`,
         `create_time`,
         `finish_time`,
         `state`
@@ -176,17 +200,20 @@
         <foreach collection="list" item="cm" index="index" separator=",">
             (
             #{cm.id},
-            #{cm.packageNo},
             #{cm.appId},
             #{cm.merchantNo},
+            #{cm.packageNo},
             #{cm.orderNo},
             #{cm.outOrderNo},
+            #{cm.amount},
+            #{cm.settleAmount},
+            #{cm.eachMoney},
+            #{cm.firstMoney},
+            #{cm.num},
             #{cm.phoneNumber},
             #{cm.province},
             #{cm.city},
-            #{cm.amount},
             #{cm.title},
-            #{cm.num},
             #{cm.createTime},
             #{cm.finishTime},
             #{cm.state}
@@ -222,20 +249,35 @@
         UPDATE
         <include refid="table"/>
         <set>
-            <if test="packageNo != null and packageNo != ''">
-                `package_no`=#{packageNo},
-            </if>
             <if test="appId != null and appId != ''">
                 `app_id`=#{appId},
             </if>
             <if test="merchantNo != null and merchantNo != ''">
                 `merchant_no`=#{merchantNo},
             </if>
+            <if test="packageNo != null and packageNo != ''">
+                `package_no`=#{packageNo},
+            </if>
             <if test="orderNo != null and orderNo != ''">
                 `order_no`=#{orderNo},
             </if>
             <if test="outOrderNo != null and outOrderNo != ''">
                 `out_order_no`=#{outOrderNo},
+            </if>
+            <if test="amount != null and amount != ''">
+                `amount`=#{amount},
+            </if>
+            <if test="settleAmount != null and settleAmount != ''">
+                `settle_amount`=#{settleAmount},
+            </if>
+            <if test="eachMoney != null and eachMoney != ''">
+                `each_money`=#{eachMoney},
+            </if>
+            <if test="firstMoney != null and firstMoney != ''">
+                `first_money`=#{firstMoney},
+            </if>
+            <if test="num != null">
+                `num`=#{num},
             </if>
             <if test="phoneNumber != null and phoneNumber != ''">
                 `phone_number`=#{phoneNumber},
@@ -246,14 +288,8 @@
             <if test="city != null and city != ''">
                 `city`=#{city},
             </if>
-            <if test="amount != null and amount != ''">
-                `amount`=#{amount},
-            </if>
             <if test="title != null and title != ''">
                 `title`=#{title},
-            </if>
-            <if test="num != null">
-                `num`=#{num},
             </if>
             <if test="createTime != null">
                 `create_time`=#{createTime},

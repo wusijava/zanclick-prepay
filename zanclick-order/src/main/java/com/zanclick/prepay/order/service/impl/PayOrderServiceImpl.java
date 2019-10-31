@@ -33,7 +33,6 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     @Autowired
     private AuthorizeOrderService authorizeOrderService;
 
-
     @Override
     protected BaseMapper<PayOrder, Long> getBaseMapper() {
         return payOrderMapper;

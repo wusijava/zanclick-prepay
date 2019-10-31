@@ -1,7 +1,7 @@
 package com.zanclick.prepay.order;
 
-import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.common.generator.CodeGenerator;
+import com.zanclick.prepay.order.entity.SettleRate;
 
 /**
  * @author lvlu
@@ -10,11 +10,10 @@ import com.zanclick.prepay.common.generator.CodeGenerator;
 public class Main {
 
     public static void main(String[] args) {
-
         String basePack = Main.class.getPackage().getName();
         CodeGenerator generator = new CodeGenerator();
-//        generator.generateDao(basePack,PayOrder.class);
-        generator.generateMybatisXml(basePack, PayOrder.class);
-//        generator.generateService(basePack,PayOrder.class);
+        generator.generateMybatisXml(basePack, SettleRate.class);
+        generator.generateService(basePack,SettleRate.class);
+        generator.generateDao(basePack,SettleRate.class);
     }
 }

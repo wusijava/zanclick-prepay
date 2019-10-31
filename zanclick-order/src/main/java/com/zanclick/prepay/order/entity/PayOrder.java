@@ -46,10 +46,19 @@ public class PayOrder implements Identifiable<Long> {
      */
     private String amount;
 
+    /**
+     * 结算金额
+     */
     private String settleAmount;
 
+    /**
+     * 每期应还金额
+     */
     private String eachMoney;
 
+    /**
+     * 首期应还金额
+     */
     private String firstMoney;
 
     /**

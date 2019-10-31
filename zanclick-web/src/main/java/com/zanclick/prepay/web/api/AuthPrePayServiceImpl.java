@@ -1,5 +1,6 @@
 package com.zanclick.prepay.web.api;
 
+import com.zanclick.prepay.authorize.util.MoneyUtil;
 import com.zanclick.prepay.authorize.vo.AuthorizePay;
 import com.zanclick.prepay.authorize.dto.PayResult;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
@@ -8,7 +9,9 @@ import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
+import com.zanclick.prepay.order.entity.SettleRate;
 import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.order.service.SettleRateService;
 import com.zanclick.prepay.setmeal.entity.SetMeal;
 import com.zanclick.prepay.setmeal.service.SetMealService;
 import com.zanclick.prepay.web.dto.ApiPay;
@@ -35,6 +38,8 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
     private SetMealService setMealService;
     @Autowired
     private PayOrderService payOrderService;
+    @Autowired
+    private SettleRateService settleRateService;
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
@@ -111,6 +116,14 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         payOrder.setCity(pay.getCity());
         payOrder.setState(PayOrder.State.wait.getCode());
         payOrder.setPhoneNumber(pay.getPhoneNumber());
+        SettleRate rate = settleRateService.queryByAppId(payOrder.getAppId());
+        String settleAmount = MoneyUtil.divide(payOrder.getAmount(),rate.getRate());
+        payOrder.setSettleAmount(settleAmount);
+        String eachAmount = MoneyUtil.divide(payOrder.getAmount(),payOrder.getNum().toString());
+        String amount = MoneyUtil.multiply(eachAmount,String.valueOf(payOrder.getNum()-1));
+        String firstAmount = MoneyUtil.subtract(payOrder.getAmount(),amount);
+        payOrder.setEachMoney(eachAmount);
+        payOrder.setFirstMoney(firstAmount);
         payOrderService.insert(payOrder);
         return payOrder;
     }
@@ -123,7 +136,6 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
      * @return
      */
     private ApiPayResult getPayResult(PayOrder order,PayResult result) {
-        //TODO 调整
         ApiPayResult payResult = new ApiPayResult();
         payResult.setState(order.getState());
         payResult.setTotalMoney(order.getAmount());
@@ -132,7 +144,7 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         if (DataUtil.isNotEmpty(result)){
             payResult.setOrderNo(result.getOrderNo());
             payResult.setQrCodeUrl(result.getQrCodeUrl());
-            payResult.setEachMoney(result.getEachMoney());
+            payResult.setEachMoney(order.getEachMoney());
         }
         if (order.isPayed()){
             order.setOrderNo(order.getOrderNo());

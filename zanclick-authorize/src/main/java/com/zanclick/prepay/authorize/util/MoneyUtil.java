@@ -236,7 +236,7 @@ public class MoneyUtil {
     }
 
     public static void main(String[] args) {
-        System.err.println(divide("2","12"));
+        System.err.println(divide("100","12"));
     }
 
     /**
