@@ -1,8 +1,8 @@
 package com.zanclick.prepay.web.api.h5;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.authorize.dto.Refund;
-import com.zanclick.prepay.authorize.dto.RefundResult;
+import com.zanclick.prepay.authorize.vo.Refund;
+import com.zanclick.prepay.authorize.vo.RefundResult;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;

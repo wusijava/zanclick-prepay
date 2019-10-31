@@ -1,6 +1,6 @@
 package com.zanclick.prepay.web.api;
 
-import com.zanclick.prepay.authorize.dto.PayDTO;
+import com.zanclick.prepay.authorize.vo.PayDTO;
 import com.zanclick.prepay.authorize.dto.PayResult;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;

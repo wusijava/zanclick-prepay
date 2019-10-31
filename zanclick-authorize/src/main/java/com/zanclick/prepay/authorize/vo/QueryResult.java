@@ -1,5 +1,6 @@
-package com.zanclick.prepay.authorize.dto;
+package com.zanclick.prepay.authorize.vo;
 
+import com.zanclick.prepay.authorize.vo.AuthorizeResponseParam;
 import lombok.Data;
 
 /**

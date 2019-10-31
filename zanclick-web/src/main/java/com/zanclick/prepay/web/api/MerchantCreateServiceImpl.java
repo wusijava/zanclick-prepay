@@ -1,7 +1,6 @@
 package com.zanclick.prepay.web.api;
 
-import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.authorize.dto.RegisterMerchant;
+import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.web.dto.ApiRegisterMerchant;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.common.entity.ResponseParam;

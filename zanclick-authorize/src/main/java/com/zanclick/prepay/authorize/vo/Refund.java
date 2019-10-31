@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.dto;
+package com.zanclick.prepay.authorize.vo;
 
 import com.zanclick.prepay.common.entity.RequestParam;
 import lombok.Data;

@@ -1,8 +1,8 @@
 package com.zanclick.prepay.web.api;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.authorize.dto.QueryDTO;
-import com.zanclick.prepay.authorize.dto.QueryResult;
+import com.zanclick.prepay.authorize.vo.QueryDTO;
+import com.zanclick.prepay.authorize.vo.QueryResult;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;

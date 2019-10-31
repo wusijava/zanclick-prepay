@@ -1,15 +1,13 @@
 package com.zanclick.prepay.authorize.service.impl;
 
 import com.alipay.api.response.MybankCreditSupplychainFactoringSupplierCreateResponse;
-import com.zanclick.prepay.authorize.dto.MerchantResult;
-import com.zanclick.prepay.authorize.dto.MerchantUpdateDTO;
-import com.zanclick.prepay.authorize.dto.RegisterMerchant;
 import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.mapper.AuthorizeMerchantMapper;
 import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.util.SupplyChainUtils;
+import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.authorize.vo.SuppilerCreate;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
@@ -79,13 +77,6 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
     public AuthorizeMerchant queryMerchant(String merchantNo) {
         return authorizeMerchantMapper.selectByMerchantNo(merchantNo);
     }
-
-    @Override
-    public MerchantResult updateMerchant(MerchantUpdateDTO dto) {
-        MerchantResult result = new MerchantResult();
-        return result;
-    }
-
 
     /**
      * 查询是否有正在审核中的商户

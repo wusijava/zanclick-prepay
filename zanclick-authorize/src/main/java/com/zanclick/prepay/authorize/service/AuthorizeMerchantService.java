@@ -1,10 +1,8 @@
 package com.zanclick.prepay.authorize.service;
 
-import com.zanclick.prepay.common.base.service.BaseService;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
-import com.zanclick.prepay.authorize.dto.RegisterMerchant;
-import com.zanclick.prepay.authorize.dto.MerchantResult;
-import com.zanclick.prepay.authorize.dto.MerchantUpdateDTO;
+import com.zanclick.prepay.authorize.vo.RegisterMerchant;
+import com.zanclick.prepay.common.base.service.BaseService;
 
 /**
  * 预授权商户
@@ -31,12 +29,4 @@ public interface AuthorizeMerchantService extends BaseService<AuthorizeMerchant,
      * @return
      */
     AuthorizeMerchant queryMerchant(String merchantNo);
-
-    /**
-     * 修改预授权商户
-     *
-     * @param dto
-     * @return
-     */
-    MerchantResult updateMerchant(MerchantUpdateDTO dto);
 }
