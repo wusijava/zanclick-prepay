@@ -17,7 +17,7 @@ public interface AuthorizePayService {
      * @param dto
      * @return
      */
-    PayResult prePay(PayDTO dto);
+    PayResult prePay(AuthorizePay dto);
 
 
     /**

@@ -57,7 +57,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
     private String prePay;
 
     @Override
-    public PayResult prePay(PayDTO dto) {
+    public PayResult prePay(AuthorizePay dto) {
         PayResult result = new PayResult();
         String check = dto.check();
         if (check != null) {
@@ -439,7 +439,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
      * @param merchant 参数
      * @return
      */
-    private AuthorizeOrder createAuthorizeOrder(PayDTO dto, AuthorizeMerchant merchant) {
+    private AuthorizeOrder createAuthorizeOrder(AuthorizePay dto, AuthorizeMerchant merchant) {
         AuthorizeConfiguration configuration = authorizeConfigurationService.queryDefaultConfiguration();
         AuthorizeOrder order = new AuthorizeOrder();
         order.setMoney(dto.getAmount());
@@ -447,6 +447,8 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setMerchantNo(dto.getMerchantNo());
         order.setTimeout(getTimeOut());
         order.setTitle(dto.getDesc());
+        order.setFee(dto.getFee());
+        order.setNum(dto.getNum());
         order.setStoreNo(merchant.getStoreNo());
         order.setDealType(AuthorizeOrder.DealType.SCAN.getCode());
         order.setPayWay(getPayWay(dto.getPayWay()));

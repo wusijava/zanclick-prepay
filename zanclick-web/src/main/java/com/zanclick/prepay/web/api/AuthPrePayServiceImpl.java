@@ -1,6 +1,6 @@
 package com.zanclick.prepay.web.api;
 
-import com.zanclick.prepay.authorize.vo.PayDTO;
+import com.zanclick.prepay.authorize.vo.AuthorizePay;
 import com.zanclick.prepay.authorize.dto.PayResult;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
@@ -146,8 +146,8 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
      * @param order
      * @return
      */
-    private PayDTO getPay(PayOrder order) {
-        PayDTO dto = new PayDTO();
+    private AuthorizePay getPay(PayOrder order) {
+        AuthorizePay dto = new AuthorizePay();
         dto.setMerchantNo(order.getMerchantNo());
         dto.setAmount(order.getAmount());
         dto.setDesc(order.getTitle());

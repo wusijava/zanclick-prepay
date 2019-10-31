@@ -23,11 +23,6 @@ public class PayResult extends AuthorizeResponseParam {
     private String outTradeNo;
 
     /**
-     * 订单号（支付宝产生）
-     * */
-    private String thirdNo;
-
-    /**
      * 二维码链接（支付宝产生）
      * */
     private String qrCodeUrl;

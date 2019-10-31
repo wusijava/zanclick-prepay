@@ -98,20 +98,11 @@ public class AuthorizeOrder implements Identifiable<Long> {
     public Boolean isSettled(){
         return  State.settled.getCode().equals(state) ;
     }
-
-    public Boolean isSettling(){
-        return State.settling.getCode().equals(state);
-    }
-
     public Boolean isUnPay(){
         return State.unPay.getCode().equals(state) || State.paying.getCode().equals(state);
     }
 
     public Boolean isFail(){ return State.closed.getCode().equals(state) || State.failed.getCode().equals(state);}
-
-    public Boolean isRefund(){
-        return State.refund.getCode().equals(state);
-    }
 
     public enum State{
         closed(-2,"交易关闭"),
@@ -119,9 +110,7 @@ public class AuthorizeOrder implements Identifiable<Long> {
         unPay(0,"等待支付"),
         paying(2,"支付中"),
         payed(1,"支付成功"),
-        settling(3,"结算中"),
-        settled(4,"结算成功"),
-        refund(5,"已解冻");
+        settled(4,"结算成功");
 
         private Integer code;
         private String desc;

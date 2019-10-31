@@ -77,13 +77,7 @@ public class AuthorizeOrderServiceImpl extends BaseMybatisServiceImpl<AuthorizeO
             order.setFinishTime(new Date());
             this.updateById(order);
         }
-        if (order.isSettling()) {
-            this.updateById(order);
-        }
         if (order.isSettled()) {
-            this.updateById(order);
-        }
-        if (order.isRefund()) {
             this.updateById(order);
         }
 
