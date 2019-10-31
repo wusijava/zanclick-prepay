@@ -14,7 +14,7 @@ public class PayResult extends AuthorizeResponseParam {
     /**
      * 订单号（我方产生）
      * */
-    private String tradeNo;
+    private String orderNo;
 
     /**
      * 订单号（第三方产生）

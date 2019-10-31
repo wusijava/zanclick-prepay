@@ -40,7 +40,7 @@ public class AuthorizeRefundOrderServiceImpl extends BaseMybatisServiceImpl<Auth
     }
 
     @Override
-    public AuthorizeRefundOrder createRefundOrder(String amount,String orderNo,String outRequestNo,String reason) {
+    public AuthorizeRefundOrder createRefundOrder(String amount,String orderNo,String outRequestNo,String authNo,Integer type,String reason) {
         AuthorizeRefundOrder refund = new AuthorizeRefundOrder();
         refund.setCreateTime(new Date());
         refund.setAmount(amount);
@@ -49,6 +49,7 @@ public class AuthorizeRefundOrderServiceImpl extends BaseMybatisServiceImpl<Auth
         refund.setOutRequestNo(outRequestNo);
         refund.setRequestNo(StringUtils.getTradeNo());
         refund.setState(AuthorizeRefundOrder.State.wait.getCode());
+        refund.setType(type);
         getBaseMapper().insert(refund);
         return refund;
     }
@@ -56,14 +57,20 @@ public class AuthorizeRefundOrderServiceImpl extends BaseMybatisServiceImpl<Auth
     @Override
     public void refundFail(AuthorizeRefundOrder refund) {
         refund.setFinishTime(new Date());
-        refund.setState(-1);
+        refund.setState(AuthorizeRefundOrder.State.fail.getCode());
         this.updateById(refund);
     }
 
     @Override
     public void refundSuccess(AuthorizeRefundOrder refund) {
         refund.setFinishTime(new Date());
-        refund.setState(1);
+        refund.setState(AuthorizeRefundOrder.State.success.getCode());
+        this.updateById(refund);
+    }
+
+    @Override
+    public void refund(AuthorizeRefundOrder refund) {
+        refund.setState(AuthorizeRefundOrder.State.refund.getCode());
         this.updateById(refund);
     }
 }

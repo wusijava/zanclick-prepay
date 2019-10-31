@@ -5,6 +5,7 @@ import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrderRefundRecord;
 import com.zanclick.prepay.authorize.mapper.AuthorizeOrderRefundRecordMapper;
 import com.zanclick.prepay.authorize.service.AuthorizeOrderRefundRecordService;
+import com.zanclick.prepay.common.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,14 +35,25 @@ public class AuthorizeOrderRefundRecordServiceImpl extends BaseMybatisServiceImp
     }
 
     @Override
-    public AuthorizeOrderRefundRecord createRefundOrder(String amount, String tradeNo, String refundNo, String reason) {
+    public AuthorizeOrderRefundRecord queryByOutRefundNo(String outRefundNo) {
+        return authorizeOrderRefundRecordMapper.selectByOutRefundNo(outRefundNo);
+    }
+
+    @Override
+    public AuthorizeOrderRefundRecord queryByRequestNo(String requestNo) {
+        return authorizeOrderRefundRecordMapper.selectByRequestNo(requestNo);
+    }
+
+    @Override
+    public AuthorizeOrderRefundRecord createRefundOrder(String amount, String requestNo, String outRefundNo, String reason) {
         AuthorizeOrderRefundRecord refund = new AuthorizeOrderRefundRecord();
         refund.setCreateTime(new Date());
         refund.setAmount(amount);
-        refund.setTradeNo(tradeNo);
+        refund.setRequestNo(requestNo);
         refund.setRefundReason(reason);
-        refund.setRefundNo(refundNo);
-        refund.setState(0);
+        refund.setOutRefundNo(outRefundNo);
+        refund.setRefundNo(StringUtils.getTradeNo());
+        refund.setState(AuthorizeOrderRefundRecord.State.wait.getCode());
         getBaseMapper().insert(refund);
         return refund;
     }
@@ -49,14 +61,14 @@ public class AuthorizeOrderRefundRecordServiceImpl extends BaseMybatisServiceImp
     @Override
     public void refundFail(AuthorizeOrderRefundRecord refund) {
         refund.setFinishTime(new Date());
-        refund.setState(-1);
+        refund.setState(AuthorizeOrderRefundRecord.State.fail.getCode());
         this.updateById(refund);
     }
 
     @Override
     public void refundSuccess(AuthorizeOrderRefundRecord refund) {
         refund.setFinishTime(new Date());
-        refund.setState(1);
+        refund.setState(AuthorizeOrderRefundRecord.State.success.getCode());
         this.updateById(refund);
     }
 }

@@ -21,11 +21,17 @@ public class PayRefundResult extends AuthorizeResponseParam {
     /**
      * 订单号 （自己生成）
      */
-    private String tradeNo;
+    private String orderNo;
+
+    private String requestNo;
+
+    private String outRequestNo;
 
     /**
      * 退款订单号 （第三方生成）
      */
+    private String outRefundNo;
+
     private String refundNo;
 
     /**

@@ -38,7 +38,7 @@ public class AuthPayQueryServiceImpl extends AbstractCommonService implements Ap
             verifyCipherJson(appId,cipherJson);
             ApiPayQuery query = parser(request,ApiPayQuery.class);
             QueryDTO dto = new QueryDTO();
-            dto.setTradeNo(query.getOrderNo());
+            dto.setOrderNo(query.getOrderNo());
             PayOrder order = payOrderService.queryByOrderNo(query.getOrderNo());
             if (DataUtil.isEmpty(order)){
                 param.setMessage("交易订号异常");

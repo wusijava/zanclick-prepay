@@ -4,6 +4,8 @@
     <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.AuthorizeRefundOrder">
             <id column="id" property="id" jdbcType="BIGINT"/>
             <result column="amount" property="amount" jdbcType="VARCHAR"/>
+            <result column="type" property="type" jdbcType="INTEGER"/>
+            <result column="auth_no" property="authNo" jdbcType="VARCHAR"/>
             <result column="out_request_no" property="outRequestNo" jdbcType="VARCHAR"/>
             <result column="request_no" property="requestNo" jdbcType="VARCHAR"/>
             <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
@@ -18,6 +20,8 @@
     <sql id="Base_Column_List">
             `id`,
             `amount`,
+            `type`,
+            `auth_no`,
             `out_request_no`,
             `request_no`,
             `order_no`,
@@ -35,6 +39,12 @@
                     </if>
                     <if test="amount != null and amount != ''">
                         AND `amount`=#{amount}
+                    </if>
+                    <if test="type != null">
+                        AND `type`=#{type}
+                    </if>
+                    <if test="authNo != null and authNo != ''">
+                        AND `auth_no`=#{authNo}
                     </if>
                     <if test="outRequestNo != null and outRequestNo != ''">
                         AND `out_request_no`=#{outRequestNo}
@@ -110,6 +120,8 @@
         (
             `id`,
             `amount`,
+            `type`,
+            `auth_no`,
             `out_request_no`,
             `request_no`,
             `order_no`,
@@ -122,6 +134,8 @@
         VALUES(
             #{id},
             #{amount},
+            #{type},
+            #{authNo},
             #{outRequestNo},
             #{requestNo},
             #{orderNo},
@@ -139,6 +153,8 @@
         (
             `id`,
             `amount`,
+            `type`,
+            `auth_no`,
             `out_request_no`,
             `request_no`,
             `order_no`,
@@ -153,6 +169,8 @@
             (
             #{cm.id},
             #{cm.amount},
+            #{cm.type},
+            #{cm.authNo},
             #{cm.outRequestNo},
             #{cm.requestNo},
             #{cm.orderNo},
@@ -179,6 +197,12 @@
         <set>
             <if test="amount != null and amount != ''">
                  `amount`=#{amount},
+            </if>
+            <if test="type != null">
+                 `type`=#{type},
+            </if>
+            <if test="authNo != null and authNo != ''">
+                 `auth_no`=#{authNo},
             </if>
             <if test="outRequestNo != null and outRequestNo != ''">
                  `out_request_no`=#{outRequestNo},

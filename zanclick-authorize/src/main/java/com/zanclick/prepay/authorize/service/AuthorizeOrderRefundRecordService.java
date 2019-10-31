@@ -20,15 +20,31 @@ public interface AuthorizeOrderRefundRecordService extends BaseService<Authorize
     AuthorizeOrderRefundRecord queryByRefundNo(String refundNo);
 
     /**
+     * 根据退款订单号查询退款订单
+     *
+     * @param outRefundNo
+     * @return
+     */
+    AuthorizeOrderRefundRecord queryByOutRefundNo(String outRefundNo);
+
+    /**
+     * 根据退款订单号查询退款订单
+     *
+     * @param requestNo
+     * @return
+     */
+    AuthorizeOrderRefundRecord queryByRequestNo(String requestNo);
+
+    /**
      * 创建退款订单
      *
-     * @param refundNo
-     * @param tradeNo
+     * @param requestNo
+     * @param outRefundNo
      * @param amount
      * @param reason
      * @return
      */
-    AuthorizeOrderRefundRecord createRefundOrder(String amount, String tradeNo, String refundNo, String reason);
+    AuthorizeOrderRefundRecord createRefundOrder(String amount, String requestNo, String outRefundNo, String reason);
 
     /**
      * 创建退款订单

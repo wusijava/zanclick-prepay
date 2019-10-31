@@ -28,12 +28,12 @@ public interface AuthorizePayService {
     SettleResult settle(SettleDTO dto);
 
     /**
-     * 解冻操作
+     * 退款操作（解冻/转支付）
      *
      * @param dto
      * @return
      */
-    FreezeResult unFreeze(UnFreezeDTO dto);
+    RefundResult refund(Refund dto);
 
     /**
      * 支付查询
@@ -53,26 +53,10 @@ public interface AuthorizePayService {
 
 
     /**
-     * 支付退款(解冻操作，对应退款状态)
-     *
-     * @param dto
-     * @return
-     */
-    RefundResult refund(RefundDTO dto);
-
-
-    /**
      * 转支付退款
      *
      * @param dto
      * @return
      */
     PayRefundResult payRefund(PayRefundDTO dto);
-    /**
-     * 转支付退款查询
-     *
-     * @param dto
-     * @return
-     */
-    RefundResult refundQuery(RefundDTO dto);
 }

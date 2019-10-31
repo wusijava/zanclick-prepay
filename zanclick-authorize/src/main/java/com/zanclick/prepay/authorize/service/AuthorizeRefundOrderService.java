@@ -33,11 +33,13 @@ public interface AuthorizeRefundOrderService extends BaseService<AuthorizeRefund
      * @param outRequestNo
      * @param orderNo
      * @param amount
+     * @param type
+     * @param authNo
      * @param reason
      *
      * @return
      */
-    AuthorizeRefundOrder createRefundOrder(String amount, String orderNo,String outRequestNo, String reason);
+    AuthorizeRefundOrder createRefundOrder(String amount, String orderNo,String outRequestNo,String authNo,Integer type, String reason);
 
     /**
      * 创建退款订单
@@ -56,4 +58,14 @@ public interface AuthorizeRefundOrderService extends BaseService<AuthorizeRefund
      * @return
      */
     void refundSuccess(AuthorizeRefundOrder refund);
+
+
+    /**
+     * 创建退款订单
+     *
+     * @param refund
+     *
+     * @return
+     */
+    void refund(AuthorizeRefundOrder refund);
 }

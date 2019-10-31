@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2019-7-8 15:49:20
  */
 @Data
-public class UnFreezeDTO extends RequestParam {
+public class Refund extends RequestParam {
 
     /**
      * 解冻/转支付 的金额

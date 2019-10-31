@@ -26,9 +26,11 @@ public class AuthorizeOrderRefundRecord implements Identifiable<Long> {
 
     private String amount;
 
-    private String tradeNo;
+    private String requestNo;
 
     private String refundNo;
+
+    private String outRefundNo;
 
     private Integer state;
 
