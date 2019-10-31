@@ -17,11 +17,6 @@ public class PayOrder implements Identifiable<Long> {
     private Long id;
 
     /**
-     * 套餐编码
-     */
-    private String packageNo;
-
-    /**
      * 应用ID
      */
     private String appId;
@@ -32,6 +27,11 @@ public class PayOrder implements Identifiable<Long> {
     private String merchantNo;
 
     /**
+     * 套餐编码
+     */
+    private String packageNo;
+
+    /**
      * 订单编号
      **/
     private String orderNo;
@@ -40,6 +40,22 @@ public class PayOrder implements Identifiable<Long> {
      * 外部编号
      **/
     private String outOrderNo;
+
+    /**
+     * 冻结金额
+     */
+    private String amount;
+
+    private String settleAmount;
+
+    private String eachMoney;
+
+    private String firstMoney;
+
+    /**
+     * 交易期数
+     */
+    private Integer num;
 
     /**
      * 套餐号码
@@ -57,19 +73,10 @@ public class PayOrder implements Identifiable<Long> {
     private String city;
 
     /**
-     * 冻结金额
-     */
-    private String amount;
-
-    /**
      * 套餐标题
      */
     private String title;
 
-    /**
-     * 交易期数
-     */
-    private Integer num;
 
     /**
      * 创建时间

@@ -2,21 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zanclick.prepay.order.mapper.PayOrderMapper">
     <resultMap id="BaseResultMap" type="com.zanclick.prepay.order.entity.PayOrder">
-            <id column="id" property="id" jdbcType="BIGINT"/>
-            <result column="package_no" property="packageNo" jdbcType="VARCHAR"/>
-            <result column="app_id" property="appId" jdbcType="VARCHAR"/>
-            <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
-            <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
-            <result column="out_order_no" property="outOrderNo" jdbcType="VARCHAR"/>
-            <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR"/>
-            <result column="province" property="province" jdbcType="VARCHAR"/>
-            <result column="city" property="city" jdbcType="VARCHAR"/>
-            <result column="amount" property="amount" jdbcType="VARCHAR"/>
-            <result column="title" property="title" jdbcType="VARCHAR"/>
-            <result column="num" property="num" jdbcType="INTEGER"/>
-            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-            <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
-            <result column="state" property="state" jdbcType="INTEGER"/>
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="package_no" property="packageNo" jdbcType="VARCHAR"/>
+        <result column="app_id" property="appId" jdbcType="VARCHAR"/>
+        <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
+        <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
+        <result column="out_order_no" property="outOrderNo" jdbcType="VARCHAR"/>
+        <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR"/>
+        <result column="province" property="province" jdbcType="VARCHAR"/>
+        <result column="city" property="city" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="num" property="num" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="table">pay_order</sql>
@@ -40,51 +40,51 @@
     <sql id="Base_Where_Clause">
         <where>
             <trim prefixOverrides="and">
-                    <if test="id != null">
-                        AND `id`=#{id}
-                    </if>
-                    <if test="packageNo != null and packageNo != ''">
-                        AND `package_no`=#{packageNo}
-                    </if>
-                    <if test="appId != null and appId != ''">
-                        AND `app_id`=#{appId}
-                    </if>
-                    <if test="merchantNo != null and merchantNo != ''">
-                        AND `merchant_no`=#{merchantNo}
-                    </if>
-                    <if test="orderNo != null and orderNo != ''">
-                        AND `order_no`=#{orderNo}
-                    </if>
-                    <if test="outOrderNo != null and outOrderNo != ''">
-                        AND `out_order_no`=#{outOrderNo}
-                    </if>
-                    <if test="phoneNumber != null and phoneNumber != ''">
-                        AND `phone_number`=#{phoneNumber}
-                    </if>
-                    <if test="province != null and province != ''">
-                        AND `province`=#{province}
-                    </if>
-                    <if test="city != null and city != ''">
-                        AND `city`=#{city}
-                    </if>
-                    <if test="amount != null and amount != ''">
-                        AND `amount`=#{amount}
-                    </if>
-                    <if test="title != null and title != ''">
-                        AND `title`=#{title}
-                    </if>
-                    <if test="num != null">
-                        AND `num`=#{num}
-                    </if>
-                    <if test="createTime != null">
-                        AND `create_time`=#{createTime}
-                    </if>
-                    <if test="finishTime != null">
-                        AND `finish_time`=#{finishTime}
-                    </if>
-                    <if test="state != null">
-                        AND `state`=#{state}
-                    </if>
+                <if test="id != null">
+                    AND `id`=#{id}
+                </if>
+                <if test="packageNo != null and packageNo != ''">
+                    AND `package_no`=#{packageNo}
+                </if>
+                <if test="appId != null and appId != ''">
+                    AND `app_id`=#{appId}
+                </if>
+                <if test="merchantNo != null and merchantNo != ''">
+                    AND `merchant_no`=#{merchantNo}
+                </if>
+                <if test="orderNo != null and orderNo != ''">
+                    AND `order_no`=#{orderNo}
+                </if>
+                <if test="outOrderNo != null and outOrderNo != ''">
+                    AND `out_order_no`=#{outOrderNo}
+                </if>
+                <if test="phoneNumber != null and phoneNumber != ''">
+                    AND `phone_number`=#{phoneNumber}
+                </if>
+                <if test="province != null and province != ''">
+                    AND `province`=#{province}
+                </if>
+                <if test="city != null and city != ''">
+                    AND `city`=#{city}
+                </if>
+                <if test="amount != null and amount != ''">
+                    AND `amount`=#{amount}
+                </if>
+                <if test="title != null and title != ''">
+                    AND `title`=#{title}
+                </if>
+                <if test="num != null">
+                    AND `num`=#{num}
+                </if>
+                <if test="createTime != null">
+                    AND `create_time`=#{createTime}
+                </if>
+                <if test="finishTime != null">
+                    AND `finish_time`=#{finishTime}
+                </if>
+                <if test="state != null">
+                    AND `state`=#{state}
+                </if>
             </trim>
         </where>
         <if test="offset == null and limit != null">
@@ -117,38 +117,38 @@
         INSERT INTO
         <include refid="table"/>
         (
-            `id`,
-            `package_no`,
-            `app_id`,
-            `merchant_no`,
-            `order_no`,
-            `out_order_no`,
-            `phone_number`,
-            `province`,
-            `city`,
-            `amount`,
-            `title`,
-            `num`,
-            `create_time`,
-            `finish_time`,
-            `state`
+        `id`,
+        `package_no`,
+        `app_id`,
+        `merchant_no`,
+        `order_no`,
+        `out_order_no`,
+        `phone_number`,
+        `province`,
+        `city`,
+        `amount`,
+        `title`,
+        `num`,
+        `create_time`,
+        `finish_time`,
+        `state`
         )
         VALUES(
-            #{id},
-            #{packageNo},
-            #{appId},
-            #{merchantNo},
-            #{orderNo},
-            #{outOrderNo},
-            #{phoneNumber},
-            #{province},
-            #{city},
-            #{amount},
-            #{title},
-            #{num},
-            #{createTime},
-            #{finishTime},
-            #{state}
+        #{id},
+        #{packageNo},
+        #{appId},
+        #{merchantNo},
+        #{orderNo},
+        #{outOrderNo},
+        #{phoneNumber},
+        #{province},
+        #{city},
+        #{amount},
+        #{title},
+        #{num},
+        #{createTime},
+        #{finishTime},
+        #{state}
         )
     </insert>
 
@@ -156,21 +156,21 @@
         INSERT INTO
         <include refid="table"/>
         (
-            `id`,
-            `package_no`,
-            `app_id`,
-            `merchant_no`,
-            `order_no`,
-            `out_order_no`,
-            `phone_number`,
-            `province`,
-            `city`,
-            `amount`,
-            `title`,
-            `num`,
-            `create_time`,
-            `finish_time`,
-            `state`
+        `id`,
+        `package_no`,
+        `app_id`,
+        `merchant_no`,
+        `order_no`,
+        `out_order_no`,
+        `phone_number`,
+        `province`,
+        `city`,
+        `amount`,
+        `title`,
+        `num`,
+        `create_time`,
+        `finish_time`,
+        `state`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -223,46 +223,46 @@
         <include refid="table"/>
         <set>
             <if test="packageNo != null and packageNo != ''">
-                 `package_no`=#{packageNo},
+                `package_no`=#{packageNo},
             </if>
             <if test="appId != null and appId != ''">
-                 `app_id`=#{appId},
+                `app_id`=#{appId},
             </if>
             <if test="merchantNo != null and merchantNo != ''">
-                 `merchant_no`=#{merchantNo},
+                `merchant_no`=#{merchantNo},
             </if>
             <if test="orderNo != null and orderNo != ''">
-                 `order_no`=#{orderNo},
+                `order_no`=#{orderNo},
             </if>
             <if test="outOrderNo != null and outOrderNo != ''">
-                 `out_order_no`=#{outOrderNo},
+                `out_order_no`=#{outOrderNo},
             </if>
             <if test="phoneNumber != null and phoneNumber != ''">
-                 `phone_number`=#{phoneNumber},
+                `phone_number`=#{phoneNumber},
             </if>
             <if test="province != null and province != ''">
-                 `province`=#{province},
+                `province`=#{province},
             </if>
             <if test="city != null and city != ''">
-                 `city`=#{city},
+                `city`=#{city},
             </if>
             <if test="amount != null and amount != ''">
-                 `amount`=#{amount},
+                `amount`=#{amount},
             </if>
             <if test="title != null and title != ''">
-                 `title`=#{title},
+                `title`=#{title},
             </if>
             <if test="num != null">
-                 `num`=#{num},
+                `num`=#{num},
             </if>
             <if test="createTime != null">
-                 `create_time`=#{createTime},
+                `create_time`=#{createTime},
             </if>
             <if test="finishTime != null">
-                 `finish_time`=#{finishTime},
+                `finish_time`=#{finishTime},
             </if>
             <if test="state != null">
-                 `state`=#{state},
+                `state`=#{state},
             </if>
         </set>
         WHERE id=#{id}

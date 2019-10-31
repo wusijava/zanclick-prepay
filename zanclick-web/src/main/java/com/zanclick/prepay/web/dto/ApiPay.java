@@ -60,7 +60,7 @@ public class ApiPay extends Param {
     public static void main(String[] args) throws UnsupportedEncodingException {
         JSONObject object = new JSONObject();
         object.put("merchantNo","201909111719241201158791");
-        object.put("packageNo","808aa5c9-ecb6-3b52-907e-4ab937f15d06");
+        object.put("packageNo","f2ee9f59-606b-3a61-8f4a-c3df93d0acde");
         object.put("outOrderNo",StringUtils.getTradeNo());
         object.put("phoneNumber","13798157315");
         object.put("province","200");

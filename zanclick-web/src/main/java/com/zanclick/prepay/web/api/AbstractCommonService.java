@@ -6,6 +6,7 @@ import com.zanclick.prepay.app.service.AppInfoService;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.AesUtil;
+import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.web.exeption.DecryptException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +41,11 @@ public abstract class AbstractCommonService {
 
 
     public String getApiPayStatus(Integer state){
-        if (AuthorizeOrder.State.payed.getCode().equals(state)){
+        if (PayOrder.State.payed.getCode().equals(state)){
             return "PAY_SUCCESS";
-        }else if (AuthorizeOrder.State.failed.getCode().equals(state) || AuthorizeOrder.State.closed.getCode().equals(state)){
+        }else if (PayOrder.State.closed.getCode().equals(state) || AuthorizeOrder.State.closed.getCode().equals(state)){
             return "PAY_CLOSED";
-        }else if (AuthorizeOrder.State.refund.getCode().equals(state)){
+        }else if (PayOrder.State.refund.getCode().equals(state)){
             return "PAY_REFUND";
         }else {
             return "WAIT_PAY";
