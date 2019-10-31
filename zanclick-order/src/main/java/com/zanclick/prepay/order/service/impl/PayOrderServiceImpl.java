@@ -1,17 +1,25 @@
 package com.zanclick.prepay.order.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
+import com.zanclick.prepay.authorize.pay.AuthorizePayService;
+import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.service.AuthorizeOrderService;
+import com.zanclick.prepay.authorize.vo.SettleDTO;
+import com.zanclick.prepay.authorize.vo.SettleResult;
 import com.zanclick.prepay.common.api.AsiaInfoHeader;
 import com.zanclick.prepay.common.api.AsiaInfoUtil;
 import com.zanclick.prepay.common.api.RespInfo;
 import com.zanclick.prepay.common.api.client.RestHttpClient;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
+import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
+import com.zanclick.prepay.order.entity.SettleOrder;
 import com.zanclick.prepay.order.mapper.PayOrderMapper;
 import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.order.service.SettleOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author Administrator
@@ -32,6 +42,14 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     private PayOrderMapper payOrderMapper;
     @Autowired
     private AuthorizeOrderService authorizeOrderService;
+    @Autowired
+    private AuthorizePayService authorizePayService;
+    @Autowired
+    private AuthorizeMerchantService authorizeMerchantService;
+    @Autowired
+    private SettleOrderService settleOrderService;
+
+    protected static ExecutorService executorService = Executors.newCachedThreadPool();
 
     @Override
     protected BaseMapper<PayOrder, Long> getBaseMapper() {
@@ -74,6 +92,17 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     @Override
     public void sendMessage(PayOrder order) {
+        String reason = sendSuccessMessage(order);
+        if (reason == null) {
+            settle(order.getOrderNo(), order.getSettleAmount(), order.getMerchantNo());
+        } else {
+            asyncSendMessage(order);
+        }
+    }
+
+
+    private String sendSuccessMessage(PayOrder order) {
+        String reason = null;
         AsiaInfoHeader header = AsiaInfoUtil.getHeader(order.getPhoneNumber());
         try {
             JSONObject object = new JSONObject();
@@ -85,21 +114,93 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             object.put("orderStatus", getOrderStatus(order.getState()));
             String result = RestHttpClient.post(header, object.toJSONString(), "commodity/freezenotify/v1.1.1");
             log.error("通知结果：{}", result);
-            RespInfo info = JSONObject.parseObject(result,RespInfo.class);
-            if (info.isSuccess()){
-                if (info.getResult().isSuccess()){
-
-                }else {
-                    log.error("通知出错:{}",info.getResult().getRetmsg());
+            RespInfo info = JSONObject.parseObject(result, RespInfo.class);
+            if (info.isSuccess()) {
+                if (info.getResult().isSuccess()) {
+                    return reason;
+                } else {
+                    log.error("通知出错:{}", info.getResult().getRetmsg());
+                    return info.getResult().getRetmsg();
                 }
-            }else {
-                log.error("通知出错:{}",info.getRespdesc());
+            } else {
+                log.error("通知出错:{}", info.getRespdesc());
+                return info.getRespdesc();
             }
         } catch (Exception e) {
             log.error("通知出错:{}", e);
         }
+        return "系统繁忙,请稍后再试";
     }
 
+
+    static Long[] times = {10000L, 10000L, 10000L};
+
+    private void asyncSendMessage(PayOrder order) {
+        executorService.submit(new Runnable() {
+            @Override
+            public void run() {
+                String reason = null;
+                for (int i = 0; i < times.length; i++) {
+                    try {
+                        Thread.sleep(times[i]);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    reason = sendSuccessMessage(order);
+                    if (reason == null) {
+                        settle(order.getOrderNo(), order.getSettleAmount(), order.getMerchantNo());
+                    }
+                }
+                if (reason != null) {
+                    createSettleOrder(order.getOrderNo(), reason, SettleOrder.State.notice_fail.getCode());
+                }
+            }
+        });
+    }
+
+
+    /**
+     * 创建各类型相关记录
+     *
+     * @param orderNo
+     * @param state
+     * @param reason
+     */
+    private void createSettleOrder(String orderNo, String reason, Integer state) {
+        SettleOrder order = new SettleOrder();
+        order.setCreateTime(new Date());
+        order.setOrderNo(orderNo);
+        order.setReason(reason);
+        order.setState(state);
+        settleOrderService.insert(order);
+        //TODO 需要考虑一下相关垫资相关问题
+    }
+
+
+    /**
+     * 通知成功，开始结算
+     *
+     * @param amount
+     * @param merchantNo
+     * @param outTradeNo
+     */
+    private void settle(String outTradeNo, String amount, String merchantNo) {
+        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(merchantNo);
+        if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
+            createSettleOrder(outTradeNo, null, SettleOrder.State.today_sign.getCode());
+        } else {
+            SettleDTO dto = new SettleDTO();
+            dto.setAmount(amount);
+            dto.setOutTradeNo(outTradeNo);
+            SettleResult settleResult = authorizePayService.settle(dto);
+            if (settleResult.isSuccess()) {
+                createSettleOrder(outTradeNo, null, SettleOrder.State.settle_wait.getCode());
+            } else {
+                createSettleOrder(outTradeNo, settleResult.getMessage(), SettleOrder.State.settle_fail.getCode());
+            }
+        }
+
+    }
 
     /**
      * 获取交易状态

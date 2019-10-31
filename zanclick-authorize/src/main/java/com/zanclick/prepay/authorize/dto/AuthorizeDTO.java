@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.vo;
+package com.zanclick.prepay.authorize.dto;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.dto.ExtendParam;

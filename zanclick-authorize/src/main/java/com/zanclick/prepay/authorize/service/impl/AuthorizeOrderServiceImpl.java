@@ -1,7 +1,7 @@
 package com.zanclick.prepay.authorize.service.impl;
 
 import com.alipay.api.AlipayClient;
-import com.zanclick.prepay.authorize.vo.AuthorizeDTO;
+import com.zanclick.prepay.authorize.dto.AuthorizeDTO;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.mapper.AuthorizeOrderMapper;
 import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;

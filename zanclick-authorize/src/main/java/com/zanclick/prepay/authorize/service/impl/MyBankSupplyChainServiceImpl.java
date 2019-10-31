@@ -56,7 +56,6 @@ public class MyBankSupplyChainServiceImpl implements MyBankSupplyChainService {
             trade.setState(TradeStateEnum.FAILED.getCode());
             supplyChainTradeService.updateById(trade);
         }
-
     }
 
     @Transactional(rollbackFor = Exception.class)

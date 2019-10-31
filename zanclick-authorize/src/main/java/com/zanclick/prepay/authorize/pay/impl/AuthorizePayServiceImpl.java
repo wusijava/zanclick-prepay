@@ -2,6 +2,7 @@ package com.zanclick.prepay.authorize.pay.impl;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.response.*;
+import com.zanclick.prepay.authorize.dto.AuthorizeDTO;
 import com.zanclick.prepay.authorize.dto.ExtendParam;
 import com.zanclick.prepay.authorize.dto.PayResult;
 import com.zanclick.prepay.authorize.dto.PayWay;
@@ -73,7 +74,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         AuthorizeOrder order = createAuthorizeOrder(dto, merchant);
-        result.setOutTradeNo(dto.getOutOrderNo());
+        result.setOutTradeNo(dto.getOutTradeNo());
         result.setOrderNo(order.getOrderNo());
         AuthorizeConfiguration configuration = authorizeConfigurationService.queryById(order.getConfigurationId());
         AlipayClient client = authorizeConfigurationService.getAlipayClient(configuration);
@@ -457,7 +458,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         AuthorizeConfiguration configuration = authorizeConfigurationService.queryDefaultConfiguration();
         AuthorizeOrder order = new AuthorizeOrder();
         order.setMoney(dto.getAmount());
-        order.setOutTradeNo(dto.getOutOrderNo());
+        order.setOutTradeNo(dto.getOutTradeNo());
         order.setMerchantNo(dto.getMerchantNo());
         order.setTimeout(getTimeOut());
         order.setTitle(dto.getDesc());

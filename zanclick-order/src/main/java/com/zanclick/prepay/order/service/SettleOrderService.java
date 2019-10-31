@@ -5,7 +5,7 @@ import com.zanclick.prepay.order.entity.SettleOrder;
 
 /**
  * @author Administrator
- * @date 2019-10-31 15:02:59
+ * @date 2019-10-31 15:47:10
  **/
 public interface SettleOrderService extends BaseService<SettleOrder,Long> {
 

@@ -6,17 +6,17 @@
             <result column="state" property="state" jdbcType="INTEGER"/>
             <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
             <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="reason" property="reason" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">settle_order</sql>
-
     <sql id="Base_Column_List">
             `id`,
             `state`,
             `order_no`,
-            `create_time`
+            `create_time`,
+            `reason`
     </sql>
-
     <sql id="Base_Where_Clause">
         <where>
             <trim prefixOverrides="and">
@@ -31,6 +31,9 @@
                     </if>
                     <if test="createTime != null">
                         AND `create_time`=#{createTime}
+                    </if>
+                    <if test="reason != null and reason != ''">
+                        AND `reason`=#{reason}
                     </if>
             </trim>
         </where>
@@ -67,13 +70,15 @@
             `id`,
             `state`,
             `order_no`,
-            `create_time`
+            `create_time`,
+            `reason`
         )
         VALUES(
             #{id},
             #{state},
             #{orderNo},
-            #{createTime}
+            #{createTime},
+            #{reason}
         )
     </insert>
 
@@ -84,7 +89,8 @@
             `id`,
             `state`,
             `order_no`,
-            `create_time`
+            `create_time`,
+            `reason`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -92,7 +98,8 @@
             #{cm.id},
             #{cm.state},
             #{cm.orderNo},
-            #{cm.createTime}
+            #{cm.createTime},
+            #{cm.reason}
             )
         </foreach>
     </insert>
@@ -117,6 +124,9 @@
             </if>
             <if test="createTime != null">
                  `create_time`=#{createTime},
+            </if>
+            <if test="reason != null and reason != ''">
+                 `reason`=#{reason},
             </if>
         </set>
         WHERE id=#{id}

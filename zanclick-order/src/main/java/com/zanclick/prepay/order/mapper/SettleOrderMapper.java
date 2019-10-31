@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @author Administrator
- * @date 2019-10-31 15:02:59
+ * @date 2019-10-31 15:47:10
  **/
 @Mapper
 public interface SettleOrderMapper extends BaseMapper<SettleOrder,Long> {

@@ -29,7 +29,7 @@ public class AuthorizePay extends RequestParam {
     /**
      * 外部订单号（第三方产生）
      */
-    private String outOrderNo;
+    private String outTradeNo;
 
     /**
      * 商户ID（第三方产生）
@@ -46,7 +46,7 @@ public class AuthorizePay extends RequestParam {
         if (checkNull(merchantNo)) {
             return "缺少商户号";
         }
-        if (checkNull(outOrderNo)) {
+        if (checkNull(outTradeNo)) {
             return "缺少外部订单号";
         }
         if (checkNull(amount)) {
