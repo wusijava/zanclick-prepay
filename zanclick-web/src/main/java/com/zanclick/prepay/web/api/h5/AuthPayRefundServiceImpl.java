@@ -40,7 +40,7 @@ public class AuthPayRefundServiceImpl extends AbstractCommonService implements A
             ApiPayRefund query = parser(request, ApiPayRefund.class);
             PayOrder order = queryByOrderNoOrOutOrderNo(query.getOrderNo(),query.getOutOrderNo());
             Refund dto = new Refund();
-            dto.setOrderNo(order.getOrderNo());
+            dto.setOutTradeNo(order.getOrderNo());
             dto.setOutRequestNo(StringUtils.getTradeNo());
             dto.setAmount(order.getAmount());
             dto.setType(0);

@@ -84,7 +84,7 @@ public class QueryOrderServiceImpl extends AbstractCommonService implements ApiR
         }
         if (order.isWait()){
             QueryDTO dto = new QueryDTO();
-            dto.setOrderNo(order.getOrderNo());
+            dto.setOutTradeNo(order.getOrderNo());
             QueryResult queryResult = authorizePayService.query(dto);
             if (queryResult.isSuccess() && !AuthorizeOrder.State.unPay.getCode().equals(queryResult.getState())){
                 if (AuthorizeOrder.State.payed.getCode().equals(queryResult.getState())){
