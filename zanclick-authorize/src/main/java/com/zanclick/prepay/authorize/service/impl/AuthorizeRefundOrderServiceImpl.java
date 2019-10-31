@@ -48,6 +48,7 @@ public class AuthorizeRefundOrderServiceImpl extends BaseMybatisServiceImpl<Auth
         refund.setRefundReason(reason);
         refund.setOutRequestNo(outRequestNo);
         refund.setRequestNo(StringUtils.getTradeNo());
+        refund.setAuthNo(authNo);
         refund.setState(AuthorizeRefundOrder.State.wait.getCode());
         refund.setType(type);
         getBaseMapper().insert(refund);

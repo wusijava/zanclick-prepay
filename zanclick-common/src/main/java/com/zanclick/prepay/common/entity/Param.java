@@ -143,7 +143,7 @@ public abstract class Param implements Serializable {
                 num++;
             }
         }
-        return !num.equals(0);
+        return num.equals(0);
     }
 
 

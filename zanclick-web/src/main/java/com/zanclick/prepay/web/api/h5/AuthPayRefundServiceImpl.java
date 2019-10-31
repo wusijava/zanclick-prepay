@@ -83,7 +83,6 @@ public class AuthPayRefundServiceImpl extends AbstractCommonService implements A
             log.error("交易订单号异常:{},{}",orderNo,outOrderNo);
             throw new BizException("交易订单号异常");
         }
-        //TODO 状态异常
         return order;
     }
 
