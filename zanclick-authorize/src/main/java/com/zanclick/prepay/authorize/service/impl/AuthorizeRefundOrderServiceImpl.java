@@ -40,11 +40,10 @@ public class AuthorizeRefundOrderServiceImpl extends BaseMybatisServiceImpl<Auth
     }
 
     @Override
-    public AuthorizeRefundOrder createRefundOrder(String amount,String orderNo,String outRequestNo,String authNo,Integer type,String reason) {
+    public AuthorizeRefundOrder createRefundOrder(String amount,String outRequestNo,String authNo,Integer type,String reason) {
         AuthorizeRefundOrder refund = new AuthorizeRefundOrder();
         refund.setCreateTime(new Date());
         refund.setAmount(amount);
-        refund.setOrderNo(orderNo);
         refund.setRefundReason(reason);
         refund.setOutRequestNo(outRequestNo);
         refund.setRequestNo(StringUtils.getTradeNo());

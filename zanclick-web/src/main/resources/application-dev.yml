@@ -48,12 +48,12 @@ spring:
 #预授权通知接口
 authorize:
   #notify: http://api.ngrok.zanclick.cn/api/open/authorize/notify
-  notify: http://api.ngrok.zanclick.cn/api/open/authorize/notify
+  notify: http://prepay.utools.club/api/open/authorize/notify
 
 # H5接口访问密钥
 h5:
   key: 12345678qwertyui
-  server: http://172.16.4.222:8082
+  server: http://172.16.4.9:8082
  #支付超时时间
 timeout:
   authorize:

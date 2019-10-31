@@ -26,8 +26,6 @@ public class AuthorizeRefundOrder implements Identifiable<Long> {
 
     private String requestNo;
 
-    private String orderNo;
-
     /**
      * 退款原因
      * */

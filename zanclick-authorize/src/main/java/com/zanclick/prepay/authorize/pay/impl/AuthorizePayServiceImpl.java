@@ -163,7 +163,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         }
         AuthorizeRefundOrder refundOrder = authorizeRefundOrderService.queryByOutRequestNo(dto.getOutRequestNo());
         if (refundOrder == null){
-            refundOrder = authorizeRefundOrderService.createRefundOrder(dto.getAmount(),order.getOrderNo(),dto.getOutRequestNo(),order.getAuthNo(),dto.getType(),dto.getReason());
+            refundOrder = authorizeRefundOrderService.createRefundOrder(dto.getAmount(),dto.getOutRequestNo(),order.getAuthNo(),dto.getType(),dto.getReason());
         }else {
             if (refundOrder.isSuccess()){
                 result.setRequestNo(refundOrder.getRequestNo());
