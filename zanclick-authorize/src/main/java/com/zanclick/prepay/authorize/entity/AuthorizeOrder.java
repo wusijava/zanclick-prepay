@@ -30,6 +30,10 @@ public class AuthorizeOrder implements Identifiable<Long> {
     /**冻结金额**/
     private String money;
 
+    private String fee;
+
+    private Integer num;
+
     /**交易方式（扫码，被扫）**/
     private Integer dealType;
 
@@ -56,11 +60,6 @@ public class AuthorizeOrder implements Identifiable<Long> {
      * 交易订单号
      * */
     private String requestNo;
-
-    /**
-     * 结算日期
-     * */
-    private String settleDate;
 
     private Date createTime;
 
@@ -93,11 +92,6 @@ public class AuthorizeOrder implements Identifiable<Long> {
 
     /** 记录状态**/
     private Integer state;
-
-    /***
-     * 数据传递用
-     * */
-    private AuthorizeOrderFee fee;
 
     public Boolean isPayed(){
         return State.payed.getCode().equals(state);

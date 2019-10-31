@@ -84,8 +84,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         if (createResponse.isSuccess()) {
             order.setQrCodeUrl(createResponse.getCodeValue());
             result.setQrCodeUrl(order.getQrCodeUrl());
-            result.setEachMoney(order.getFee().getEachMoney());
-            result.setFirstMoney(order.getFee().getFirstMoney());
             result.setSuccess();
         } else {
             order.setState(AuthorizeOrder.State.failed.getCode());
@@ -427,7 +425,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         dto.setOut_request_no(order.getRequestNo());
         dto.setOut_order_no(order.getOrderNo());
         dto.setOrder_title(order.getTitle());
-        dto.setAmount(order.getFee().getOrderRealMoney());
+        dto.setAmount(order.getMoney());
         dto.setPay_timeout(order.getTimeout() + "m");
         dto.setExtra_param(getExtendParam());
         dto.setProduct_code("PRE_AUTH");
@@ -454,7 +452,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setStoreNo(merchant.getStoreNo());
         order.setDealType(AuthorizeOrder.DealType.SCAN.getCode());
         order.setPayWay(getPayWay(dto.getPayWay()));
-        order.setSettleDate(getSettleDate());
         order.setSellerNo(merchant.getSellerNo());
         order.setSellerName(merchant.getName());
         order.setContactName(merchant.getContactName());
@@ -466,7 +463,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setSettleType(AuthorizeOrder.SettleType.NO.getCode() );
         order.setConfigurationId(configuration.getId());
         order.setAppId(merchant.getAppId());
-        createOrderFee(order,dto);
         authorizeOrderService.insert(order);
         return order;
     }
@@ -518,7 +514,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         trade.setAmount(order.getMoney());
         trade.setAuthNo(order.getAuthNo());
         trade.setCreateTime(new Date());
-        trade.setFqNum(order.getFee().getCycle());
+        trade.setFqNum(order.getNum());
         trade.setTitle(order.getTitle());
         trade.setTotalAmount(order.getMoney());
         trade.setRcvLoginId(order.getSellerNo());
@@ -532,32 +528,10 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         trade.setConfigurationId(order.getConfigurationId());
         trade.setFreezeDate(order.getFinishTime());
         trade.setExpireDate(DateUtil.addTime(order.getFinishTime(),3,Calendar.YEAR));
-        trade.setMybankFee(order.getFee().getServiceMoney());
+        trade.setMybankFee(order.getFee());
         myBankSupplyChainService.tradeCreate(trade);
         return trade;
     }
-
-
-    /**
-     * 创建预支付费用详情
-     *
-     * @param order
-     * @return
-     */
-    private void createOrderFee(AuthorizeOrder order,PayDTO dto) {
-        String fee = authorizeFeeService.queryByAppId(order.getAppId());
-        String serviceFee = MoneyUtil.multiply(fee,order.getMoney());
-        AuthorizeOrderFee orderFee = new AuthorizeOrderFee();
-        orderFee.setMoney(order.getMoney());
-        orderFee.setServiceMoney(serviceFee);
-        orderFee.setOrderRealMoney(order.getMoney());
-        orderFee.setCycle(dto.getNum());
-        orderFee.setEachMoney(MoneyUtil.devide(dto.getAmount(),dto.getNum().toString()));
-        orderFee.setOrderNo(order.getOrderNo());
-        orderFee.setRequestNo(order.getRequestNo());
-        order.setFee(orderFee);
-    }
-
 
 
     /**
@@ -579,15 +553,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         ExtendParam param = new ExtendParam();
         param.setCategory("HOTEL");
         return param;
-    }
-
-    /**
-     * 获取结算时间
-     *
-     * @return
-     */
-    private String getSettleDate() {
-        return AuthorizeUtil.getSettleDate();
     }
 
     /**

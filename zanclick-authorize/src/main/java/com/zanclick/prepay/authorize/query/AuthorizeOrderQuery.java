@@ -1,11 +1,7 @@
 package com.zanclick.prepay.authorize.query;
 
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
-import com.zanclick.prepay.authorize.entity.AuthorizeOrderFee;
-import com.zanclick.prepay.common.entity.Identifiable;
 import lombok.Data;
-
-import java.util.Date;
 
 /**
  * 资金授权订单

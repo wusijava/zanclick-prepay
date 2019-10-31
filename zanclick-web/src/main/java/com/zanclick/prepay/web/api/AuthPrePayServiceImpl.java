@@ -123,6 +123,7 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
      * @return
      */
     private ApiPayResult getPayResult(PayOrder order,PayResult result) {
+        //TODO 调整
         ApiPayResult payResult = new ApiPayResult();
         payResult.setState(order.getState());
         payResult.setTotalMoney(order.getAmount());
