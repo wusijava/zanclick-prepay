@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class SettleDTO extends RequestParam {
     /**
-     * 订单号（自己产生对应requestNo）
+     * 订单号
      */
     private String orderNo;
 

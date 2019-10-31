@@ -1,6 +1,8 @@
 package com.zanclick.prepay.order.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
+import com.zanclick.prepay.authorize.service.AuthorizeOrderService;
 import com.zanclick.prepay.common.api.AsiaInfoHeader;
 import com.zanclick.prepay.common.api.AsiaInfoUtil;
 import com.zanclick.prepay.common.api.RespInfo;
@@ -13,6 +15,7 @@ import com.zanclick.prepay.order.service.PayOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,6 +30,9 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     @Autowired
     private PayOrderMapper payOrderMapper;
+    @Autowired
+    private AuthorizeOrderService authorizeOrderService;
+
 
     @Override
     protected BaseMapper<PayOrder, Long> getBaseMapper() {
@@ -53,16 +59,18 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         this.updateById(order);
     }
 
+    @Transactional(rollbackFor = Exception.class)
     @Override
-    public void handleSuccess(String orderNo) {
-        PayOrder order = payOrderMapper.selectByOrderNo(orderNo);
+    public void handleSuccess(AuthorizeOrder order) {
+        authorizeOrderService.handleAuthorizeOrder(order);
+        PayOrder payOrder = payOrderMapper.selectByOrderNo(order.getOrderNo());
         if (order == null) {
-            log.error("交易订单异常:{}", orderNo);
+            log.error("交易订单异常:{}", order.getOrderNo());
             return;
         }
         order.setState(PayOrder.State.payed.getCode());
         order.setFinishTime(new Date());
-        handlePayOrder(order);
+        handlePayOrder(payOrder);
     }
 
     @Override
