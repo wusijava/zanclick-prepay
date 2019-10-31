@@ -2,7 +2,9 @@ package com.zanclick.prepay.authorize.pay.impl;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.response.*;
-import com.zanclick.prepay.authorize.dto.*;
+import com.zanclick.prepay.authorize.dto.ExtendParam;
+import com.zanclick.prepay.authorize.dto.PayResult;
+import com.zanclick.prepay.authorize.dto.PayWay;
 import com.zanclick.prepay.authorize.entity.*;
 import com.zanclick.prepay.authorize.enums.AliConstants;
 import com.zanclick.prepay.authorize.enums.Constants;
@@ -32,8 +34,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
 
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
-    @Autowired
-    private AuthorizeFeeService authorizeFeeService;
     @Autowired
     private AuthorizeOrderService authorizeOrderService;
     @Autowired
