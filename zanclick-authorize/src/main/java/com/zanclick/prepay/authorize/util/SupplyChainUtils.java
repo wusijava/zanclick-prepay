@@ -31,7 +31,7 @@ import java.util.Date;
 public class SupplyChainUtils {
 
     private static final String SALE_PD_CODE = "01025200002000003643";
-    private static final Integer BILL_DATE = 28;
+    private static final Integer BILL_DATE = 26;
 
     public static void main(String[] args) {
     }
@@ -264,7 +264,7 @@ public class SupplyChainUtils {
     }
 
     private static Account createPayAccount(AuthorizeConfiguration configuration) {
-        return createAccount(configuration.getIsvUid(), configuration.getName());
+        return createAccount(configuration.getMyBankUid(), configuration.getName());
     }
 
     private static Account createRcvAccount(String uid, String alipayName) {
@@ -282,9 +282,9 @@ public class SupplyChainUtils {
     private static Member createBuyer(AuthorizeConfiguration configuration) {
         Member buyer = new Member();
         buyer.setIpId(configuration.getIpId());
-        buyer.setIpRoleId(configuration.getIpId());
-        buyer.setSiteLoginId(configuration.getSellerNo());
-        buyer.setSiteUserId(configuration.getIsvUid());
+        buyer.setIpRoleId(configuration.getRoleId());
+        buyer.setSiteLoginId(configuration.getMyBankSellerNo());
+        buyer.setSiteUserId(configuration.getMyBankUid());
         buyer.setSite("ALIPAY");
         buyer.setUseType("SITE");
         return buyer;
@@ -314,8 +314,8 @@ public class SupplyChainUtils {
 
 
     private static AlipayClient getAlipayClient(AuthorizeConfiguration configuration) {
-        return new DefaultAlipayClient(configuration.getGateway(), configuration.getIsvAppId(), configuration.getPrivateKey()
-                , configuration.getFormat(), configuration.getCharset(), configuration.getPublicKey(), configuration.getSignType());
+        return new DefaultAlipayClient(configuration.getGateway(), configuration.getMyBankAppId(), configuration.getMyBankPrivateKey()
+                , configuration.getFormat(), configuration.getCharset(), configuration.getMyBankPublicKey(), configuration.getSignType());
     }
 
     /**

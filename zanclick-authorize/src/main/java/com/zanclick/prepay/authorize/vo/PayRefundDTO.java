@@ -13,16 +13,6 @@ import lombok.Data;
 public class PayRefundDTO extends RequestParam {
 
     /**
-     * 预授权订单外部订单号
-     */
-    private String outTradeNo;
-
-    /**
-     * 预授权订单自己生成的订单号
-     */
-    private String orderNo;
-
-    /**
      * 转支付时生成的订单号
      */
     private String outRequestNo;
@@ -44,9 +34,6 @@ public class PayRefundDTO extends RequestParam {
 
     @Override
     public String check() {
-        if (checkNull(outTradeNo) && checkNull(orderNo)) {
-            return "请至少传入一个订单号";
-        }
         if (checkNull(outRequestNo) && checkNotNull(requestNo)) {
             return "缺少入转支付/解冻订单号";
         }

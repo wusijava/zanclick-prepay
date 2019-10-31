@@ -16,6 +16,11 @@
             <result column="service_provider_id" property="serviceProviderId" jdbcType="VARCHAR"/>
             <result column="ip_id" property="ipId" jdbcType="VARCHAR"/>
             <result column="role_id" property="roleId" jdbcType="VARCHAR"/>
+            <result column="my_bank_app_id" property="myBankAppId" jdbcType="VARCHAR"/>
+            <result column="my_bank_public_key" property="myBankPublicKey" jdbcType="VARCHAR"/>
+            <result column="my_bank_private_key" property="myBankPrivateKey" jdbcType="VARCHAR"/>
+            <result column="my_bank_uid" property="myBankUid" jdbcType="VARCHAR"/>
+            <result column="my_bank_seller_no" property="myBankSellerNo" jdbcType="VARCHAR"/>
             <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
             <result column="format" property="format" jdbcType="VARCHAR"/>
             <result column="charset" property="charset" jdbcType="VARCHAR"/>
@@ -39,6 +44,11 @@
             `service_provider_id`,
             `ip_id`,
             `role_id`,
+            `my_bank_app_id`,
+            `my_bank_public_key`,
+            `my_bank_private_key`,
+            `my_bank_uid`,
+            `my_bank_seller_no`,
             `seller_no`,
             `format`,
             `charset`,
@@ -89,6 +99,21 @@
                     </if>
                     <if test="roleId != null and roleId != ''">
                         AND `role_id`=#{roleId}
+                    </if>
+                    <if test="myBankAppId != null and myBankAppId != ''">
+                        AND `my_bank_app_id`=#{myBankAppId}
+                    </if>
+                    <if test="myBankPublicKey != null and myBankPublicKey != ''">
+                        AND `my_bank_public_key`=#{myBankPublicKey}
+                    </if>
+                    <if test="myBankPrivateKey != null and myBankPrivateKey != ''">
+                        AND `my_bank_private_key`=#{myBankPrivateKey}
+                    </if>
+                    <if test="myBankUid != null and myBankUid != ''">
+                        AND `my_bank_uid`=#{myBankUid}
+                    </if>
+                    <if test="myBankSellerNo != null and myBankSellerNo != ''">
+                        AND `my_bank_seller_no`=#{myBankSellerNo}
                     </if>
                     <if test="sellerNo != null and sellerNo != ''">
                         AND `seller_no`=#{sellerNo}
@@ -151,6 +176,11 @@
             `service_provider_id`,
             `ip_id`,
             `role_id`,
+            `my_bank_app_id`,
+            `my_bank_public_key`,
+            `my_bank_private_key`,
+            `my_bank_uid`,
+            `my_bank_seller_no`,
             `seller_no`,
             `format`,
             `charset`,
@@ -172,6 +202,11 @@
             #{serviceProviderId},
             #{ipId},
             #{roleId},
+            #{myBankAppId},
+            #{myBankPublicKey},
+            #{myBankPrivateKey},
+            #{myBankUid},
+            #{myBankSellerNo},
             #{sellerNo},
             #{format},
             #{charset},
@@ -198,6 +233,11 @@
             `service_provider_id`,
             `ip_id`,
             `role_id`,
+            `my_bank_app_id`,
+            `my_bank_public_key`,
+            `my_bank_private_key`,
+            `my_bank_uid`,
+            `my_bank_seller_no`,
             `seller_no`,
             `format`,
             `charset`,
@@ -221,6 +261,11 @@
             #{cm.serviceProviderId},
             #{cm.ipId},
             #{cm.roleId},
+            #{cm.myBankAppId},
+            #{cm.myBankPublicKey},
+            #{cm.myBankPrivateKey},
+            #{cm.myBankUid},
+            #{cm.myBankSellerNo},
             #{cm.sellerNo},
             #{cm.format},
             #{cm.charset},
@@ -296,6 +341,21 @@
             </if>
             <if test="roleId != null and roleId != ''">
                  `role_id`=#{roleId},
+            </if>
+            <if test="myBankAppId != null and myBankAppId != ''">
+                 `my_bank_app_id`=#{myBankAppId},
+            </if>
+            <if test="myBankPublicKey != null and myBankPublicKey != ''">
+                 `my_bank_public_key`=#{myBankPublicKey},
+            </if>
+            <if test="myBankPrivateKey != null and myBankPrivateKey != ''">
+                 `my_bank_private_key`=#{myBankPrivateKey},
+            </if>
+            <if test="myBankUid != null and myBankUid != ''">
+                 `my_bank_uid`=#{myBankUid},
+            </if>
+            <if test="myBankSellerNo != null and myBankSellerNo != ''">
+                 `my_bank_seller_no`=#{myBankSellerNo},
             </if>
             <if test="sellerNo != null and sellerNo != ''">
                  `seller_no`=#{sellerNo},

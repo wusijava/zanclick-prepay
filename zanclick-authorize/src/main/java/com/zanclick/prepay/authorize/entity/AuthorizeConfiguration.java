@@ -74,6 +74,15 @@ public class AuthorizeConfiguration implements Identifiable<Long> {
      * */
     private String roleId;
 
+    private String myBankAppId;
+
+    private String myBankPublicKey;
+
+    private String myBankPrivateKey;
+
+    private String myBankUid;
+
+    private String myBankSellerNo;
 
     /**
      * 支付宝账号

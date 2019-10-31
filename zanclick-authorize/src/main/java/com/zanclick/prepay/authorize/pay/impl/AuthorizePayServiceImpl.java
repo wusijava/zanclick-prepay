@@ -193,7 +193,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
                 return result;
             }
         } else {
-            AlipayTradePayResponse payResponse = createPay(refundOrder, client, order.getBuyerId(),configuration.getIsvAppId(),configuration.getServiceProviderId());
+            AlipayTradePayResponse payResponse = createPay(refundOrder, client, order.getBuyerId(),configuration.getIsvUid(),configuration.getServiceProviderId());
             if (!payResponse.isSuccess()) {
                 refundOrder.setReason(payResponse.getSubMsg());
                 authorizeRefundOrderService.refundFail(refundOrder);
@@ -306,12 +306,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             result.setFail();
             return result;
         }
-        AuthorizeOrder order = queryByOrderNoOrOutTradeNo(dto.getOrderNo(), dto.getOutTradeNo());
-        if (order == null || order.isFail() || order.isUnPay()) {
-            result.setMessage("订单信息有误");
-            result.setFail();
-            return result;
-        }
         AuthorizeRefundOrder refundOrder = queryByRequestNoOrOutRequestNo(dto.getRequestNo(),dto.getOutRequestNo());
         if (refundOrder == null) {
             result.setMessage("订单信息有误");
@@ -328,6 +322,12 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             result.setFail();
             return result;
         }
+        AuthorizeOrder order = authorizeOrderService.queryByAuthNo(refundOrder.getAuthNo());
+        if (order == null || order.isFail() || order.isUnPay()) {
+            result.setMessage("订单信息有误");
+            result.setFail();
+            return result;
+        }
         AuthorizeOrderRefundRecord record = authorizeOrderRefundRecordService.queryByOutRefundNo(dto.getOutRefundNo());
         if (record == null){
             record = authorizeOrderRefundRecordService.createRefundOrder(refundOrder.getAmount(),refundOrder.getRequestNo(),dto.getOutRefundNo(),dto.getReason());
@@ -335,8 +335,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             if (record.isSuccess()) {
                 result.setAmount(record.getAmount());
                 result.setIsChange("N");
-                result.setOutTradeNo(order.getOutTradeNo());
-                result.setOrderNo(order.getOrderNo());
                 result.setRequestNo(refundOrder.getRequestNo());
                 result.setOutRequestNo(refundOrder.getOutRequestNo());
                 result.setRefundNo(record.getRefundNo());
@@ -369,8 +367,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         authorizeRefundOrderService.refund(refundOrder);
         result.setAmount(record.getAmount());
         result.setIsChange("Y");
-        result.setOutTradeNo(order.getOutTradeNo());
-        result.setOrderNo(order.getOrderNo());
         result.setRequestNo(refundOrder.getRequestNo());
         result.setOutRequestNo(refundOrder.getOutRequestNo());
         result.setRefundNo(record.getRefundNo());

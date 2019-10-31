@@ -14,16 +14,6 @@ import java.util.Date;
 @Data
 public class PayRefundResult extends AuthorizeResponseParam {
 
-    /**
-     * 订单号 （第三方产生）
-     */
-    private String outTradeNo;
-
-    /**
-     * 订单号 （自己生成）
-     */
-    private String orderNo;
-
     private String requestNo;
 
     private String outRequestNo;
