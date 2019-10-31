@@ -28,7 +28,6 @@
         <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
         <result column="contact_name" property="contactName" jdbcType="VARCHAR"/>
         <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR"/>
-        <result column="request_content" property="requestContent" jdbcType="VARCHAR"/>
         <result column="configuration_id" property="configurationId" jdbcType="BIGINT"/>
         <result column="state" property="state" jdbcType="INTEGER"/>
     </resultMap>
@@ -61,7 +60,6 @@
             `seller_no`,
             `contact_name`,
             `contact_phone`,
-            `request_content`,
             `configuration_id`,
             `state`
     </sql>
@@ -146,9 +144,6 @@
                 <if test="contactPhone != null and contactPhone != ''">
                     AND `contact_phone`=#{contactPhone}
                 </if>
-                <if test="requestContent != null and requestContent != ''">
-                    AND `request_content`=#{requestContent}
-                </if>
                 <if test="configurationId != null">
                     AND `configuration_id`=#{configurationId}
                 </if>
@@ -213,7 +208,6 @@
         `seller_no`,
         `contact_name`,
         `contact_phone`,
-        `request_content`,
         `configuration_id`,
         `state`
         )
@@ -244,7 +238,6 @@
         #{sellerNo},
         #{contactName},
         #{contactPhone},
-        #{requestContent},
         #{configurationId},
         #{state}
         )
@@ -280,7 +273,6 @@
         `seller_no`,
         `contact_name`,
         `contact_phone`,
-        `request_content`,
         `configuration_id`,
         `state`
         )
@@ -313,7 +305,6 @@
             #{cm.sellerNo},
             #{cm.contactName},
             #{cm.contactPhone},
-            #{cm.requestContent},
             #{cm.configurationId},
             #{cm.state}
             )
@@ -438,9 +429,6 @@
             </if>
             <if test="contactPhone != null and contactPhone != ''">
                 `contact_phone`=#{contactPhone},
-            </if>
-            <if test="requestContent != null and requestContent != ''">
-                `request_content`=#{requestContent},
             </if>
             <if test="configurationId != null">
                 `configuration_id`=#{configurationId},
