@@ -79,7 +79,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         AlipayClient client = authorizeConfigurationService.getAlipayClient(configuration);
         AuthorizeDTO payModal = createPayModal(order);
         payModal.setPayee_user_id(configuration.getIsvUid());
-        order.setRequestContent(payModal.toString());
         AlipayFundAuthOrderVoucherCreateResponse createResponse = AuthorizePayUtil.qrFreeze(client, NOTIFY_URL, payModal);
         if (createResponse.isSuccess()) {
             order.setQrCodeUrl(createResponse.getCodeValue());

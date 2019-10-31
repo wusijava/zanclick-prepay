@@ -10,6 +10,8 @@
         <result column="timeout" property="timeout" jdbcType="VARCHAR"/>
         <result column="qr_code_url" property="qrCodeUrl" jdbcType="VARCHAR"/>
         <result column="money" property="money" jdbcType="VARCHAR"/>
+        <result column="fee" property="fee" jdbcType="VARCHAR"/>
+        <result column="num" property="num" jdbcType="INTEGER"/>
         <result column="deal_type" property="dealType" jdbcType="INTEGER"/>
         <result column="settle_type" property="settleType" jdbcType="INTEGER"/>
         <result column="pay_way" property="payWay" jdbcType="INTEGER"/>
@@ -17,7 +19,6 @@
         <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>
         <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
         <result column="request_no" property="requestNo" jdbcType="VARCHAR"/>
-        <result column="settle_date" property="settleDate" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
         <result column="buyer_id" property="buyerId" jdbcType="VARCHAR"/>
@@ -42,6 +43,8 @@
             `timeout`,
             `qr_code_url`,
             `money`,
+            `fee`,
+            `num`,
             `deal_type`,
             `settle_type`,
             `pay_way`,
@@ -49,7 +52,6 @@
             `out_trade_no`,
             `order_no`,
             `request_no`,
-            `settle_date`,
             `create_time`,
             `finish_time`,
             `buyer_id`,
@@ -90,6 +92,12 @@
                 <if test="money != null and money != ''">
                     AND `money`=#{money}
                 </if>
+                <if test="fee != null and fee != ''">
+                    AND `fee`=#{fee}
+                </if>
+                <if test="num != null">
+                    AND `num`=#{num}
+                </if>
                 <if test="dealType != null">
                     AND `deal_type`=#{dealType}
                 </if>
@@ -110,9 +118,6 @@
                 </if>
                 <if test="requestNo != null and requestNo != ''">
                     AND `request_no`=#{requestNo}
-                </if>
-                <if test="settleDate != null and settleDate != ''">
-                    AND `settle_date`=#{settleDate}
                 </if>
                 <if test="createTime != null">
                     AND `create_time`=#{createTime}
@@ -150,15 +155,8 @@
                 <if test="state != null">
                     AND `state`=#{state}
                 </if>
-                <if test="nextIndex != null">
-                    AND `id` &lt; #{nextIndex}
-                </if>
-                <if test="stateIn != null and stateIn != ''">
-                    AND `state` IN (${stateIn})
-                </if>
             </trim>
         </where>
-        ORDER BY id DESC
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
@@ -197,6 +195,8 @@
         `timeout`,
         `qr_code_url`,
         `money`,
+        `fee`,
+        `num`,
         `deal_type`,
         `settle_type`,
         `pay_way`,
@@ -204,7 +204,6 @@
         `out_trade_no`,
         `order_no`,
         `request_no`,
-        `settle_date`,
         `create_time`,
         `finish_time`,
         `buyer_id`,
@@ -227,6 +226,8 @@
         #{timeout},
         #{qrCodeUrl},
         #{money},
+        #{fee},
+        #{num},
         #{dealType},
         #{settleType},
         #{payWay},
@@ -234,7 +235,6 @@
         #{outTradeNo},
         #{orderNo},
         #{requestNo},
-        #{settleDate},
         #{createTime},
         #{finishTime},
         #{buyerId},
@@ -262,6 +262,8 @@
         `timeout`,
         `qr_code_url`,
         `money`,
+        `fee`,
+        `num`,
         `deal_type`,
         `settle_type`,
         `pay_way`,
@@ -269,7 +271,6 @@
         `out_trade_no`,
         `order_no`,
         `request_no`,
-        `settle_date`,
         `create_time`,
         `finish_time`,
         `buyer_id`,
@@ -294,6 +295,8 @@
             #{cm.timeout},
             #{cm.qrCodeUrl},
             #{cm.money},
+            #{cm.fee},
+            #{cm.num},
             #{cm.dealType},
             #{cm.settleType},
             #{cm.payWay},
@@ -301,7 +304,6 @@
             #{cm.outTradeNo},
             #{cm.orderNo},
             #{cm.requestNo},
-            #{cm.settleDate},
             #{cm.createTime},
             #{cm.finishTime},
             #{cm.buyerId},
@@ -383,6 +385,12 @@
             <if test="money != null and money != ''">
                 `money`=#{money},
             </if>
+            <if test="fee != null and fee != ''">
+                `fee`=#{fee},
+            </if>
+            <if test="num != null">
+                `num`=#{num},
+            </if>
             <if test="dealType != null">
                 `deal_type`=#{dealType},
             </if>
@@ -403,9 +411,6 @@
             </if>
             <if test="requestNo != null and requestNo != ''">
                 `request_no`=#{requestNo},
-            </if>
-            <if test="settleDate != null and settleDate != ''">
-                `settle_date`=#{settleDate},
             </if>
             <if test="createTime != null">
                 `create_time`=#{createTime},

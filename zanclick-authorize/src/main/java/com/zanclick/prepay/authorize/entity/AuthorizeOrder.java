@@ -86,8 +86,6 @@ public class AuthorizeOrder implements Identifiable<Long> {
 
     private String contactPhone;
 
-    private String requestContent;
-
     private Long configurationId;
 
     /** 记录状态**/
