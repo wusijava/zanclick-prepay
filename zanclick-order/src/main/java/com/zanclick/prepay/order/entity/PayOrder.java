@@ -34,7 +34,9 @@ public class PayOrder implements Identifiable<Long> {
     /**
      * 订单编号
      **/
-    private String orderNo;
+    private String outTradeNo;
+
+    private String requestNo;
 
     /**
      * 外部编号

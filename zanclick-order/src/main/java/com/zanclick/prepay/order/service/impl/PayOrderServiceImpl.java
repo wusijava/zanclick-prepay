@@ -57,8 +57,8 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     }
 
     @Override
-    public PayOrder queryByOrderNo(String orderNo) {
-        return payOrderMapper.selectByOrderNo(orderNo);
+    public PayOrder queryByOutTradeNo(String orderNo) {
+        return payOrderMapper.selectByOutTradeNo(orderNo);
     }
 
     @Override
@@ -80,7 +80,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     @Override
     public void handleSuccess(AuthorizeOrder order) {
         authorizeOrderService.handleAuthorizeOrder(order);
-        PayOrder payOrder = payOrderMapper.selectByOrderNo(order.getOrderNo());
+        PayOrder payOrder = payOrderMapper.selectByOutTradeNo(order.getOutTradeNo());
         if (order == null) {
             log.error("交易订单异常:{}", order.getOrderNo());
             return;
@@ -94,7 +94,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     public void sendMessage(PayOrder order) {
         String reason = sendSuccessMessage(order);
         if (reason == null) {
-            settle(order.getOrderNo(), order.getSettleAmount(), order.getMerchantNo());
+            settle(order.getRequestNo(), order.getSettleAmount(), order.getMerchantNo());
         } else {
             asyncSendMessage(order);
         }
@@ -106,7 +106,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         AsiaInfoHeader header = AsiaInfoUtil.getHeader(order.getPhoneNumber());
         try {
             JSONObject object = new JSONObject();
-            object.put("orderNo", order.getOrderNo());
+            object.put("orderNo", order.getOutTradeNo());
             object.put("outOrderNo", order.getOutOrderNo());
             object.put("packageNo", order.getPackageNo());
             object.put("payTime", sdf.format(order.getFinishTime()));
@@ -148,11 +148,11 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
                     }
                     reason = sendSuccessMessage(order);
                     if (reason == null) {
-                        settle(order.getOrderNo(), order.getSettleAmount(), order.getMerchantNo());
+                        settle(order.getRequestNo(), order.getSettleAmount(), order.getMerchantNo());
                     }
                 }
                 if (reason != null) {
-                    createSettleOrder(order.getOrderNo(), reason, SettleOrder.State.notice_fail.getCode());
+                    createSettleOrder(order.getRequestNo(), reason, SettleOrder.State.notice_fail.getCode());
                 }
             }
         });
@@ -182,21 +182,21 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
      *
      * @param amount
      * @param merchantNo
-     * @param outTradeNo
+     * @param requestNo
      */
-    private void settle(String outTradeNo, String amount, String merchantNo) {
+    private void settle(String requestNo, String amount, String merchantNo) {
         AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(merchantNo);
         if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
-            createSettleOrder(outTradeNo, null, SettleOrder.State.today_sign.getCode());
+            createSettleOrder(requestNo, null, SettleOrder.State.today_sign.getCode());
         } else {
             SettleDTO dto = new SettleDTO();
             dto.setAmount(amount);
-            dto.setOutTradeNo(outTradeNo);
+            dto.setOutTradeNo(requestNo);
             SettleResult settleResult = authorizePayService.settle(dto);
             if (settleResult.isSuccess()) {
-                createSettleOrder(outTradeNo, null, SettleOrder.State.settle_wait.getCode());
+                createSettleOrder(requestNo, null, SettleOrder.State.settle_wait.getCode());
             } else {
-                createSettleOrder(outTradeNo, settleResult.getMessage(), SettleOrder.State.settle_fail.getCode());
+                createSettleOrder(requestNo, settleResult.getMessage(), SettleOrder.State.settle_fail.getCode());
             }
         }
 

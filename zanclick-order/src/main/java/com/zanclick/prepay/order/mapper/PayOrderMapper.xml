@@ -6,7 +6,8 @@
         <result column="app_id" property="appId" jdbcType="VARCHAR"/>
         <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
         <result column="package_no" property="packageNo" jdbcType="VARCHAR"/>
-        <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
+        <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>
+        <result column="request_no" property="requestNo" jdbcType="VARCHAR"/>
         <result column="out_order_no" property="outOrderNo" jdbcType="VARCHAR"/>
         <result column="amount" property="amount" jdbcType="VARCHAR"/>
         <result column="settle_amount" property="settleAmount" jdbcType="VARCHAR"/>
@@ -28,7 +29,8 @@
             `app_id`,
             `merchant_no`,
             `package_no`,
-            `order_no`,
+            `out_trade_no`,
+            `request_no`,
             `out_order_no`,
             `amount`,
             `settle_amount`,
@@ -58,8 +60,11 @@
                 <if test="packageNo != null and packageNo != ''">
                     AND `package_no`=#{packageNo}
                 </if>
-                <if test="orderNo != null and orderNo != ''">
-                    AND `order_no`=#{orderNo}
+                <if test="outTradeNo != null and outTradeNo != ''">
+                    AND `out_trade_no`=#{outTradeNo}
+                </if>
+                <if test="requestNo != null and requestNo != ''">
+                    AND `request_no`=#{requestNo}
                 </if>
                 <if test="outOrderNo != null and outOrderNo != ''">
                     AND `out_order_no`=#{outOrderNo}
@@ -136,7 +141,8 @@
         `app_id`,
         `merchant_no`,
         `package_no`,
-        `order_no`,
+        `out_trade_no`,
+        `request_no`,
         `out_order_no`,
         `amount`,
         `settle_amount`,
@@ -156,7 +162,8 @@
         #{appId},
         #{merchantNo},
         #{packageNo},
-        #{orderNo},
+        #{outTradeNo},
+        #{requestNo},
         #{outOrderNo},
         #{amount},
         #{settleAmount},
@@ -181,7 +188,8 @@
         `app_id`,
         `merchant_no`,
         `package_no`,
-        `order_no`,
+        `out_trade_no`,
+        `request_no`,
         `out_order_no`,
         `amount`,
         `settle_amount`,
@@ -203,7 +211,8 @@
             #{cm.appId},
             #{cm.merchantNo},
             #{cm.packageNo},
-            #{cm.orderNo},
+            #{cm.outTradeNo},
+            #{cm.requestNo},
             #{cm.outOrderNo},
             #{cm.amount},
             #{cm.settleAmount},
@@ -229,12 +238,12 @@
         WHERE id=#{id}
     </select>
 
-    <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+    <select id="selectByOutTradeNo" resultMap="BaseResultMap" parameterType="java.lang.String">
         SELECT
         <include refid="Base_Column_List"/>
         FROM
         <include refid="table"/>
-        WHERE order_no = #{orderNo} ORDER BY id DESC LIMIT 1
+        WHERE out_trade_no = #{outTradeNo} ORDER BY id DESC LIMIT 1
     </select>
 
     <select id="selectByOutOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String">
@@ -258,8 +267,11 @@
             <if test="packageNo != null and packageNo != ''">
                 `package_no`=#{packageNo},
             </if>
-            <if test="orderNo != null and orderNo != ''">
-                `order_no`=#{orderNo},
+            <if test="outTradeNo != null and outTradeNo != ''">
+                `out_trade_no`=#{outTradeNo},
+            </if>
+            <if test="requestNo != null and requestNo != ''">
+                `request_no`=#{requestNo},
             </if>
             <if test="outOrderNo != null and outOrderNo != ''">
                 `out_order_no`=#{outOrderNo},

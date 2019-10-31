@@ -12,10 +12,7 @@ import lombok.Data;
 @Data
 public class PayResult extends AuthorizeResponseParam {
 
-    /**
-     * 订单号（我方产生）
-     * */
-    private String orderNo;
+    private String requestNo;
 
     /**
      * 订单号（第三方产生）

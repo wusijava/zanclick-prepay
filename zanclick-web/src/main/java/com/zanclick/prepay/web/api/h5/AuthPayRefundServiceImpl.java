@@ -38,9 +38,9 @@ public class AuthPayRefundServiceImpl extends AbstractCommonService implements A
         try {
             verifyCipherJson(appId, cipherJson);
             ApiPayRefund query = parser(request, ApiPayRefund.class);
-            PayOrder order = queryByOrderNoOrOutOrderNo(query.getOrderNo(),query.getOutOrderNo());
+            PayOrder order = queryByOutTradeNoOrOutOrderNo(query.getOrderNo(),query.getOutOrderNo());
             Refund dto = new Refund();
-            dto.setOutTradeNo(order.getOrderNo());
+            dto.setOutTradeNo(order.getOutTradeNo());
             dto.setOutRequestNo(StringUtils.getTradeNo());
             dto.setAmount(order.getAmount());
             dto.setType(0);
@@ -71,10 +71,10 @@ public class AuthPayRefundServiceImpl extends AbstractCommonService implements A
      * @param outOrderNo
      * @return
      * */
-    private PayOrder queryByOrderNoOrOutOrderNo(String orderNo,String outOrderNo){
+    private PayOrder queryByOutTradeNoOrOutOrderNo(String orderNo,String outOrderNo){
         PayOrder order = null;
         if (orderNo != null){
-            order = payOrderService.queryByOrderNo(orderNo);
+            order = payOrderService.queryByOutTradeNo(orderNo);
         }
         if (order == null && outOrderNo != null){
             order = payOrderService.queryByOutOrderNo(outOrderNo);

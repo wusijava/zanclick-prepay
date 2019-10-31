@@ -13,6 +13,9 @@ public class QueryOrder extends Param {
 
     private String outOrderNo;
 
+    /**
+     * 对应 outTradeNo
+     * */
     private String orderNo;
 
     public String check(){

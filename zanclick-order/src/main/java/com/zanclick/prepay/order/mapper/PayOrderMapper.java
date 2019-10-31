@@ -12,12 +12,12 @@ import org.apache.ibatis.annotations.Mapper;
 public interface PayOrderMapper extends BaseMapper<PayOrder, Long> {
 
     /**
-     * 根据 orderNo查找
+     * 根据 outTradeNo查找
      *
-     * @param orderNo
+     * @param outTradeNo
      * @return
      */
-    PayOrder selectByOrderNo(String orderNo);
+    PayOrder selectByOutTradeNo(String outTradeNo);
 
     /**
      * 根据 outOrderNo查找

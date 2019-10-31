@@ -48,7 +48,7 @@ public class ApiOpenController {
 
     @GetMapping(value = "/notifyReset", produces = "application/json;charset=utf-8")
     public Response notifyReset(String orderNo) {
-        PayOrder order = payOrderService.queryByOrderNo(orderNo);
+        PayOrder order = payOrderService.queryByOutTradeNo(orderNo);
         if (order == null) {
             return Response.fail("订单号有误");
         }

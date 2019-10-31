@@ -74,7 +74,7 @@ public class QueryOrderServiceImpl extends AbstractCommonService implements ApiR
         QueryOrderResult result = new QueryOrderResult();
         PayOrder order = null;
         if (DataUtil.isNotEmpty(queryOrder.getOrderNo())) {
-            order = payOrderService.queryByOrderNo(queryOrder.getOrderNo());
+            order = payOrderService.queryByOutTradeNo(queryOrder.getOrderNo());
             if (DataUtil.isEmpty(order)) {
                 order = payOrderService.queryByOutOrderNo(queryOrder.getOutOrderNo());
             }
@@ -84,7 +84,7 @@ public class QueryOrderServiceImpl extends AbstractCommonService implements ApiR
         }
         if (order.isWait()){
             QueryDTO dto = new QueryDTO();
-            dto.setOutTradeNo(order.getOrderNo());
+            dto.setOutTradeNo(order.getOutTradeNo());
             QueryResult queryResult = authorizePayService.query(dto);
             if (queryResult.isSuccess() && !AuthorizeOrder.State.unPay.getCode().equals(queryResult.getState())){
                 if (AuthorizeOrder.State.payed.getCode().equals(queryResult.getState())){
@@ -100,7 +100,7 @@ public class QueryOrderServiceImpl extends AbstractCommonService implements ApiR
         }
         result.setMerchantNo(order.getMerchantNo());
         result.setOrderFee(order.getAmount());
-        result.setOrderNo(order.getOrderNo());
+        result.setOrderNo(order.getOutTradeNo());
         result.setOrderStatus(getH5PayStatus(order.getState()));
         result.setOrderTime(sdf.format(order.getCreateTime()));
         result.setPackageNo(order.getPackageNo());

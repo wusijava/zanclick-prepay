@@ -39,7 +39,7 @@ public class AuthPayQueryServiceImpl extends AbstractCommonService implements Ap
             ApiPayQuery query = parser(request,ApiPayQuery.class);
             QueryDTO dto = new QueryDTO();
             dto.setOutTradeNo(query.getOrderNo());
-            PayOrder order = payOrderService.queryByOrderNo(query.getOrderNo());
+            PayOrder order = payOrderService.queryByOutTradeNo(query.getOrderNo());
             if (DataUtil.isEmpty(order)){
                 param.setMessage("交易订号异常");
                 param.setFail();

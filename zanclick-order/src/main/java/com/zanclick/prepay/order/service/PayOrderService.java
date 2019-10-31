@@ -16,7 +16,7 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      * @param orderNo
      * @return
      */
-    PayOrder queryByOrderNo(String orderNo);
+    PayOrder queryByOutTradeNo(String orderNo);
 
     /**
      * 根据 outOrderNo查找

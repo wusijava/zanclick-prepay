@@ -75,7 +75,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         }
         AuthorizeOrder order = createAuthorizeOrder(dto, merchant);
         result.setOutTradeNo(dto.getOutTradeNo());
-        result.setOrderNo(order.getOrderNo());
+        result.setRequestNo(order.getRequestNo());
         AuthorizeConfiguration configuration = authorizeConfigurationService.queryById(order.getConfigurationId());
         AlipayClient client = authorizeConfigurationService.getAlipayClient(configuration);
         AuthorizeDTO payModal = createPayModal(order);
@@ -202,7 +202,6 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
                 return result;
             }
         }
-        //TODO 这里需要处理一下金额信息
         authorizeRefundOrderService.refundSuccess(refundOrder);
         if (MoneyUtil.equal(refundMoney,order.getMoney())){
             order.setState(AuthorizeOrder.State.settled.getCode());
