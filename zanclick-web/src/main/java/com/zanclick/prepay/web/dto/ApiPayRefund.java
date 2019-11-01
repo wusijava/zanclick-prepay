@@ -11,6 +11,9 @@ import lombok.Data;
 @Data
 public class ApiPayRefund{
 
+    /**
+     * 对应 outTradeNo
+     * */
     private String orderNo;
 
     private String outOrderNo;
