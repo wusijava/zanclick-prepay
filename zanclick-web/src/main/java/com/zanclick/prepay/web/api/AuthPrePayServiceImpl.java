@@ -13,8 +13,10 @@ import com.zanclick.prepay.web.dto.ApiPay;
 import com.zanclick.prepay.web.dto.ApiPayResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
 import java.util.Date;
 
 /**
@@ -33,6 +35,9 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
     @Autowired
     private PayOrderService payOrderService;
 
+    @Value("${h5.server}")
+    private String h5Server;
+
     @Override
     public String resolve(String appId, String cipherJson, String request) {
         ResponseParam param = new ResponseParam();
@@ -47,8 +52,13 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
                 param.setMessage(check);
                 return param.toString();
             }
+            StringBuffer sb = new StringBuffer();
+            sb.append(h5Server+"/order/orderConfirmation");
+            sb.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
             PayOrder order = getPayOrder(dto);
-            param.setData(getPayResult(order));
+            ApiPayResult result = getPayResult(order);
+            result.setUrl(sb.toString());
+            param.setData(result);
             return param.toString();
         } catch (BizException be) {
             param.setMessage(be.getMessage());

@@ -24,6 +24,8 @@ public class ApiPayResult extends Param {
      */
     private String qrCodeUrl;
 
+    private String url;
+
     private Integer num;
 
     private String eachMoney;

@@ -41,6 +41,7 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
             return param.toString();
         }
         try {
+            verifyAppId(appId);
             RegisterMerchant merchant = new RegisterMerchant();
             merchant.setWayId(apiMerchant.getWayId());
             merchant.setMerchantNo(apiMerchant.getMerchantNo());

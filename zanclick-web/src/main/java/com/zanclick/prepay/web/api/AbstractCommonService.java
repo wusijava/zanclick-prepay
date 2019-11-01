@@ -25,6 +25,14 @@ public abstract class AbstractCommonService {
     @Autowired
     private AppInfoService appInfoService;
 
+    public void verifyAppId(String appId){
+        AppInfo appInfo = appInfoService.queryByAppId(appId);
+        if (appInfo == null || appInfo.getState().equals(AppInfo.State.close.getCode())) {
+            log.error("应用异常,商户提交信息:{}",appId);
+            throw new BizException("应用信息异常");
+        }
+    }
+
     public String verifyCipherJson(String appId,String cipherJson){
         AppInfo appInfo = appInfoService.queryByAppId(appId);
         if (appInfo == null || appInfo.getState().equals(AppInfo.State.close.getCode())) {
