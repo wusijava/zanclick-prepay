@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 
 /**
- * 预授权二维码支付
+ * 预授权订单创建
  *
  * @author duchong
  * @date 2019-7-8 15:28:06

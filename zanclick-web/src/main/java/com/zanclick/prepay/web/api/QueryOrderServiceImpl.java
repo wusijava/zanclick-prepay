@@ -1,9 +1,5 @@
 package com.zanclick.prepay.web.api;
 
-import com.zanclick.prepay.authorize.vo.QueryDTO;
-import com.zanclick.prepay.authorize.vo.QueryResult;
-import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
-import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
@@ -17,13 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
- * 预授权二维码支付
+ * 查询并修改当前订单状态
  *
  * @author duchong
- * @date 2019-7-8 15:28:06
+ * @date 2019-11-1 17:36:29
  **/
 @Slf4j
 @Service("comZanclickQueryAuthOrder")
@@ -31,8 +26,6 @@ public class QueryOrderServiceImpl extends AbstractCommonService implements ApiR
 
     @Autowired
     private PayOrderService payOrderService;
-    @Autowired
-    private AuthorizePayService authorizePayService;
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 预授权商户注册
+ * 商户信息签约
  *
  * @author duchong
  * @date 2019-7-8 15:28:06

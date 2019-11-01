@@ -20,7 +20,7 @@ import java.net.URLEncoder;
 import java.util.Date;
 
 /**
- * 预授权二维码支付
+ * 预授权交易流水创建
  *
  * @author duchong
  * @date 2019-7-8 15:28:06
