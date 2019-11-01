@@ -40,7 +40,7 @@ public class GateWayController {
             log.error("加密参数异常:{}",encrypt);
             param.setFail();
             param.setMessage("解密失败");
-            return param.toString();
+            return AesUtil.Encrypt(param.toString(),h5Key);
         }
         ApiRequestContent content = JSONObject.parseObject(decrypt,ApiRequestContent.class);
         String check = content.check();
@@ -48,7 +48,7 @@ public class GateWayController {
             log.error("加密参数异常:{}",encrypt);
             param.setFail();
             param.setMessage(check);
-            return param.toString();
+            return AesUtil.Encrypt(param.toString(),h5Key);
         }
         String method = StringUtils.getMethodName(content.getMethod());
         MethodSwitch hasMethod = methodSwitchService.queryByMethodAndAppId(method,content.getAppId());
@@ -56,12 +56,12 @@ public class GateWayController {
             log.error("方法名称异常:{}",method);
             param.setFail();
             param.setMessage("无法识别的方法名");
-            return param.toString();
+            return AesUtil.Encrypt(param.toString(),h5Key);
         }
         if (hasMethod.isClosed()){
             param.setFail();
             param.setMessage(hasMethod.getName()+"已关闭");
-            return param.toString();
+            return AesUtil.Encrypt(param.toString(),h5Key);
         }
         try {
             ApiRequestResolver resolver = (ApiRequestResolver) ApplicationContextProvider.getBean(method);
@@ -72,7 +72,7 @@ public class GateWayController {
             param.setMessage("系统繁忙，请稍后再试");
         }
         param.setFail();
-        return param.toString();
+        return AesUtil.Encrypt(param.toString(),h5Key);
     }
 
 }

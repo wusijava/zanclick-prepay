@@ -6,11 +6,8 @@ import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.ApplicationContextProvider;
 import com.zanclick.prepay.common.utils.StringUtils;
-import com.zanclick.prepay.order.entity.PayOrder;
-import com.zanclick.prepay.order.service.PayOrderService;
 import com.zanclick.prepay.web.exeption.DecryptException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,10 +25,9 @@ import java.net.URLEncoder;
 @Slf4j
 @RestController(value = "api_open_controller")
 public class ApiOpenController {
+
     @Value("${h5.server}")
     private String h5Server;
-    @Autowired
-    private PayOrderService payOrderService;
 
     @GetMapping(value = "/verifyMerchant", produces = "application/json;charset=utf-8")
     public Response verifyMerchant(String appId, String cipherJson) {
@@ -45,18 +41,6 @@ public class ApiOpenController {
         } catch (DecryptException e) {
             return Response.fail("解密失败，请检查加密信息");
         }
-    }
-
-    @GetMapping(value = "/notifyReset", produces = "application/json;charset=utf-8")
-    public Response notifyReset(String orderNo) {
-        PayOrder order = payOrderService.queryByOutTradeNo(orderNo);
-        if (order == null) {
-            return Response.fail("订单号有误");
-        }
-        if (order.isPayed()) {
-            payOrderService.sendMessage(order);
-        }
-        return Response.ok("调用成功");
     }
 
     @GetMapping(value = "/createQr")
