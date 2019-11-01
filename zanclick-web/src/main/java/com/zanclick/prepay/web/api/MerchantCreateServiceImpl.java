@@ -35,11 +35,6 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
             param.setMessage(check);
             return param.toString();
         }
-        if (appId == null){
-            param.setFail();
-            param.setMessage("缺少应用ID");
-            return param.toString();
-        }
         try {
             verifyAppId(appId);
             RegisterMerchant merchant = new RegisterMerchant();

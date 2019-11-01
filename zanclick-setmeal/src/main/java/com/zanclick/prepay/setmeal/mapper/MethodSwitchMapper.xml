@@ -5,7 +5,7 @@
             <id column="id" property="id" jdbcType="BIGINT"/>
             <result column="method" property="method" jdbcType="VARCHAR"/>
             <result column="name" property="name" jdbcType="VARCHAR"/>
-            <result column="app_id" property="appId" jdbcType="INTEGER"/>
+            <result column="app_id" property="appId" jdbcType="VARCHAR"/>
             <result column="state" property="state" jdbcType="INTEGER"/>
     </resultMap>
 
@@ -29,7 +29,7 @@
                     <if test="name != null and name != ''">
                         AND `name`=#{name}
                     </if>
-                    <if test="appId != null">
+                    <if test="appId != null and appId != ''">
                         AND `app_id`=#{appId}
                     </if>
                     <if test="state != null">
@@ -60,6 +60,15 @@
         FROM
         <include refid="table"/>
         <include refid="Base_Where_Clause"/>
+    </select>
+
+
+    <select id="selectByMethodAndAppId" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        where method = #{method} and app_id = #{appId} ORDER BY id DESC
     </select>
 
     <insert id="insert" parameterType="com.zanclick.prepay.setmeal.entity.MethodSwitch" useGeneratedKeys="true"
@@ -122,7 +131,7 @@
             <if test="name != null and name != ''">
                  `name`=#{name},
             </if>
-            <if test="appId != null">
+            <if test="appId != null and appId != ''">
                  `app_id`=#{appId},
             </if>
             <if test="state != null">

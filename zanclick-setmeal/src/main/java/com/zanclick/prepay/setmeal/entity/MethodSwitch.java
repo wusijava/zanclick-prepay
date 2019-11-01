@@ -27,7 +27,7 @@ public class MethodSwitch implements Identifiable<Long> {
     /**
      * 应用ID
      */
-    private Integer appId;
+    private String appId;
 
     private Integer state;
 
