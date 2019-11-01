@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class ApiPayResult extends Param {
 
-    private Integer state;
+    private String status;
 
     /**
      * 订单号

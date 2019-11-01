@@ -1,20 +1,14 @@
 package com.zanclick.prepay.web.api;
 
-import com.zanclick.prepay.authorize.util.MoneyUtil;
-import com.zanclick.prepay.authorize.vo.AuthorizePay;
 import com.zanclick.prepay.authorize.dto.PayResult;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
+import com.zanclick.prepay.authorize.vo.AuthorizePay;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.DataUtil;
-import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.order.entity.PayOrder;
-import com.zanclick.prepay.order.entity.SettleRate;
 import com.zanclick.prepay.order.service.PayOrderService;
-import com.zanclick.prepay.order.service.SettleRateService;
-import com.zanclick.prepay.setmeal.entity.SetMeal;
-import com.zanclick.prepay.setmeal.service.SetMealService;
 import com.zanclick.prepay.web.dto.ApiPay;
 import com.zanclick.prepay.web.dto.ApiPayResult;
 import lombok.extern.slf4j.Slf4j;
@@ -35,12 +29,9 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
 
     @Autowired
     private AuthorizePayService authorizePayService;
-    @Autowired
-    private SetMealService setMealService;
+
     @Autowired
     private PayOrderService payOrderService;
-    @Autowired
-    private SettleRateService settleRateService;
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
@@ -56,25 +47,12 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
                 param.setMessage(check);
                 return param.toString();
             }
-            PayOrder order = getPayOrder(dto, appId);
-            if (order.isPayed()){
-                param.setData(getPayResult(order,null));
-                return param.toString();
-            }
-            PayResult result = authorizePayService.prePay(getPay(order));
-            if (result.isSuccess()) {
-                order.setRequestNo(result.getRequestNo());
-                payOrderService.handlePayOrder(order);
-                param.setData(getPayResult(order,result));
-                return param.toString();
-            }
-            order.setState(PayOrder.State.closed.getCode());
-            order.setFinishTime(new Date());
-            payOrderService.handlePayOrder(order);
-            param.setMessage(result.getMessage());
+            PayOrder order = getPayOrder(dto);
+            param.setData(getPayResult(order));
+            return param.toString();
         } catch (BizException be) {
             param.setMessage(be.getMessage());
-            log.error("查询异常:{}", be);
+            log.error("创建订单异常:{}", be);
         } catch (Exception e) {
             param.setMessage("系统异常，请稍后再试");
             log.error("系统异常:{}", e);
@@ -89,44 +67,21 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
      * @param pay
      * @return
      */
-    private PayOrder getPayOrder(ApiPay pay, String appId) {
-        PayOrder payOrder = payOrderService.queryByOutOrderNo(pay.getOutOrderNo());
-        if (DataUtil.isNotEmpty(payOrder) && payOrder.isPayed()){
-            throw new BizException("交易已支付");
+    private PayOrder getPayOrder(ApiPay pay) {
+        PayOrder payOrder = payOrderService.queryAndHandlePayOrder(null,pay.getOutOrderNo());
+        if (payOrder.isWait() && DataUtil.isEmpty(payOrder.getRequestNo())){
+            PayResult result = authorizePayService.prePay(getPay(payOrder));
+            if (result.isSuccess()) {
+                payOrder.setRequestNo(result.getRequestNo());
+                payOrder.setQrCodeUrl(result.getQrCodeUrl());
+                payOrderService.handlePayOrder(payOrder);
+            }else {
+                payOrder.setState(PayOrder.State.closed.getCode());
+                payOrder.setFinishTime(new Date());
+                payOrderService.handlePayOrder(payOrder);
+                throw new BizException(result.getMessage());
+            }
         }
-        if (DataUtil.isNotEmpty(payOrder) && payOrder.isWait()){
-            return payOrder;
-        }
-        SetMeal meal = setMealService.queryByPackageNo(pay.getPackageNo());
-        if (DataUtil.isEmpty(meal)) {
-            throw new BizException("套餐编码错误");
-        }
-        if (SetMeal.State.closed.getCode().equals(meal.getState())) {
-            throw new BizException("套餐已下架");
-        }
-        payOrder = new PayOrder();
-        payOrder.setPackageNo(pay.getPackageNo());
-        payOrder.setAmount(meal.getTotalAmount());
-        payOrder.setAppId(appId);
-        payOrder.setNum(meal.getNum());
-        payOrder.setTitle(meal.getTitle());
-        payOrder.setCreateTime(new Date());
-        payOrder.setMerchantNo(pay.getMerchantNo());
-        payOrder.setOutOrderNo(pay.getOutOrderNo());
-        payOrder.setOutTradeNo(StringUtils.getTradeNo());
-        payOrder.setProvince(pay.getProvince());
-        payOrder.setCity(pay.getCity());
-        payOrder.setState(PayOrder.State.wait.getCode());
-        payOrder.setPhoneNumber(pay.getPhoneNumber());
-        SettleRate rate = settleRateService.queryByAppId(payOrder.getAppId());
-        String settleAmount = MoneyUtil.divide(payOrder.getAmount(),rate.getRate());
-        payOrder.setSettleAmount(settleAmount);
-        String eachAmount = MoneyUtil.divide(payOrder.getAmount(),payOrder.getNum().toString());
-        String amount = MoneyUtil.multiply(eachAmount,String.valueOf(payOrder.getNum()-1));
-        String firstAmount = MoneyUtil.subtract(payOrder.getAmount(),amount);
-        payOrder.setEachMoney(eachAmount);
-        payOrder.setFirstMoney(firstAmount);
-        payOrderService.insert(payOrder);
         return payOrder;
     }
 
@@ -134,23 +89,17 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
      * 获取支付封装类
      *
      * @param order
-     * @param result
      * @return
      */
-    private ApiPayResult getPayResult(PayOrder order,PayResult result) {
+    private ApiPayResult getPayResult(PayOrder order) {
         ApiPayResult payResult = new ApiPayResult();
-        payResult.setState(order.getState());
+        payResult.setStatus(getApiPayStatus(order.getState()));
         payResult.setTotalMoney(order.getAmount());
         payResult.setNum(order.getNum());
         payResult.setTitle(order.getTitle());
-        if (DataUtil.isNotEmpty(result)){
-            payResult.setOrderNo(order.getOutTradeNo());
-            payResult.setQrCodeUrl(result.getQrCodeUrl());
-            payResult.setEachMoney(order.getEachMoney());
-        }
-        if (order.isPayed()){
-            order.setOutTradeNo(order.getOutTradeNo());
-        }
+        payResult.setOrderNo(order.getOutTradeNo());
+        payResult.setQrCodeUrl(order.getQrCodeUrl());
+        payResult.setEachMoney(order.getEachMoney());
         return payResult;
     }
 

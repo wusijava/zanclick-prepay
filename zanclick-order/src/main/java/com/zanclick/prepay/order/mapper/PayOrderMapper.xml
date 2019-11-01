@@ -20,6 +20,7 @@
         <result column="title" property="title" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
+        <result column="qr_code_url" property="qrCodeUrl" jdbcType="VARCHAR"/>
         <result column="state" property="state" jdbcType="INTEGER"/>
     </resultMap>
 
@@ -43,6 +44,7 @@
             `title`,
             `create_time`,
             `finish_time`,
+            `qr_code_url`,
             `state`
     </sql>
     <sql id="Base_Where_Clause">
@@ -102,6 +104,9 @@
                 <if test="finishTime != null">
                     AND `finish_time`=#{finishTime}
                 </if>
+                <if test="qrCodeUrl != null and qrCodeUrl != ''">
+                    AND `qr_code_url`=#{qrCodeUrl}
+                </if>
                 <if test="state != null">
                     AND `state`=#{state}
                 </if>
@@ -155,6 +160,7 @@
         `title`,
         `create_time`,
         `finish_time`,
+        `qr_code_url`,
         `state`
         )
         VALUES(
@@ -176,6 +182,7 @@
         #{title},
         #{createTime},
         #{finishTime},
+        #{qrCodeUrl},
         #{state}
         )
     </insert>
@@ -202,6 +209,7 @@
         `title`,
         `create_time`,
         `finish_time`,
+        `qr_code_url`,
         `state`
         )
         VALUES
@@ -225,6 +233,7 @@
             #{cm.title},
             #{cm.createTime},
             #{cm.finishTime},
+            #{cm.qrCodeUrl},
             #{cm.state}
             )
         </foreach>
@@ -308,6 +317,9 @@
             </if>
             <if test="finishTime != null">
                 `finish_time`=#{finishTime},
+            </if>
+            <if test="qrCodeUrl != null and qrCodeUrl != ''">
+                `qr_code_url`=#{qrCodeUrl},
             </if>
             <if test="state != null">
                 `state`=#{state},

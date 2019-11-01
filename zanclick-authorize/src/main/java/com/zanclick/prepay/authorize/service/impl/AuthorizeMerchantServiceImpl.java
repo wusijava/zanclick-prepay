@@ -144,6 +144,7 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         create.setStoreNo(merchant.getSellerNo());
         create.setSellerName(merchant.getName());
         create.setRcvContactEmail(null);
+        create.setRcvLoginId(merchant.getSellerNo());
         create.setRcvContactName(merchant.getContactName());
         create.setRcvContactPhone(merchant.getContactPhone());
         create.setOperatorName(OPRATORCHANNEL);

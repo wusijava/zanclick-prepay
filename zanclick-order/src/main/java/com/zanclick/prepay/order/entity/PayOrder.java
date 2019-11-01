@@ -99,6 +99,8 @@ public class PayOrder implements Identifiable<Long> {
      */
     private Date finishTime;
 
+    private String qrCodeUrl;
+
     private Integer state;
 
     public enum State {

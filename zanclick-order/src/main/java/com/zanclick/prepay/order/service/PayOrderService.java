@@ -13,10 +13,10 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
     /**
      * 根据 orderNo查找
      *
-     * @param orderNo
+     * @param outTradeNo
      * @return
      */
-    PayOrder queryByOutTradeNo(String orderNo);
+    PayOrder queryByOutTradeNo(String outTradeNo);
 
     /**
      * 根据 outOrderNo查找
@@ -25,6 +25,15 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      * @return
      */
     PayOrder queryByOutOrderNo(String outOrderNo);
+
+    /**
+     * 根据 outOrderNo查找
+     *
+     * @param outTradeNo
+     * @param outOrderNo
+     * @return
+     */
+    PayOrder queryAndHandlePayOrder(String outTradeNo, String outOrderNo);
 
 
     /**

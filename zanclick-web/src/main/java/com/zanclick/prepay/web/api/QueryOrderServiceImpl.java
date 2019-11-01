@@ -63,45 +63,19 @@ public class QueryOrderServiceImpl extends AbstractCommonService implements ApiR
     }
 
     /**
-     * 获取交易列表展示数据
+     * 查询交易详情
      *
-     * @param orderList
+     * @param queryOrder
      * @return
      */
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSS");
-
     private QueryOrderResult queryOrder(QueryOrder queryOrder) {
         QueryOrderResult result = new QueryOrderResult();
-        PayOrder order = null;
-        if (DataUtil.isNotEmpty(queryOrder.getOrderNo())) {
-            order = payOrderService.queryByOutTradeNo(queryOrder.getOrderNo());
-            if (DataUtil.isEmpty(order)) {
-                order = payOrderService.queryByOutOrderNo(queryOrder.getOutOrderNo());
-            }
-        }
-        if (order == null) {
-            throw new BizException("交易订单号有误");
-        }
-        if (order.isWait()){
-            QueryDTO dto = new QueryDTO();
-            dto.setOutTradeNo(order.getOutTradeNo());
-            QueryResult queryResult = authorizePayService.query(dto);
-            if (queryResult.isSuccess() && !AuthorizeOrder.State.unPay.getCode().equals(queryResult.getState())){
-                if (AuthorizeOrder.State.payed.getCode().equals(queryResult.getState())){
-                    order.setState(PayOrder.State.payed.getCode());
-                    order.setFinishTime(new Date());
-                    payOrderService.updateById(order);
-                }else if (AuthorizeOrder.State.failed.getCode().equals(queryResult.getState()) || AuthorizeOrder.State.closed.getCode().equals(queryResult.getState())){
-                    order.setState(PayOrder.State.closed.getCode());
-                    order.setFinishTime(new Date());
-                    payOrderService.updateById(order);
-                }
-            }
-        }
+        PayOrder order = payOrderService.queryAndHandlePayOrder(queryOrder.getOrderNo(),queryOrder.getOutOrderNo());
         result.setMerchantNo(order.getMerchantNo());
         result.setOrderFee(order.getAmount());
         result.setOrderNo(order.getOutTradeNo());
-        result.setOrderStatus(getH5PayStatus(order.getState()));
+        result.setOrderStatus(getApiPayStatus(order.getState()));
         result.setOrderTime(sdf.format(order.getCreateTime()));
         result.setPackageNo(order.getPackageNo());
         result.setOutOrderNo(order.getOutOrderNo());
@@ -112,14 +86,5 @@ public class QueryOrderServiceImpl extends AbstractCommonService implements ApiR
         return result;
     }
 
-
-    public String getH5PayStatus(Integer state) {
-        if (PayOrder.State.payed.getCode().equals(state)) {
-            return "TRADE_SUCCESS";
-        } else if (PayOrder.State.closed.getCode().equals(state) || AuthorizeOrder.State.closed.getCode().equals(state)) {
-            return "TRADE_CLOSED";
-        }
-        return "WAIT_PAY";
-    }
 
 }

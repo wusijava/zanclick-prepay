@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) {
         String basePack = Main.class.getPackage().getName();
         CodeGenerator generator = new CodeGenerator();
-        generator.generateMybatisXml(basePack, AuthorizeOrder.class);
+        generator.generateMybatisXml(basePack, AuthorizeConfiguration.class);
 //        generator.generateDao(basePack,SupplyChainTrade.class);
 //        generator.generateService(basePack,SupplyChainTrade.class);
     }

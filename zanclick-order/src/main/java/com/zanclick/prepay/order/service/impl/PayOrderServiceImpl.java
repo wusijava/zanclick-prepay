@@ -5,7 +5,8 @@ import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
-import com.zanclick.prepay.authorize.service.AuthorizeOrderService;
+import com.zanclick.prepay.authorize.vo.QueryDTO;
+import com.zanclick.prepay.authorize.vo.QueryResult;
 import com.zanclick.prepay.authorize.vo.SettleDTO;
 import com.zanclick.prepay.authorize.vo.SettleResult;
 import com.zanclick.prepay.common.api.AsiaInfoHeader;
@@ -14,6 +15,8 @@ import com.zanclick.prepay.common.api.RespInfo;
 import com.zanclick.prepay.common.api.client.RestHttpClient;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
+import com.zanclick.prepay.common.exception.BizException;
+import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
@@ -63,6 +66,41 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     @Override
     public PayOrder queryByOutOrderNo(String outOrderNo) {
         return payOrderMapper.selectByOutOrderNo(outOrderNo);
+    }
+
+    @Override
+    public PayOrder queryAndHandlePayOrder(String outTradeNo, String outOrderNo) {
+        PayOrder payOrder = null;
+        if (DataUtil.isNotEmpty(outOrderNo)){
+            payOrder = this.queryByOutTradeNo(outOrderNo);
+        }
+        if (DataUtil.isEmpty(payOrder) && DataUtil.isNotEmpty(outOrderNo)){
+            payOrder = this.queryByOutOrderNo(outOrderNo);
+        }
+        if (payOrder == null){
+            log.error("订单信息异常:{},{}",outOrderNo,outTradeNo);
+            throw new BizException("订单信息异常");
+        }
+        if (payOrder.isWait() && payOrder.getRequestNo() != null && payOrder.getQrCodeUrl() !=null){
+            QueryDTO dto = new QueryDTO();
+            dto.setOutTradeNo(payOrder.getOutTradeNo());
+            QueryResult queryResult = authorizePayService.query(dto);
+            if (queryResult.isSuccess()){
+                if (AuthorizeOrder.State.payed.getCode().equals(queryResult.getState())){
+                    payOrder.setState(PayOrder.State.payed.getCode());
+                    payOrder.setFinishTime(new Date());
+                    handlePayOrder(payOrder);
+                }else if (AuthorizeOrder.State.failed.getCode().equals(queryResult.getState()) || AuthorizeOrder.State.closed.getCode().equals(queryResult.getState())){
+                    payOrder.setState(PayOrder.State.closed.getCode());
+                    payOrder.setFinishTime(new Date());
+                    handlePayOrder(payOrder);
+                }
+            }else {
+                log.error("交易信息异常:{},{},{}",queryResult.getMessage(),outOrderNo,outTradeNo);
+                throw new RuntimeException(queryResult.getMessage());
+            }
+        }
+        return payOrder;
     }
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -133,6 +171,11 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     static Long[] times = {10000L, 10000L, 10000L};
 
+    /**
+     * 推送异步消息
+     *
+     * @param order
+     */
     private void asyncSendMessage(PayOrder order) {
         executorService.submit(new Runnable() {
             @Override
@@ -146,7 +189,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
                     }
                     reason = sendSuccessMessage(order);
                     if (reason == null) {
-                        settle(order.getRequestNo(), order.getOutTradeNo(),order.getSettleAmount(), order.getMerchantNo());
+                        settle(order.getRequestNo(), order.getOutTradeNo(), order.getSettleAmount(), order.getMerchantNo());
                     }
                 }
                 if (reason != null) {
@@ -182,7 +225,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
      * @param requestNo
      * @param outTradeNo
      */
-    private void settle(String requestNo,String outTradeNo, String amount, String merchantNo) {
+    private void settle(String requestNo, String outTradeNo, String amount, String merchantNo) {
         AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(merchantNo);
         if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
             createSettleOrder(requestNo, null, SettleOrder.State.today_sign.getCode());
@@ -193,7 +236,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             SettleResult settleResult = authorizePayService.settle(dto);
             if (settleResult.isSuccess()) {
                 createSettleOrder(requestNo, "等待结算", SettleOrder.State.settle_wait.getCode());
-                RedisUtil.lSet("settle",requestNo);
+                RedisUtil.lSet("settle", requestNo);
             } else {
                 createSettleOrder(requestNo, settleResult.getMessage(), SettleOrder.State.settle_fail.getCode());
             }

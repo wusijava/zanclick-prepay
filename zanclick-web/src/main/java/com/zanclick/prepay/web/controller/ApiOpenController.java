@@ -8,14 +8,18 @@ import com.zanclick.prepay.common.utils.ApplicationContextProvider;
 import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.web.dto.ApiPayResult;
 import com.zanclick.prepay.web.exeption.DecryptException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.URLEncoder;
 
 /**
@@ -58,41 +62,59 @@ public class ApiOpenController {
         return Response.ok("调用成功");
     }
 
+
     @GetMapping(value = "/createQr")
-    public Response createQr(String appId, String cipherJson, HttpServletResponse response) {
-        log.error("接收到支付创建请求：appId:{},cipherJson:{}",appId,cipherJson);
+    public void createQrs(String appId, String cipherJson, HttpServletResponse response) {
+        String method = "com.zanclick.create.order";
+        String message = null;
+        StringBuffer sb = new StringBuffer();
+        try {
+            ResponseParam param = resolver(method,appId, cipherJson);
+            if (!param.isSuccess()) {
+                sb.append("/auth/fail");
+                sb.append("?desc="+URLEncoder.encode(param.getMessage(), "utf-8"));
+                response.sendRedirect(h5Server + sb.toString());
+                return;
+            }else {
+                sb.append("/trade/creates");
+                sb.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
+                response.sendRedirect(h5Server + sb.toString());
+                return;
+            }
+        } catch (DecryptException e) {
+            log.error("订单创建,解密失败:{}", e);
+            message = "解密失败，请检查加密信息";
+        } catch (Exception e) {
+            log.error("订单创建,系统异常:{}", e);
+            message = "系统繁忙，请稍后再试";
+        }
+        try {
+            sb.append("/auth/fail");
+            sb.append("?desc="+URLEncoder.encode(message, "utf-8"));
+            response.sendRedirect(h5Server + sb.toString());
+        } catch (IOException e) {
+            log.error("重定向失败:{}", e);
+        }
+    }
+
+    @PostMapping(value = "/createPay")
+    @ResponseBody
+    public Response createPay(String appId, String cipherJson) {
         String method = "com.zanclick.create.auth.prePay";
         try {
             ResponseParam param = resolver(method,appId, cipherJson);
             if (!param.isSuccess()) {
                 return Response.fail(param.getMessage());
             }
-            JSONObject object = (JSONObject) param.getData();
-            Integer state = object.getInteger("state");
-            StringBuffer sb = new StringBuffer();
-            if (state.equals(0)) {
-                sb.append("/trade/create");
-                sb.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
-                sb.append("&qrCodeUrl=" + object.getString("qrCodeUrl")).append("&orderNo=" + object.getString("orderNo"));
-                sb.append("&eachMoney=" + object.getString("eachMoney")).append("&totalMoney=" + object.getString("totalMoney"));
-                sb.append("&num=" + object.getInteger("num")).append("&title=" + URLEncoder.encode(object.getString("title"), "utf-8"));
-            } else if (state.equals(1)) {
-                sb.append("/auth/success");
-                sb.append("?orderNo=" + object.getString("orderNo")).append("&title=" + URLEncoder.encode(object.getString("title"), "utf-8"));
-                sb.append("&money=" + object.getString("totalMoney"));
-            } else if (state.equals(-1)) {
-                sb.append("/auth/fail");
-            }
-            response.sendRedirect(h5Server + sb.toString());
+            ApiPayResult object = (ApiPayResult) param.getData();
+            return Response.ok(object);
         } catch (DecryptException e) {
             return Response.fail("解密失败，请检查加密信息");
         } catch (Exception e) {
             log.error("系统异常:{}", e);
             return Response.fail("系统繁忙，请稍后再试");
         }
-        return Response.ok("");
     }
-
 
     @GetMapping(value = "/queryOrderList", produces = "application/json;charset=utf-8")
     public Response queryOrderList(String appId, String cipherJson) {

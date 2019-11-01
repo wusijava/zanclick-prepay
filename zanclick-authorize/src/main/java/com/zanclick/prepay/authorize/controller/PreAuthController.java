@@ -52,7 +52,7 @@ public class PreAuthController extends BaseController {
         boolean verify_result;
         try {
             verify_result = AlipaySignature.rsaCheckV1(params,
-                    configuration.getPublicKey(),
+                    configuration.getMyBankPublicKey(),
                     configuration.getCharset(), configuration.getSignType());
         }catch (Exception e) {
             log.warn("异步通知接收失败："+e);

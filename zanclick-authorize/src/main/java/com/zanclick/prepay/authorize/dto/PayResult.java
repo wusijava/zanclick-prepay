@@ -23,8 +23,4 @@ public class PayResult extends AuthorizeResponseParam {
      * 二维码链接（支付宝产生）
      * */
     private String qrCodeUrl;
-
-    private String eachMoney;
-
-    private String firstMoney;
 }

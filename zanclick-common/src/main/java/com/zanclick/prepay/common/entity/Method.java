@@ -22,6 +22,7 @@ public class Method {
         methods.add("comZanclickRefundAuthPay");
         methods.add("comZanclickQueryAuthPay");
         methods.add("comZanclickCreateAuthPrePay");
+        methods.add("comZanclickCreateOrder");
         methods.add("comZanclickQueryAuthOrderDetail");
     }
 
