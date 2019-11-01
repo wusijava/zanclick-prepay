@@ -32,7 +32,7 @@ public class MethodSwitchServiceImpl extends BaseMybatisServiceImpl<MethodSwitch
 
     @Override
     public MethodSwitch queryByMethodAndAppId(String method, String appId) {
-      return getMethod(method, appId);
+      return getAppMethod(method, appId);
     }
 
 

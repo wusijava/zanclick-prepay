@@ -18,7 +18,6 @@ import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
-import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.entity.SettleOrder;
 import com.zanclick.prepay.order.mapper.PayOrderMapper;
@@ -236,7 +235,6 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             SettleResult settleResult = authorizePayService.settle(dto);
             if (settleResult.isSuccess()) {
                 createSettleOrder(requestNo, "等待结算", SettleOrder.State.settle_wait.getCode());
-                RedisUtil.lSet("settle", requestNo);
             } else {
                 createSettleOrder(requestNo, settleResult.getMessage(), SettleOrder.State.settle_fail.getCode());
             }
