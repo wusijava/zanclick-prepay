@@ -72,7 +72,7 @@ public class ApiOpenController {
                 response.sendRedirect(h5Server + sb.toString());
                 return;
             }else {
-                sb.append("/trade/creates");
+                sb.append("/trade/create");
                 sb.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
                 response.sendRedirect(h5Server + sb.toString());
                 return;
