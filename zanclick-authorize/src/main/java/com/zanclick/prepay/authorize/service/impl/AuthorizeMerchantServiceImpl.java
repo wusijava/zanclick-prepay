@@ -15,8 +15,10 @@ import com.zanclick.prepay.common.exception.BizException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.concurrent.Executors;
 
 /**
  * 预授权商户
@@ -81,6 +83,12 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
     @Override
     public AuthorizeMerchant queryByAliPayLoginNo(String sellerNo) {
         return authorizeMerchantMapper.selectByAliPayLoginNo(sellerNo);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void importMerchantList(String wayId, String storeProvince, String storeCity, String storeCounty, String storeNo, String storeName, String storeSubjectCertNo, String storeSubjectName, String contactName, String contactPhone, String name, String sellerId) {
+        authorizeMerchantMapper.importMerchantList(wayId,storeProvince,storeCity,storeCounty,storeNo,storeName,storeSubjectCertNo,storeSubjectName,contactName,contactPhone,name,sellerId);
     }
 
     /**
