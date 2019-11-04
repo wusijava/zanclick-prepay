@@ -1,7 +1,7 @@
-package com.zanclick.prepay.setmeal.mapper;
+package com.zanclick.prepay.web.mapper;
 
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
-import com.zanclick.prepay.setmeal.entity.MethodSwitch;
+import com.zanclick.prepay.web.entity.MethodSwitch;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Map;

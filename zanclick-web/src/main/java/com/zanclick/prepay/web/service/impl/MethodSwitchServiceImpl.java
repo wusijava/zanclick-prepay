@@ -1,11 +1,11 @@
-package com.zanclick.prepay.setmeal.service.impl;
+package com.zanclick.prepay.web.service.impl;
 
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.common.utils.RedisUtil;
-import com.zanclick.prepay.setmeal.entity.MethodSwitch;
-import com.zanclick.prepay.setmeal.mapper.MethodSwitchMapper;
-import com.zanclick.prepay.setmeal.service.MethodSwitchService;
+import com.zanclick.prepay.web.entity.MethodSwitch;
+import com.zanclick.prepay.web.mapper.MethodSwitchMapper;
+import com.zanclick.prepay.web.service.MethodSwitchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

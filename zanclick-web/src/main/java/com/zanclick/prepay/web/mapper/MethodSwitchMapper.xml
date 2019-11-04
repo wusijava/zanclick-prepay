@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zanclick.prepay.setmeal.mapper.MethodSwitchMapper">
-    <resultMap id="BaseResultMap" type="com.zanclick.prepay.setmeal.entity.MethodSwitch">
+<mapper namespace="com.zanclick.prepay.web.mapper.MethodSwitchMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.web.entity.MethodSwitch">
             <id column="id" property="id" jdbcType="BIGINT"/>
             <result column="method" property="method" jdbcType="VARCHAR"/>
             <result column="name" property="name" jdbcType="VARCHAR"/>
@@ -71,7 +71,7 @@
         where method = #{method} and app_id = #{appId} ORDER BY id DESC
     </select>
 
-    <insert id="insert" parameterType="com.zanclick.prepay.setmeal.entity.MethodSwitch" useGeneratedKeys="true"
+    <insert id="insert" parameterType="com.zanclick.prepay.web.entity.MethodSwitch" useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO
         <include refid="table"/>
@@ -121,7 +121,7 @@
         WHERE id=#{id}
     </select>
 
-    <update id="updateById" parameterType="com.zanclick.prepay.setmeal.entity.MethodSwitch">
+    <update id="updateById" parameterType="com.zanclick.prepay.web.entity.MethodSwitch">
         UPDATE
         <include refid="table"/>
         <set>

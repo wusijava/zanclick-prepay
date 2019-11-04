@@ -1,9 +1,7 @@
-package com.zanclick.prepay.setmeal.service;
+package com.zanclick.prepay.web.service;
 
 import com.zanclick.prepay.common.base.service.BaseService;
-import com.zanclick.prepay.setmeal.entity.MethodSwitch;
-
-import java.util.Map;
+import com.zanclick.prepay.web.entity.MethodSwitch;
 
 /**
  * @author Administrator
