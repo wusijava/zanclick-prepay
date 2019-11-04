@@ -78,6 +78,11 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         return authorizeMerchantMapper.selectByMerchantNo(merchantNo);
     }
 
+    @Override
+    public AuthorizeMerchant queryByAliPayLoginNo(String sellerNo) {
+        return authorizeMerchantMapper.selectByAliPayLoginNo(sellerNo);
+    }
+
     /**
      * 查询是否有正在审核中的商户
      *

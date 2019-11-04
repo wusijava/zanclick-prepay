@@ -29,4 +29,12 @@ public interface AuthorizeMerchantService extends BaseService<AuthorizeMerchant,
      * @return
      */
     AuthorizeMerchant queryMerchant(String merchantNo);
+
+    /**
+     * 根据支付宝收款行号查询
+     *
+     * @param sellerNo
+     * @return
+     */
+    AuthorizeMerchant queryByAliPayLoginNo(String sellerNo);
 }
