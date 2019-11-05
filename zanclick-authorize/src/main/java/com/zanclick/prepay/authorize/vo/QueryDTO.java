@@ -20,11 +20,11 @@ public class QueryDTO extends RequestParam {
     /**
      * 订单号
      * */
-    private String orderNo;
+    private String requestNo;
 
     @Override
     public String check() {
-        if (checkNull(outTradeNo) && checkNull(orderNo)) {
+        if (checkNull(outTradeNo) && checkNull(requestNo)) {
             return "请至少传入一个订单号";
         }
         return null;

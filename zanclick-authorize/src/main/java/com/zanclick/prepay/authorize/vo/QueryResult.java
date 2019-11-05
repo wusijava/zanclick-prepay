@@ -17,8 +17,8 @@ public class QueryResult extends AuthorizeResponseParam {
     private String outTradeNo;
 
     /**
-     * 订单号 （自己生成）
+     * 订单号
      */
-    private String tradeNo;
+    private String requestNo;
 
 }

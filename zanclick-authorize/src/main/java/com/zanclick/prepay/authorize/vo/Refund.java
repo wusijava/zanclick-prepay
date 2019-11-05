@@ -23,9 +23,9 @@ public class Refund extends RequestParam {
     private String outTradeNo;
 
     /**
-     * 订单号（自己产生）
+     * 订单号（主订单里的）
      */
-    private String orderNo;
+    private String requestNo;
 
     /**
      * 解冻/转支付 订单号（自己生成，对应本次操作）
@@ -44,7 +44,7 @@ public class Refund extends RequestParam {
 
     @Override
     public String check() {
-        if (checkNull(outTradeNo) && checkNull(orderNo)) {
+        if (checkNull(outTradeNo) && checkNull(requestNo)) {
             return "请至少选择一个订单号";
         }
         if (checkNull(outRequestNo)) {

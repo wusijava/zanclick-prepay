@@ -14,7 +14,7 @@ public class SettleDTO extends RequestParam {
     /**
      * 订单号
      */
-    private String orderNo;
+    private String requestNo;
 
     /**
      * 外部订单号
@@ -25,7 +25,7 @@ public class SettleDTO extends RequestParam {
 
     @Override
     public String check() {
-        if (checkNull(orderNo) && checkNull(outTradeNo)) {
+        if (checkNull(requestNo) && checkNull(outTradeNo)) {
             return "请至少传入一个订单单号";
         }
         if (checkNull(amount)) {

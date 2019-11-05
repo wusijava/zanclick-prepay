@@ -18,10 +18,8 @@ public class RefundResult extends ResponseParam {
     private String outTradeNo;
 
     /**
-     * 订单号（自己产生）
-     */
-    private String orderNo;
-
+     * （解冻/转支付订单产生的）
+     * */
     private String requestNo;
 
     private String outRequestNo;

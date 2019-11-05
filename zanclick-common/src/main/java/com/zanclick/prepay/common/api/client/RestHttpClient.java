@@ -3,8 +3,8 @@ package com.zanclick.prepay.common.api.client;
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.api.AsiaInfoHashMap;
 import com.zanclick.prepay.common.api.AsiaInfoHeader;
+import com.zanclick.prepay.common.api.RestConfig;
 import com.zanclick.prepay.common.api.sign.RSASignature;
-import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -32,13 +32,6 @@ import java.util.Set;
  */
 @Slf4j
 public class RestHttpClient {
-
-    private static final String HTTPS_URL = StringUtils.getProperty(
-            "config.properties", "HTTPS_URL");
-
-    private static final String SIGN_PRIVATE_KEY = StringUtils.getProperty(
-            "config.properties", "SIGN_PRIVATE_KEY");
-
 
     public static HttpClient getSSLHttpClient() throws Exception {
 
@@ -109,7 +102,7 @@ public class RestHttpClient {
             AsiaInfoHashMap head = AsiaInfoHashMap.toAsiaInfoHashMap(header);
             HttpPost postMethod = new HttpPost(url);
             String content = RSASignature.getSignContent(RSASignature.getSortedMap(head)) + body;
-            String signStr = RSASignature.sign(content, SIGN_PRIVATE_KEY);
+            String signStr = RSASignature.sign(content, RestConfig.requestPrivateKey);
             Set keys = head.keySet();
             Iterator it = keys.iterator();
             while (it.hasNext()) {

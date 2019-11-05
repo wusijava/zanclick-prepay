@@ -106,8 +106,8 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         result.setOutTradeNo(dto.getOutTradeNo());
-        result.setOrderNo(dto.getOrderNo());
-        AuthorizeOrder order = queryByOrderNoOrOutTradeNo(dto.getOrderNo(), dto.getOutTradeNo());
+        result.setRequestNo(dto.getRequestNo());
+        AuthorizeOrder order = queryByRequestNoOrOutTradeNo(dto.getRequestNo(), dto.getOutTradeNo());
         if (order == null || !order.isPayed()) {
             String message = order == null ? "交易订单号有误" : "订单状态异常，无法结算";
             result.setMessage(message);
@@ -146,8 +146,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         }
         String desc = dto.isUnFree() ? "解冻" : "转支付";
         result.setOutTradeNo(dto.getOutTradeNo());
-        result.setOrderNo(dto.getOrderNo());
-        AuthorizeOrder order = queryByOrderNoOrOutTradeNo(dto.getOrderNo(), dto.getOutTradeNo());
+        AuthorizeOrder order = queryByRequestNoOrOutTradeNo(dto.getRequestNo(), dto.getOutTradeNo());
         if (order == null || order.isUnPay()) {
             String message = order == null ? "交易订单号有误" : "订单状态异常，无法进行" + desc;
             result.setMessage(message);
@@ -223,8 +222,8 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         result.setOutTradeNo(dto.getOutTradeNo());
-        result.setTradeNo(dto.getOrderNo());
-        AuthorizeOrder order = queryByOrderNoOrOutTradeNo(dto.getOrderNo(), dto.getOutTradeNo());
+        result.setRequestNo(dto.getRequestNo());
+        AuthorizeOrder order = queryByRequestNoOrOutTradeNo(dto.getRequestNo(), dto.getOutTradeNo());
         if (order == null) {
             result.setMessage("交易订单号有误");
             result.setFail();
@@ -273,8 +272,8 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             return result;
         }
         result.setOutTradeNo(dto.getOutTradeNo());
-        result.setTradeNo(dto.getOrderNo());
-        AuthorizeOrder order = queryByOrderNoOrOutTradeNo(dto.getOrderNo(), dto.getOutTradeNo());
+        result.setRequestNo(dto.getRequestNo());
+        AuthorizeOrder order = queryByRequestNoOrOutTradeNo(dto.getRequestNo(), dto.getOutTradeNo());
         if (order == null) {
             result.setMessage("交易订单号有误");
             result.setFail();
@@ -481,13 +480,13 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
     /**
      * 根据订单号查询或者屋外部订单号查询
      *
-     * @param orderNo
+     * @param requestNo
      * @param outTradeNo
      */
-    private AuthorizeOrder queryByOrderNoOrOutTradeNo(String orderNo, String outTradeNo) {
+    private AuthorizeOrder queryByRequestNoOrOutTradeNo(String requestNo, String outTradeNo) {
         AuthorizeOrder order = null;
-        if (orderNo != null) {
-            order = authorizeOrderService.queryByOrderNo(orderNo);
+        if (requestNo != null) {
+            order = authorizeOrderService.queryByRequestNo(requestNo);
         }
         if (order == null && outTradeNo != null) {
             order = authorizeOrderService.queryByOutTradeNo(outTradeNo);
