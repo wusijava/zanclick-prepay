@@ -12,6 +12,7 @@ import com.zanclick.prepay.authorize.vo.SettleResult;
 import com.zanclick.prepay.common.api.AsiaInfoHeader;
 import com.zanclick.prepay.common.api.AsiaInfoUtil;
 import com.zanclick.prepay.common.api.RespInfo;
+import com.zanclick.prepay.common.api.RestConfig;
 import com.zanclick.prepay.common.api.client.RestHttpClient;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
@@ -138,7 +139,13 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     private String sendSuccessMessage(PayOrder order) {
         String reason = null;
-        AsiaInfoHeader header = AsiaInfoUtil.getHeader(order.getPhoneNumber());
+        String routeValue = null;
+        if (RestConfig.isPhone()){
+            routeValue = order.getPhoneNumber();
+        }else {
+            routeValue = order.getCity();
+        }
+        AsiaInfoHeader header = AsiaInfoUtil.header(routeValue);
         try {
             JSONObject object = new JSONObject();
             object.put("orderNo", order.getOutTradeNo());
@@ -147,7 +154,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             object.put("payTime", sdf.format(order.getFinishTime()));
             object.put("merchantNo", order.getMerchantNo());
             object.put("orderStatus", getOrderStatus(order.getState()));
-            String result = RestHttpClient.post(header, object.toJSONString(), "commodity/freezenotify/v1.1.1");
+            String result = RestHttpClient.post(header, object.toJSONString(), RestConfig.payOrderNotify);
             log.error("通知结果：{}", result);
             RespInfo info = JSONObject.parseObject(result, RespInfo.class);
             if (info.isSuccess()) {

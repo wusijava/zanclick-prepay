@@ -103,11 +103,11 @@ public class RestHttpClient {
     }
 
     public static String post(AsiaInfoHeader header, String body,String url) throws Exception {
-        log.error("能力回调:{},{},{}",JSONObject.toJSONString(header),body,HTTPS_URL+url);
+        log.error("能力回调:{},{},{}",JSONObject.toJSONString(header),body,url);
         HttpClient httpclient = getSSLHttpClient();
         try {
             AsiaInfoHashMap head = AsiaInfoHashMap.toAsiaInfoHashMap(header);
-            HttpPost postMethod = new HttpPost(HTTPS_URL+url);
+            HttpPost postMethod = new HttpPost(url);
             String content = RSASignature.getSignContent(RSASignature.getSortedMap(head)) + body;
             String signStr = RSASignature.sign(content, SIGN_PRIVATE_KEY);
             Set keys = head.keySet();

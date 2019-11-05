@@ -14,39 +14,21 @@ public class AsiaInfoUtil {
 
     private static SimpleDateFormat yyyyMMddHHmmssSSS = new SimpleDateFormat("yyyyMMddHHmmssSSS");
 
-    public static AsiaInfoHeader getHeader(String route_value) {
-        return prod(route_value);
-    }
 
-
-    public static AsiaInfoHeader dev(String route_value) {
+    public static AsiaInfoHeader header(String route_value) {
         AsiaInfoHeader header = new AsiaInfoHeader();
-        header.setAppId("502004");
+        header.setAppId(RestConfig.appId);
         header.setTimestamp(yyyyMMddHHmmssSSS.format(new Date()));
         header.setBusiSerial(busiSerial());
         header.setNonce(nonce());
-        header.setSign_method("RSA");
-        header.setOperatorid("");
-        header.setRoute_type("0");
-        header.setRoute_value("200");
-        return header;
-    }
-
-
-    public static AsiaInfoHeader prod(String route_value) {
-        AsiaInfoHeader header = new AsiaInfoHeader();
-        header.setAppId("101102");
-        header.setTimestamp(yyyyMMddHHmmssSSS.format(new Date()));
-        header.setBusiSerial(busiSerial());
-        header.setNonce(nonce());
-        header.setSign_method("RSA");
-        header.setOperatorid("");
-        header.setRoute_type("1");
+        header.setSign_method(RestConfig.signMethod);
+        header.setRoute_type(RestConfig.routeType);
         header.setRoute_value(route_value);
+        header.setOperatorid("");
         return header;
     }
 
-    private static String busiSerial(){
+    static String busiSerial(){
         return UUID.randomUUID().toString().replaceAll("-","");
     }
 
@@ -54,7 +36,7 @@ public class AsiaInfoUtil {
      * 创建指定数量的随机字符串
      * @return
      */
-    public static String nonce() {
+    static String nonce() {
         String retStr = "";
         String strTable = "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         int len = strTable.length();
@@ -76,9 +58,5 @@ public class AsiaInfoUtil {
             }
         } while (bDone);
         return retStr;
-    }
-
-    public static void main(String[] args) {
-        System.err.println(nonce());
     }
 }
