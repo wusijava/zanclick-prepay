@@ -4,6 +4,8 @@ import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.common.base.service.BaseService;
 
+import java.util.List;
+
 /**
  * 预授权商户
  *
@@ -38,12 +40,13 @@ public interface AuthorizeMerchantService extends BaseService<AuthorizeMerchant,
      */
     AuthorizeMerchant queryByAliPayLoginNo(String sellerNo);
 
+
+
     /**
      * 导入商户信息列表
      *
      * @param
      * @return
      */
-    void importMerchantList( String wayId,String storeProvince,String storeCity,String storeCounty,String storeNo,String storeName,String storeSubjectCertNo,String storeSubjectName,String contactName,
-                             String contactPhone,String name,String sellerId);
+    void createMerchantByExcel(List<AuthorizeMerchant> list);
 }

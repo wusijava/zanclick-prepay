@@ -387,10 +387,5 @@
         </set>
         WHERE id=#{id}
     </update>
-    <insert id="importMerchantList"   keyProperty="id" parameterType="string">
-insert into
-        <include refid="table"/> (`way_id`,`seller_id`,`name`,`contact_name`,`contact_phone`,`store_no`,`store_name`,
-             `store_subject_name`,`store_subject_cert_no`,`store_province`,`store_city`,`store_county`
-             ) values (#{wayId},#{sellerId},#{name},#{contactName},#{contactPhone},#{storeNo},#{storeName},#{storeSubjectName},
-    #{storeSubjectCertNo},#{storeProvince},#{storeCity},#{storeCounty})</insert>
+
 </mapper>

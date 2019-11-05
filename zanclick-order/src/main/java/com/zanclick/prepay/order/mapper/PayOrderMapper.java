@@ -26,4 +26,6 @@ public interface PayOrderMapper extends BaseMapper<PayOrder, Long> {
      * @return
      */
     PayOrder selectByOutOrderNo(String outOrderNo);
+
+
 }

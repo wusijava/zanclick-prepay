@@ -32,7 +32,10 @@ public interface AuthorizeMerchantMapper extends BaseMapper<AuthorizeMerchant, L
      * @param
      * @return
      */
-    void importMerchantList( String wayId,String storeProvince,String storeCity,String storeCounty,String storeNo,String storeName,String storeSubjectCertNo,String storeSubjectName,String contactName,
-                             String contactPhone,String name,String sellerId);
+
+
+
+
+
 
 }

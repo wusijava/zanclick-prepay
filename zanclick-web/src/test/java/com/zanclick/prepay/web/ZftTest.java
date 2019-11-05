@@ -30,10 +30,10 @@ public class ZftTest {
 
     @Test
     public void sss(){
-        List<RegisterMerchant> merchantList = ExcelUtil.readExcel("E:\\excel\\20191102.xls","Sheet1");
+       /* List<RegisterMerchant> merchantList = ExcelUtil.readExcel("E:\\excel\\20191102.xls","Sheet1");
         for (RegisterMerchant merchant:merchantList){
             createAuthorizeMerchant(merchant);
-        }
+        }*/
     }
 
     @Test
