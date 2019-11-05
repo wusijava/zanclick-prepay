@@ -1,4 +1,4 @@
-package com.zanclick.prepay.web.entity;
+package com.zanclick.prepay.app.entity;
 
 import com.zanclick.prepay.common.entity.Identifiable;
 import lombok.Data;

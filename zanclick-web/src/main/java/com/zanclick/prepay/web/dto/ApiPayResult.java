@@ -33,4 +33,6 @@ public class ApiPayResult extends Param {
     private String totalMoney;
 
     private String title;
+
+    private String storeName;
 }

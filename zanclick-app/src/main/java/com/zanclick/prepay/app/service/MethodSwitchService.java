@@ -1,7 +1,7 @@
-package com.zanclick.prepay.web.service;
+package com.zanclick.prepay.app.service;
 
 import com.zanclick.prepay.common.base.service.BaseService;
-import com.zanclick.prepay.web.entity.MethodSwitch;
+import com.zanclick.prepay.app.entity.MethodSwitch;
 
 /**
  * @author Administrator

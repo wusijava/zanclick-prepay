@@ -1,7 +1,9 @@
 package com.zanclick.prepay.web.api;
 
 import com.zanclick.prepay.authorize.dto.PayResult;
+import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
+import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.vo.AuthorizePay;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
@@ -34,6 +36,8 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
 
     @Autowired
     private PayOrderService payOrderService;
+    @Autowired
+    private AuthorizeMerchantService authorizeMerchantService;
 
     @Value("${h5.server}")
     private String h5Server;
@@ -110,6 +114,12 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         payResult.setOrderNo(order.getOutTradeNo());
         payResult.setQrCodeUrl(order.getQrCodeUrl());
         payResult.setEachMoney(order.getEachMoney());
+        if (DataUtil.isNotEmpty(order.getMerchantNo())){
+            AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(order.getMerchantNo());
+            if (DataUtil.isNotEmpty(merchant)){
+                payResult.setStoreName(merchant.getStoreName());
+            }
+        }
         return payResult;
     }
 
