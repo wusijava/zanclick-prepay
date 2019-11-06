@@ -95,10 +95,11 @@ public class RestHttpClient {
         return httpclient;
     }
 
-    public static String post(AsiaInfoHeader header, String body,String url) throws Exception {
+    public static String post(AsiaInfoHeader header, String body,String url){
         log.error("能力回调:{},{},{}",JSONObject.toJSONString(header),body,url);
-        HttpClient httpclient = getSSLHttpClient();
+        HttpClient httpclient = null;
         try {
+            httpclient = getSSLHttpClient();
             AsiaInfoHashMap head = AsiaInfoHashMap.toAsiaInfoHashMap(header);
             HttpPost postMethod = new HttpPost(url);
             String content = RSASignature.getSignContent(RSASignature.getSortedMap(head)) + body;

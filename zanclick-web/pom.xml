@@ -33,6 +33,11 @@
             <artifactId>zanclick-order</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.zanclick</groupId>
+            <artifactId>zanclick-settle</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>

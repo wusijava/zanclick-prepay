@@ -1,4 +1,4 @@
-package com.zanclick.prepay.order.entity;
+package com.zanclick.prepay.settle.entity;
 
 import com.zanclick.prepay.common.entity.Identifiable;
 import lombok.Data;
@@ -28,6 +28,7 @@ public class SettleOrder implements Identifiable<Long> {
     private String reason;
 
     public enum State {
+        notice_wait(4, "等待通知"),
         notice_fail(0, "通知失败"),
         settle_fail(1, "结算失败"),
         settle_wait(2, "等待结算"),
@@ -58,5 +59,9 @@ public class SettleOrder implements Identifiable<Long> {
         }
     }
 
+    public static void main(String[] args) {
+        System.err.println("CDZHA20505\n");
+        System.err.println("CDZHA20505");
+    }
 
 }

@@ -25,6 +25,7 @@
         <module>zanclick-app</module>
         <module>zanclick-setmeal</module>
         <module>zanclick-order</module>
+        <module>zanclick-settle</module>
     </modules>
 
     <dependencies>

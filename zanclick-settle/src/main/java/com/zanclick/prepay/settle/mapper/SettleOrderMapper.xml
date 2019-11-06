@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zanclick.prepay.order.mapper.SettleOrderMapper">
-    <resultMap id="BaseResultMap" type="com.zanclick.prepay.order.entity.SettleOrder">
+<mapper namespace="com.zanclick.prepay.settle.mapper.SettleOrderMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.settle.entity.SettleOrder">
             <id column="id" property="id" jdbcType="BIGINT"/>
             <result column="state" property="state" jdbcType="INTEGER"/>
             <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
@@ -62,7 +62,17 @@
         <include refid="Base_Where_Clause"/>
     </select>
 
-    <insert id="insert" parameterType="com.zanclick.prepay.order.entity.SettleOrder" useGeneratedKeys="true"
+
+    <select id="selectByOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE
+        order_no = #{orderNo} ORDER BY id DESC LIMIT 1
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.settle.entity.SettleOrder" useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO
         <include refid="table"/>
@@ -112,7 +122,7 @@
         WHERE id=#{id}
     </select>
 
-    <update id="updateById" parameterType="com.zanclick.prepay.order.entity.SettleOrder">
+    <update id="updateById" parameterType="com.zanclick.prepay.settle.entity.SettleOrder">
         UPDATE
         <include refid="table"/>
         <set>
