@@ -17,6 +17,7 @@ import com.zanclick.prepay.authorize.vo.*;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,7 @@ import java.util.Date;
  * @author duchong
  * @date 2019-7-8 15:28:06
  **/
+@Slf4j
 @Service
 public class AuthorizePayServiceImpl implements AuthorizePayService {
 
@@ -69,6 +71,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         }
         AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(dto.getMerchantNo());
         if (merchant == null || !merchant.isSuccess()) {
+            log.error("未签约商户无法进行预授权操作:{}",dto.getMerchantNo());
             result.setFail();
             result.setMessage("未签约商户无法进行预授权操作");
             return result;
