@@ -8,6 +8,9 @@ import com.zanclick.prepay.order.service.SettleRateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Administrator
  * @date 2019-10-31 14:21:08
@@ -24,8 +27,12 @@ public class SettleRateServiceImpl extends BaseMybatisServiceImpl<SettleRate,Lon
         return settleRateMapper;
     }
 
+
     @Override
-    public SettleRate queryByAppId(String appId) {
-        return settleRateMapper.selectByAppId(appId);
+    public SettleRate queryByAppId(String appId, Integer num) {
+        Map<String,Object> params = new HashMap<>(2);
+        params.put("appId",appId);
+        params.put("num",num);
+        return settleRateMapper.selectByAppIdAndNum(params);
     }
 }

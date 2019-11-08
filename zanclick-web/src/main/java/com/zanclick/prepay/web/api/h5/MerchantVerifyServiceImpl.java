@@ -1,4 +1,4 @@
-package com.zanclick.prepay.web.api;
+package com.zanclick.prepay.web.api.h5;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
@@ -6,6 +6,7 @@ import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
+import com.zanclick.prepay.web.api.AbstractCommonService;
 import com.zanclick.prepay.web.dto.ApiVerifyMerchant;
 import com.zanclick.prepay.web.dto.VerifyMerchant;
 import lombok.extern.slf4j.Slf4j;

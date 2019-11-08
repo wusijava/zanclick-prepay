@@ -19,6 +19,9 @@ public class SettleRate implements Identifiable<Long> {
      */
     private String rate;
 
+    private Integer num;
+
     private String appId;
+
 
 }

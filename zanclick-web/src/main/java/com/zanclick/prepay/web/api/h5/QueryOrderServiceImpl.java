@@ -1,4 +1,4 @@
-package com.zanclick.prepay.web.api;
+package com.zanclick.prepay.web.api.h5;
 
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
@@ -6,6 +6,7 @@ import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.web.api.AbstractCommonService;
 import com.zanclick.prepay.web.dto.QueryOrder;
 import com.zanclick.prepay.web.dto.QueryOrderResult;
 import lombok.extern.slf4j.Slf4j;

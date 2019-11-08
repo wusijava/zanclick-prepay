@@ -1,8 +1,9 @@
-package com.zanclick.prepay.web.api;
+package com.zanclick.prepay.web.api.h5;
 
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
+import com.zanclick.prepay.web.api.AbstractCommonService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 

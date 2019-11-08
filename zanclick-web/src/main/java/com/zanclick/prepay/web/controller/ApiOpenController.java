@@ -32,15 +32,7 @@ public class ApiOpenController {
     @GetMapping(value = "/verifyMerchant", produces = "application/json;charset=utf-8")
     public Response verifyMerchant(String appId, String cipherJson) {
         String method = "com.zanclick.verify.merchant";
-        try {
-            ResponseParam param = resolver(method, appId, cipherJson);
-            if (param.isSuccess()) {
-                return Response.ok(param.getData());
-            }
-            return Response.unsigned(param.getMessage());
-        } catch (DecryptException e) {
-            return Response.fail("解密失败，请检查加密信息");
-        }
+        return common(appId,cipherJson,method);
     }
 
     @GetMapping(value = "/createQr")
@@ -79,8 +71,19 @@ public class ApiOpenController {
 
     @GetMapping(value = "/queryOrderList", produces = "application/json;charset=utf-8")
     public Response queryOrderList(String appId, String cipherJson) {
+        String method = "com.zanclick.query.auth.order";
+        return common(appId,cipherJson,method);
+    }
+
+
+    @GetMapping(value = "/refund", produces = "application/json;charset=utf-8")
+    public Response refund(String appId, String cipherJson) {
+        String method = "com.zanclick.refund.authPay";
+        return common(appId,cipherJson,method);
+    }
+
+    private Response common(String appId,String cipherJson,String method){
         try {
-            String method = "com.zanclick.query.auth.order";
             ResponseParam param = resolver(method, appId, cipherJson);
             if (param.isSuccess()) {
                 return Response.ok(param.getData());

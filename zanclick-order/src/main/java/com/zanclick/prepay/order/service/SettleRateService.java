@@ -14,8 +14,10 @@ public interface SettleRateService extends BaseService<SettleRate,Long> {
      * 根据appId查询
      *
      * @param appId
+     * @param num
      * @return
      */
-    SettleRate queryByAppId(String appId);
+    SettleRate queryByAppId(String appId,Integer num);
+
 
 }

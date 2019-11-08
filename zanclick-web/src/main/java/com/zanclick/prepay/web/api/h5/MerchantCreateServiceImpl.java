@@ -1,6 +1,7 @@
-package com.zanclick.prepay.web.api;
+package com.zanclick.prepay.web.api.h5;
 
 import com.zanclick.prepay.authorize.vo.RegisterMerchant;
+import com.zanclick.prepay.web.api.AbstractCommonService;
 import com.zanclick.prepay.web.dto.ApiRegisterMerchant;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.common.entity.ResponseParam;

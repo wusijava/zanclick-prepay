@@ -10,6 +10,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>zanclick-settle</artifactId>
+    <description>第三方资金接入项目启动</description>
+    <name>结算中心</name>
 
 
     <dependencies>

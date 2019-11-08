@@ -1,4 +1,4 @@
-package com.zanclick.prepay.web.api;
+package com.zanclick.prepay.web.api.h5;
 
 import com.zanclick.prepay.authorize.util.MoneyUtil;
 import com.zanclick.prepay.common.entity.ResponseParam;
@@ -10,8 +10,9 @@ import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.entity.SettleRate;
 import com.zanclick.prepay.order.service.PayOrderService;
 import com.zanclick.prepay.order.service.SettleRateService;
-import com.zanclick.prepay.setmeal.entity.SetMeal;
-import com.zanclick.prepay.setmeal.service.SetMealService;
+import com.zanclick.prepay.admin.entity.SetMeal;
+import com.zanclick.prepay.admin.service.SetMealService;
+import com.zanclick.prepay.web.api.AbstractCommonService;
 import com.zanclick.prepay.web.dto.ApiPay;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,7 +101,7 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder.setCity(pay.getCity());
         payOrder.setState(PayOrder.State.wait.getCode());
         payOrder.setPhoneNumber(pay.getPhoneNumber());
-        SettleRate rate = settleRateService.queryByAppId(payOrder.getAppId());
+        SettleRate rate = settleRateService.queryByAppId(payOrder.getAppId(),payOrder.getNum());
         String settleAmount = MoneyUtil.divide(payOrder.getAmount(),rate.getRate());
         payOrder.setSettleAmount(settleAmount);
         String eachAmount = MoneyUtil.divide(payOrder.getAmount(),payOrder.getNum().toString());
