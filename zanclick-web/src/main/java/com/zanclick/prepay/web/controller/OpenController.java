@@ -1,15 +1,27 @@
 package com.zanclick.prepay.web.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
+import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.common.entity.Response;
+import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.web.service.ApiService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.xssf.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 内部接口
@@ -25,6 +37,8 @@ public class OpenController {
 
     @Autowired
     private PayOrderService payOrderService;
+    @Autowired
+    private ApiService apiService;
 
     @ApiOperation(value = "通知补发")
     @GetMapping(value = "/resetNotify", produces = "application/json;charset=utf-8")
@@ -52,4 +66,84 @@ public class OpenController {
         }
     }
 
+
+
+    @GetMapping(value = "/downloadMerchantExcel/{key}")
+    @ResponseBody
+    public void downloadMerchantExcel(@PathVariable(value = "key") String key, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        Object object = RedisUtil.get(key);
+        List<RegisterMerchant> objectList = object == null ? null : (List<RegisterMerchant>) object;
+        if (objectList == null){
+            log.error("key已经过期:{}",key);
+            return;
+        }
+        batchExport(RegisterMerchant.headers,RegisterMerchant.keys,parser(objectList),request,response);
+    }
+
+
+    private List<JSONObject> parser(List<RegisterMerchant> merchantList){
+        return JSONObject.parseArray(JSONObject.toJSONString(merchantList),JSONObject.class);
+    }
+
+    static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHHmmss");
+    public void batchExport(String[] headers,String[] keys, List<JSONObject> lists, HttpServletRequest request, HttpServletResponse response) throws Exception {
+        // 声明一个工作薄
+        XSSFWorkbook wb = new XSSFWorkbook();
+        //声明一个sheet并命名
+        XSSFSheet sheet = wb.createSheet("京东聚合订单");
+        //给sheet名称一个长度
+        sheet.setDefaultColumnWidth(18);
+        //创建第一行（也可以称为表头）
+        XSSFRow row = sheet.createRow(0);
+
+        //给表头第一行一次创建单元格(对应字段创建对应单元格)
+        for (int i = 0; i < headers.length; i++) {
+            XSSFCellStyle style = wb.createCellStyle();
+            style.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+            XSSFCell headerCell = row.createCell(i);
+            headerCell.setCellStyle(style);
+            headerCell.setCellValue(headers[i]);
+        }
+
+        int rowIndex = 0;
+        XSSFCell cell=null;
+        for(JSONObject obj:lists){
+            XSSFCellStyle style = wb.createCellStyle();
+            style.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+            rowIndex++;
+            row = sheet.createRow(rowIndex);
+
+            for (int i = 0;i<keys.length;i++){
+                cell=row.createCell(i);
+                cell.setCellStyle(style);
+                cell.setCellValue(obj.getString(keys[i]));
+            }
+        }
+        String filename = "商户信息"+sdf1.format(new Date())+".xlsx";
+        String filepath = request.getRealPath("/") + filename;
+        FileOutputStream out = new FileOutputStream(filepath);
+        wb.write(out);
+        out.close();
+        downloadExcel(filepath,response);
+    }
+
+    /**
+     * 下载
+     */
+    public static void downloadExcel(String filepath, HttpServletResponse response)
+            throws IOException {
+        File file = new File(filepath);
+        String fileName = file.getName();
+        response.setContentType("application/vnd.ms-excel;charset=utf-8");
+        response.addHeader("Content-Disposition", "attachment;filename=" + new String(fileName.getBytes("utf-8"), "ISO8859-1"));
+        response.setCharacterEncoding("utf-8");
+        InputStream fis = new BufferedInputStream(new FileInputStream(file));
+        byte[] b = new byte[fis.available()];
+        fis.read(b);
+        response.getOutputStream().write(b);
+        fis.close();
+        if (file.exists()) {
+            file.delete();
+        }
+    }
 }

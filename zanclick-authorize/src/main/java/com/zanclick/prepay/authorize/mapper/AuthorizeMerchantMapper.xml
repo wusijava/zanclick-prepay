@@ -2,31 +2,31 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zanclick.prepay.authorize.mapper.AuthorizeMerchantMapper">
     <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.AuthorizeMerchant">
-            <id column="id" property="id" jdbcType="BIGINT"/>
-            <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
-            <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
-            <result column="app_id" property="appId" jdbcType="VARCHAR"/>
-            <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
-            <result column="seller_id" property="sellerId" jdbcType="VARCHAR"/>
-            <result column="name" property="name" jdbcType="VARCHAR"/>
-            <result column="contact_name" property="contactName" jdbcType="VARCHAR"/>
-            <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR"/>
-            <result column="operator_name" property="operatorName" jdbcType="VARCHAR"/>
-            <result column="store_no" property="storeNo" jdbcType="VARCHAR"/>
-            <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
-            <result column="store_subject_name" property="storeSubjectName" jdbcType="VARCHAR"/>
-            <result column="store_subject_cert_no" property="storeSubjectCertNo" jdbcType="VARCHAR"/>
-            <result column="store_province" property="storeProvince" jdbcType="VARCHAR"/>
-            <result column="store_city" property="storeCity" jdbcType="VARCHAR"/>
-            <result column="store_county" property="storeCounty" jdbcType="VARCHAR"/>
-            <result column="store_province_code" property="storeProvinceCode" jdbcType="VARCHAR"/>
-            <result column="store_city_code" property="storeCityCode" jdbcType="VARCHAR"/>
-            <result column="store_county_code" property="storeCountyCode" jdbcType="VARCHAR"/>
-            <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR"/>
-            <result column="reason" property="reason" jdbcType="VARCHAR"/>
-            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-            <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
-            <result column="state" property="state" jdbcType="INTEGER"/>
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
+        <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
+        <result column="app_id" property="appId" jdbcType="VARCHAR"/>
+        <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
+        <result column="seller_id" property="sellerId" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="contact_name" property="contactName" jdbcType="VARCHAR"/>
+        <result column="contact_phone" property="contactPhone" jdbcType="VARCHAR"/>
+        <result column="operator_name" property="operatorName" jdbcType="VARCHAR"/>
+        <result column="store_no" property="storeNo" jdbcType="VARCHAR"/>
+        <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
+        <result column="store_subject_name" property="storeSubjectName" jdbcType="VARCHAR"/>
+        <result column="store_subject_cert_no" property="storeSubjectCertNo" jdbcType="VARCHAR"/>
+        <result column="store_province" property="storeProvince" jdbcType="VARCHAR"/>
+        <result column="store_city" property="storeCity" jdbcType="VARCHAR"/>
+        <result column="store_county" property="storeCounty" jdbcType="VARCHAR"/>
+        <result column="store_province_code" property="storeProvinceCode" jdbcType="VARCHAR"/>
+        <result column="store_city_code" property="storeCityCode" jdbcType="VARCHAR"/>
+        <result column="store_county_code" property="storeCountyCode" jdbcType="VARCHAR"/>
+        <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR"/>
+        <result column="reason" property="reason" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="table">authorize_merchant</sql>
@@ -60,83 +60,90 @@
     <sql id="Base_Where_Clause">
         <where>
             <trim prefixOverrides="and">
-                    <if test="id != null">
-                        AND `id`=#{id}
-                    </if>
-                    <if test="merchantNo != null and merchantNo != ''">
-                        AND `merchant_no`=#{merchantNo}
-                    </if>
-                    <if test="wayId != null and wayId != ''">
-                        AND `way_id`=#{wayId}
-                    </if>
-                    <if test="appId != null and appId != ''">
-                        AND `app_id`=#{appId}
-                    </if>
-                    <if test="sellerNo != null and sellerNo != ''">
-                        AND `seller_no`=#{sellerNo}
-                    </if>
-                    <if test="sellerId != null and sellerId != ''">
-                        AND `seller_id`=#{sellerId}
-                    </if>
-                    <if test="name != null and name != ''">
-                        AND `name`=#{name}
-                    </if>
-                    <if test="contactName != null and contactName != ''">
-                        AND `contact_name`=#{contactName}
-                    </if>
-                    <if test="contactPhone != null and contactPhone != ''">
-                        AND `contact_phone`=#{contactPhone}
-                    </if>
-                    <if test="operatorName != null and operatorName != ''">
-                        AND `operator_name`=#{operatorName}
-                    </if>
-                    <if test="storeNo != null and storeNo != ''">
-                        AND `store_no`=#{storeNo}
-                    </if>
-                    <if test="storeName != null and storeName != ''">
-                        AND `store_name`=#{storeName}
-                    </if>
-                    <if test="storeSubjectName != null and storeSubjectName != ''">
-                        AND `store_subject_name`=#{storeSubjectName}
-                    </if>
-                    <if test="storeSubjectCertNo != null and storeSubjectCertNo != ''">
-                        AND `store_subject_cert_no`=#{storeSubjectCertNo}
-                    </if>
-                    <if test="storeProvince != null and storeProvince != ''">
-                        AND `store_province`=#{storeProvince}
-                    </if>
-                    <if test="storeCity != null and storeCity != ''">
-                        AND `store_city`=#{storeCity}
-                    </if>
-                    <if test="storeCounty != null and storeCounty != ''">
-                        AND `store_county`=#{storeCounty}
-                    </if>
-                    <if test="storeProvinceCode != null and storeProvinceCode != ''">
-                        AND `store_province_code`=#{storeProvinceCode}
-                    </if>
-                    <if test="storeCityCode != null and storeCityCode != ''">
-                        AND `store_city_code`=#{storeCityCode}
-                    </if>
-                    <if test="storeCountyCode != null and storeCountyCode != ''">
-                        AND `store_county_code`=#{storeCountyCode}
-                    </if>
-                    <if test="supplierNo != null and supplierNo != ''">
-                        AND `supplier_no`=#{supplierNo}
-                    </if>
-                    <if test="reason != null and reason != ''">
-                        AND `reason`=#{reason}
-                    </if>
-                    <if test="createTime != null">
-                        AND `create_time`=#{createTime}
-                    </if>
-                    <if test="finishTime != null">
-                        AND `finish_time`=#{finishTime}
-                    </if>
-                    <if test="state != null">
-                        AND `state`=#{state}
-                    </if>
+                <if test="id != null">
+                    AND `id`=#{id}
+                </if>
+                <if test="merchantNo != null and merchantNo != ''">
+                    AND `merchant_no` LIKE concat ('%',#{merchantNo},'%')
+                </if>
+                <if test="wayId != null and wayId != ''">
+                    AND `way_id` LIKE concat ('%',#{wayId},'%')
+                </if>
+                <if test="appId != null and appId != ''">
+                    AND `app_id`=#{appId}
+                </if>
+                <if test="sellerNo != null and sellerNo != ''">
+                    AND `seller_no` LIKE concat ('%',#{sellerNo},'%')
+                </if>
+                <if test="sellerId != null and sellerId != ''">
+                    AND `seller_id`=#{sellerId}
+                </if>
+                <if test="name != null and name != ''">
+                    AND `name`=#{name}
+                </if>
+                <if test="contactName != null and contactName != ''">
+                    AND `contact_name`=#{contactName}
+                </if>
+                <if test="contactPhone != null and contactPhone != ''">
+                    AND `contact_phone`=#{contactPhone}
+                </if>
+                <if test="operatorName != null and operatorName != ''">
+                    AND `operator_name`=#{operatorName}
+                </if>
+                <if test="storeNo != null and storeNo != ''">
+                    AND `store_no`=#{storeNo}
+                </if>
+                <if test="storeName != null and storeName != ''">
+                    AND `store_name`=#{storeName}
+                </if>
+                <if test="storeSubjectName != null and storeSubjectName != ''">
+                    AND `store_subject_name`=#{storeSubjectName}
+                </if>
+                <if test="storeSubjectCertNo != null and storeSubjectCertNo != ''">
+                    AND `store_subject_cert_no`=#{storeSubjectCertNo}
+                </if>
+                <if test="storeProvince != null and storeProvince != ''">
+                    AND `store_province`=#{storeProvince}
+                </if>
+                <if test="storeCity != null and storeCity != ''">
+                    AND `store_city`=#{storeCity}
+                </if>
+                <if test="storeCounty != null and storeCounty != ''">
+                    AND `store_county`=#{storeCounty}
+                </if>
+                <if test="storeProvinceCode != null and storeProvinceCode != ''">
+                    AND `store_province_code`=#{storeProvinceCode}
+                </if>
+                <if test="storeCityCode != null and storeCityCode != ''">
+                    AND `store_city_code`=#{storeCityCode}
+                </if>
+                <if test="storeCountyCode != null and storeCountyCode != ''">
+                    AND `store_county_code`=#{storeCountyCode}
+                </if>
+                <if test="supplierNo != null and supplierNo != ''">
+                    AND `supplier_no`=#{supplierNo}
+                </if>
+                <if test="reason != null and reason != ''">
+                    AND `reason`=#{reason}
+                </if>
+                <if test="createTime != null">
+                    AND `create_time`=#{createTime}
+                </if>
+                <if test="finishTime != null">
+                    AND `finish_time`=#{finishTime}
+                </if>
+                <if test="state != null">
+                    AND `state`=#{state}
+                </if>
+                <if test="startTime != null">
+                    and DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
+                </if>
             </trim>
         </where>
+        ORDER BY id DESC
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
@@ -167,58 +174,58 @@
         INSERT INTO
         <include refid="table"/>
         (
-            `id`,
-            `way_id`,
-            `merchant_no`,
-            `app_id`,
-            `seller_no`,
-            `seller_id`,
-            `name`,
-            `contact_name`,
-            `contact_phone`,
-            `operator_name`,
-            `store_no`,
-            `store_name`,
-            `store_subject_name`,
-            `store_subject_cert_no`,
-            `store_province`,
-            `store_city`,
-            `store_county`,
-            `store_province_code`,
-            `store_city_code`,
-            `store_county_code`,
-            `supplier_no`,
-            `reason`,
-            `create_time`,
-            `finish_time`,
-            `state`
+        `id`,
+        `way_id`,
+        `merchant_no`,
+        `app_id`,
+        `seller_no`,
+        `seller_id`,
+        `name`,
+        `contact_name`,
+        `contact_phone`,
+        `operator_name`,
+        `store_no`,
+        `store_name`,
+        `store_subject_name`,
+        `store_subject_cert_no`,
+        `store_province`,
+        `store_city`,
+        `store_county`,
+        `store_province_code`,
+        `store_city_code`,
+        `store_county_code`,
+        `supplier_no`,
+        `reason`,
+        `create_time`,
+        `finish_time`,
+        `state`
         )
         VALUES(
-            #{id},
-            #{wayId},
-            #{merchantNo},
-            #{appId},
-            #{sellerNo},
-            #{sellerId},
-            #{name},
-            #{contactName},
-            #{contactPhone},
-            #{operatorName},
-            #{storeNo},
-            #{storeName},
-            #{storeSubjectName},
-            #{storeSubjectCertNo},
-            #{storeProvince},
-            #{storeCity},
-            #{storeCounty},
-            #{storeProvinceCode},
-            #{storeCityCode},
-            #{storeCountyCode},
-            #{supplierNo},
-            #{reason},
-            #{createTime},
-            #{finishTime},
-            #{state}
+        #{id},
+        #{wayId},
+        #{merchantNo},
+        #{appId},
+        #{sellerNo},
+        #{sellerId},
+        #{name},
+        #{contactName},
+        #{contactPhone},
+        #{operatorName},
+        #{storeNo},
+        #{storeName},
+        #{storeSubjectName},
+        #{storeSubjectCertNo},
+        #{storeProvince},
+        #{storeCity},
+        #{storeCounty},
+        #{storeProvinceCode},
+        #{storeCityCode},
+        #{storeCountyCode},
+        #{supplierNo},
+        #{reason},
+        #{createTime},
+        #{finishTime},
+        #{state}
         )
     </insert>
 
@@ -226,31 +233,31 @@
         INSERT INTO
         <include refid="table"/>
         (
-            `id`,
-            `way_id`,
-            `merchant_no`,
-            `app_id`,
-            `seller_no`,
-            `seller_id`,
-            `name`,
-            `contact_name`,
-            `contact_phone`,
-            `operator_name`,
-            `store_no`,
-            `store_name`,
-            `store_subject_name`,
-            `store_subject_cert_no`,
-            `store_province`,
-            `store_city`,
-            `store_county`,
-            `store_province_code`,
-            `store_city_code`,
-            `store_county_code`,
-            `supplier_no`,
-            `reason`,
-            `create_time`,
-            `finish_time`,
-            `state`
+        `id`,
+        `way_id`,
+        `merchant_no`,
+        `app_id`,
+        `seller_no`,
+        `seller_id`,
+        `name`,
+        `contact_name`,
+        `contact_phone`,
+        `operator_name`,
+        `store_no`,
+        `store_name`,
+        `store_subject_name`,
+        `store_subject_cert_no`,
+        `store_province`,
+        `store_city`,
+        `store_county`,
+        `store_province_code`,
+        `store_city_code`,
+        `store_county_code`,
+        `supplier_no`,
+        `reason`,
+        `create_time`,
+        `finish_time`,
+        `state`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -316,73 +323,73 @@
                 `way_id`=#{wayId},
             </if>
             <if test="merchantNo != null and merchantNo != ''">
-                 `merchant_no`=#{merchantNo},
+                `merchant_no`=#{merchantNo},
             </if>
             <if test="appId != null and appId != ''">
-                 `app_id`=#{appId},
+                `app_id`=#{appId},
             </if>
             <if test="sellerNo != null and sellerNo != ''">
-                 `seller_no`=#{sellerNo},
+                `seller_no`=#{sellerNo},
             </if>
             <if test="sellerId != null and sellerId != ''">
-                 `seller_id`=#{sellerId},
+                `seller_id`=#{sellerId},
             </if>
             <if test="name != null and name != ''">
-                 `name`=#{name},
+                `name`=#{name},
             </if>
             <if test="contactName != null and contactName != ''">
-                 `contact_name`=#{contactName},
+                `contact_name`=#{contactName},
             </if>
             <if test="contactPhone != null and contactPhone != ''">
-                 `contact_phone`=#{contactPhone},
+                `contact_phone`=#{contactPhone},
             </if>
             <if test="operatorName != null and operatorName != ''">
-                 `operator_name`=#{operatorName},
+                `operator_name`=#{operatorName},
             </if>
             <if test="storeNo != null and storeNo != ''">
-                 `store_no`=#{storeNo},
+                `store_no`=#{storeNo},
             </if>
             <if test="storeName != null and storeName != ''">
-                 `store_name`=#{storeName},
+                `store_name`=#{storeName},
             </if>
             <if test="storeSubjectName != null and storeSubjectName != ''">
-                 `store_subject_name`=#{storeSubjectName},
+                `store_subject_name`=#{storeSubjectName},
             </if>
             <if test="storeSubjectCertNo != null and storeSubjectCertNo != ''">
-                 `store_subject_cert_no`=#{storeSubjectCertNo},
+                `store_subject_cert_no`=#{storeSubjectCertNo},
             </if>
             <if test="storeProvince != null and storeProvince != ''">
-                 `store_province`=#{storeProvince},
+                `store_province`=#{storeProvince},
             </if>
             <if test="storeCity != null and storeCity != ''">
-                 `store_city`=#{storeCity},
+                `store_city`=#{storeCity},
             </if>
             <if test="storeCounty != null and storeCounty != ''">
-                 `store_county`=#{storeCounty},
+                `store_county`=#{storeCounty},
             </if>
             <if test="storeProvinceCode != null and storeProvinceCode != ''">
-                 `store_province_code`=#{storeProvinceCode},
+                `store_province_code`=#{storeProvinceCode},
             </if>
             <if test="storeCityCode != null and storeCityCode != ''">
-                 `store_city_code`=#{storeCityCode},
+                `store_city_code`=#{storeCityCode},
             </if>
             <if test="storeCountyCode != null and storeCountyCode != ''">
-                 `store_county_code`=#{storeCountyCode},
+                `store_county_code`=#{storeCountyCode},
             </if>
             <if test="supplierNo != null and supplierNo != ''">
-                 `supplier_no`=#{supplierNo},
+                `supplier_no`=#{supplierNo},
             </if>
             <if test="reason != null and reason != ''">
-                 `reason`=#{reason},
+                `reason`=#{reason},
             </if>
             <if test="createTime != null">
-                 `create_time`=#{createTime},
+                `create_time`=#{createTime},
             </if>
             <if test="finishTime != null">
-                 `finish_time`=#{finishTime},
+                `finish_time`=#{finishTime},
             </if>
             <if test="state != null">
-                 `state`=#{state},
+                `state`=#{state},
             </if>
         </set>
         WHERE id=#{id}

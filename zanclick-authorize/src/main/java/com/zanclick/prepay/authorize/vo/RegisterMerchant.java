@@ -144,6 +144,9 @@ public class RegisterMerchant extends Param {
         return null;
     }
 
+   public static String[] headers = {"渠道编码","省份","地区","县（区）","门店编号","门店名称","营业执照注册号","营业执照名称","联系人","联系人电话","支付宝认证姓名","支付宝账号","当前状态","原因"};
+   public static String[] keys = {"wayId","storeProvince","storeCity","storeCounty","storeNo","storeName","storeSubjectCertNo","storeSubjectName","contactName","contactPhone","name","sellerNo","state","reason"};
+
     public static void main(String[] args) {
         JSONObject object = new JSONObject();
         object.put("method", "com.zanclick.create.merchant");

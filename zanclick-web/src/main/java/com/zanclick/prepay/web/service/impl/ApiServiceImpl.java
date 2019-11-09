@@ -16,6 +16,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,6 +29,7 @@ import java.util.List;
  * @description
  * @date 2019-11-1 17:44:14
  */
+@Service
 public class ApiServiceImpl implements ApiService {
 
     @Autowired
@@ -47,7 +49,6 @@ public class ApiServiceImpl implements ApiService {
                 reset.add(merchant);
             }
         }
-
         AuthorizeMerchant query = new AuthorizeMerchant();
         query.setState(0);
         List<AuthorizeMerchant> merchantList = authorizeMerchantService.queryList(query);
