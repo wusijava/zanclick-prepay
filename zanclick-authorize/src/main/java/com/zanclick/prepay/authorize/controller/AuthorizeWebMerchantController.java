@@ -1,17 +1,27 @@
 package com.zanclick.prepay.authorize.controller;
 
+import com.alipay.api.response.MybankCreditSupplychainFactoringSupplierCreateResponse;
+import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.query.AuthorizeMerchantQuery;
+import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
+import com.zanclick.prepay.authorize.util.SupplyChainUtils;
 import com.zanclick.prepay.authorize.vo.RegisterMerchant;
+import com.zanclick.prepay.authorize.vo.SuppilerCreate;
 import com.zanclick.prepay.authorize.vo.web.AuthorizeWebListInfo;
 import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.POIUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Cell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -19,9 +29,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,6 +49,7 @@ public class AuthorizeWebMerchantController extends BaseController {
 
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
+
     @Value("${excelDownloadUrl}")
     private String excelDownloadUrl;
 
@@ -67,13 +80,30 @@ public class AuthorizeWebMerchantController extends BaseController {
     public Response<String> batchExport(AuthorizeMerchantQuery query) {
         List<AuthorizeMerchant> merchantList = authorizeMerchantService.queryList(query);
         List<RegisterMerchant> registerMerchantList = new ArrayList<>();
-        for (AuthorizeMerchant merchant:merchantList){
-            registerMerchantList.add(getExcelDetail(merchant));
+        for (AuthorizeMerchant merchant : merchantList) {
+            registerMerchantList.add(authorizeMerchantService.getRegisterMerchant(merchant));
         }
-        String key = UUID.randomUUID().toString().replaceAll("-","");
-        RedisUtil.set(key,registerMerchantList,1000*60*30L);
-        String url=excelDownloadUrl+key;
+        String key = UUID.randomUUID().toString().replaceAll("-", "");
+        RedisUtil.set(key, registerMerchantList, 1000 * 60 * 30L);
+        String url = excelDownloadUrl + key;
         return Response.ok(url);
+    }
+
+    @ApiOperation(value = "导入商户信息")
+    @RequestMapping(value = "batchImport", method = RequestMethod.POST)
+    @ResponseBody
+    public Response<String> batchImport(MultipartFile file) {
+        try {
+            authorizeMerchantService.createMerchantList(getMerchantList(file));
+            List<RegisterMerchant> registerMerchantList = authorizeMerchantService.createAllSupplier();
+            String key = UUID.randomUUID().toString().replaceAll("-", "");
+            RedisUtil.set(key, registerMerchantList, 1000 * 60 * 30L);
+            String url = excelDownloadUrl + key;
+            return Response.ok(url);
+        } catch (Exception e) {
+            log.error("导入商户出错:{}",e);
+            return Response.fail("导入商户失败");
+        }
     }
 
 
@@ -84,7 +114,6 @@ public class AuthorizeWebMerchantController extends BaseController {
      * @return
      */
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     private AuthorizeWebListInfo getListVo(AuthorizeMerchant merchant) {
         AuthorizeWebListInfo vo = new AuthorizeWebListInfo();
         vo.setId(merchant.getId());
@@ -104,49 +133,91 @@ public class AuthorizeWebMerchantController extends BaseController {
         vo.setStoreCity(merchant.getStoreCity());
         vo.setSellerNo(merchant.getSellerNo());
         vo.setState(merchant.getState());
-        vo.setStateStr(getStateDesc(merchant.getState()));
+        vo.setStateStr(merchant.getStateDesc());
         return vo;
     }
 
     /**
-     * 获取显示的状态信息
+     * 获取导入的数据
      *
-     * @param state
+     * @param file
      */
-    private String getStateDesc(Integer state) {
-        if (AuthorizeMerchant.State.success.getCode().equals(state)) {
-            return "签约成功";
-        } else if (AuthorizeMerchant.State.failed.getCode().equals(state)) {
-            return "签约失败";
-        } else {
-            return "等待签约";
+    private List<RegisterMerchant> getMerchantList(MultipartFile file) {
+        List<RegisterMerchant> list = new ArrayList<>();
+        HSSFWorkbook workbook = POIUtil.getWorkBook(file);
+        if (workbook == null) {
+            throw new RuntimeException("导入excel出错");
         }
+        HSSFSheet sheet = workbook.getSheet("Sheet1");
+        if (sheet == null) {
+            throw new RuntimeException("导入excel出错");
+        }
+        Integer rowNum = sheet.getLastRowNum();
+        RegisterMerchant qualification = null;
+        for (int i = 1; i <= rowNum; i++) {
+            qualification = new RegisterMerchant();
+            qualification.setAppId("201910091625131208151");
+            qualification.setOperatorName("中国移动");
+            HSSFRow row = workbook.getSheet("Sheet1").getRow(i);
+            format(row);
+            qualification.setWayId(getData(row, 1));
+            qualification.setStoreProvince(getData(row, 2));
+            qualification.setStoreCity(getData(row, 3));
+            qualification.setStoreCounty(getData(row, 4));
+            qualification.setStoreNo(getData(row, 5));
+            qualification.setStoreName(getData(row, 6));
+            qualification.setStoreSubjectCertNo(getData(row, 7));
+            qualification.setStoreSubjectName(getData(row, 8));
+            qualification.setContactName(getData(row, 9));
+            qualification.setContactPhone(getData(row, 10));
+            qualification.setName(getData(row, 11));
+            qualification.setSellerNo(getData(row, 12));
+            qualification.setMerchantNo("DZ" + qualification.getWayId());
+            list.add(qualification);
+        }
+        return list;
     }
 
-    private RegisterMerchant getExcelDetail(AuthorizeMerchant dto) {
-        RegisterMerchant merchant = new RegisterMerchant();
-        merchant.setAppId(dto.getAppId());
-        merchant.setWayId(dto.getWayId());
-        merchant.setMerchantNo(dto.getMerchantNo());
-        merchant.setContactName(dto.getContactName());
-        merchant.setContactPhone(dto.getContactPhone());
-        merchant.setName(dto.getName());
-        merchant.setOperatorName(dto.getOperatorName());
-        merchant.setStoreSubjectName(dto.getStoreSubjectName());
-        merchant.setStoreSubjectCertNo(dto.getStoreSubjectCertNo());
-        merchant.setStoreNo(dto.getStoreNo());
-        merchant.setStoreName(dto.getStoreName());
-        merchant.setStoreProvince(dto.getStoreProvince());
-        merchant.setStoreCity(dto.getStoreCity());
-        merchant.setStoreCounty(dto.getStoreCounty());
-        merchant.setStoreProvinceCode(dto.getStoreProvinceCode());
-        merchant.setStoreCityCode(dto.getStoreCityCode());
-        merchant.setStoreCountyCode(dto.getStoreCountyCode());
-        merchant.setSellerNo(dto.getSellerNo());
-        merchant.setState(getStateDesc(dto.getState()));
-        merchant.setReason(dto.getReason());
-        return merchant;
+    /**
+     * 格式化excel数据
+     *
+     * @param row
+     */
+    private void format(HSSFRow row) {
+        row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(4).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(7).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(8).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(9).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(10).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(11).setCellType(Cell.CELL_TYPE_STRING);
+        row.getCell(12).setCellType(Cell.CELL_TYPE_STRING);
     }
 
+    /**
+     * 获取数据
+     *
+     * @param row
+     * @param cellNum
+     */
+    private String getData(HSSFRow row, Integer cellNum) {
+        return format(row.getCell(cellNum).getStringCellValue());
 
+    }
+
+    /**
+     * 格式化数据
+     *
+     * @param s
+     */
+    private String format(String s) {
+        if (DataUtil.isEmpty(s)) {
+            return "";
+        }
+        return s.trim().replaceAll("\r", "").replaceAll("\n", "");
+    }
 }

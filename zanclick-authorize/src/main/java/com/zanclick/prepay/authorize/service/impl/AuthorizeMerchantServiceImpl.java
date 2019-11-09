@@ -16,11 +16,10 @@ import com.zanclick.prepay.common.utils.DataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.Executors;
 
 /**
  * 预授权商户
@@ -45,35 +44,38 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
 
     @Override
     public void createMerchant(RegisterMerchant register) {
-        String repeat = queryWaitOrSuccessMerchant(register.getMerchantNo());
-        if (repeat != null) {
-            throw new BizException(repeat);
+        if (queryRepeatMerchant(register.getMerchantNo())) {
+            throw new BizException("重复提交");
         }
-        AuthorizeMerchant oldMerchant = authorizeMerchantMapper.selectByAliPayLoginNo(register.getSellerNo());
+        AuthorizeMerchant merchant = createAuthorizeMerchant(register);
+        createMerchant(merchant);
+    }
+
+    /**
+     * 创建商户
+     *
+     * @param merchant
+     */
+    private void createMerchant(AuthorizeMerchant merchant) {
+        AuthorizeMerchant oldMerchant = authorizeMerchantMapper.selectByAliPayLoginNo(merchant.getSellerNo());
         if (oldMerchant != null && oldMerchant.getState() != null) {
             if (oldMerchant.getState().equals(AuthorizeMerchant.State.waiting.getCode())) {
                 throw new BizException("资料已提交，请耐心等待审核");
             }
             if (oldMerchant.getState().equals(AuthorizeMerchant.State.success.getCode())) {
-                if (oldMerchant.getStoreNo() != null && oldMerchant.getStoreNo().equals(register.getStoreNo())){
+                if (oldMerchant.getStoreNo() != null && oldMerchant.getStoreNo().equals(merchant.getStoreNo())) {
                     throw new BizException("门店编号重复");
                 }
-                if (oldMerchant.getStoreName() != null && oldMerchant.getStoreName().equals(register.getStoreName())){
-                    throw new BizException("门店名称重复");
-                }
+                merchant.setSupplierNo(oldMerchant.getSupplierNo());
+                merchant.setState(AuthorizeMerchant.State.success.getCode());
+                merchant.setFinishTime(new Date());
+                this.updateById(merchant);
+                return;
             }
         }
-        AuthorizeMerchant merchant = createAuthorizeMerchant(register);
-        if (oldMerchant == null || oldMerchant.getState().equals(AuthorizeMerchant.State.failed.getCode())){
-            createSupplier(merchant);
-            if (merchant.isFail()) {
-                throw new BizException(merchant.getReason());
-            }
-        }else {
-            merchant.setState(AuthorizeMerchant.State.success.getCode());
-            merchant.setSupplierNo(oldMerchant.getSupplierNo());
-            merchant.setFinishTime(new Date());
-            authorizeMerchantMapper.updateById(merchant);
+        createSupplier(merchant);
+        if (merchant.isFail()) {
+            throw new BizException(merchant.getReason());
         }
     }
 
@@ -88,14 +90,76 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
     }
 
 
+    @Override
+    public void createMerchantList(List<RegisterMerchant> list) {
+        for (RegisterMerchant merchant : list) {
+            if (queryRepeatMerchant(merchant.getMerchantNo())) {
+                continue;
+            }
+            createAuthorizeMerchant(merchant);
+        }
+    }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void createMerchantByExcel(List<AuthorizeMerchant> list) {
-        if(DataUtil.isEmpty(list)){
-            return;
+    public List<RegisterMerchant> createAllSupplier() {
+        List<RegisterMerchant> registerMerchantList = new ArrayList<>();
+        AuthorizeMerchant query = new AuthorizeMerchant();
+        query.setState(0);
+        List<AuthorizeMerchant> merchantList = this.queryList(query);
+        for (AuthorizeMerchant merchant:merchantList){
+            try {
+                createMerchant(merchant);
+            }catch (Exception e){
+               log.error("创建商户出错:{},{}",merchant.getMerchantNo(),merchant.getReason());
+               registerMerchantList.add(getRegisterMerchant(merchant));
+            }
         }
-        authorizeMerchantMapper.insertBatch(list);
+        return registerMerchantList;
+    }
+
+    @Override
+    public RegisterMerchant getRegisterMerchant(AuthorizeMerchant dto) {
+        RegisterMerchant merchant = new RegisterMerchant();
+        merchant.setAppId(dto.getAppId());
+        merchant.setWayId(dto.getWayId());
+        merchant.setMerchantNo(dto.getMerchantNo());
+        merchant.setContactName(dto.getContactName());
+        merchant.setContactPhone(dto.getContactPhone());
+        merchant.setName(dto.getName());
+        merchant.setOperatorName(dto.getOperatorName());
+        merchant.setStoreSubjectName(dto.getStoreSubjectName());
+        merchant.setStoreSubjectCertNo(dto.getStoreSubjectCertNo());
+        merchant.setStoreNo(dto.getStoreNo());
+        merchant.setStoreName(dto.getStoreName());
+        merchant.setStoreProvince(dto.getStoreProvince());
+        merchant.setStoreCity(dto.getStoreCity());
+        merchant.setStoreCounty(dto.getStoreCounty());
+        merchant.setStoreProvinceCode(dto.getStoreProvinceCode());
+        merchant.setStoreCityCode(dto.getStoreCityCode());
+        merchant.setStoreCountyCode(dto.getStoreCountyCode());
+        merchant.setSellerNo(dto.getSellerNo());
+        merchant.setState(dto.getStateDesc());
+        merchant.setReason(dto.getReason());
+        return merchant;
+    }
+
+    /**
+     * 查询是否有重复的商户
+     *
+     * @@param merchantNo
+     */
+    private Boolean queryRepeatMerchant(String merchantNo) {
+        AuthorizeMerchant queryMerchant = new AuthorizeMerchant();
+        queryMerchant.setMerchantNo(merchantNo);
+        List<AuthorizeMerchant> merchantList = this.queryList(queryMerchant);
+        if (DataUtil.isNotEmpty(merchantList)) {
+            for (AuthorizeMerchant merchant : merchantList) {
+                if (merchant.isSuccess()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -140,7 +204,7 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
      */
     private void createSupplier(AuthorizeMerchant merchant) {
         AuthorizeConfiguration configuration = authorizeConfigurationService.queryDefaultConfiguration();
-        MybankCreditSupplychainFactoringSupplierCreateResponse response = SupplyChainUtils.createSupplier(create(merchant),configuration);
+        MybankCreditSupplychainFactoringSupplierCreateResponse response = SupplyChainUtils.createSupplier(create(merchant), configuration);
         if (response.isSuccess()) {
             merchant.setState(AuthorizeMerchant.State.success.getCode());
             merchant.setSupplierNo(response.getSupplierNo());
@@ -178,22 +242,4 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         return create;
     }
 
-    /**
-     * 查询是否有正在审核中的商户
-     *
-     * @param merchantNo
-     * @return
-     */
-    private String queryWaitOrSuccessMerchant(String merchantNo) {
-        AuthorizeMerchant merchant = authorizeMerchantMapper.selectByMerchantNo(merchantNo);
-        if (merchant != null && merchant.getState() != null) {
-            if (merchant.getState().equals(AuthorizeMerchant.State.waiting.getCode())) {
-                return "资料已提交，请耐心等待审核";
-            }
-            if (merchant.getState().equals(AuthorizeMerchant.State.success.getCode())) {
-                return "请勿重复提交";
-            }
-        }
-        return null;
-    }
 }

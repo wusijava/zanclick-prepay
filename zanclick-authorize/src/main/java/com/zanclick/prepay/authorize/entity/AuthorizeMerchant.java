@@ -146,6 +146,16 @@ public class AuthorizeMerchant implements Identifiable<Long> {
         }
     }
 
+    public String getStateDesc() {
+        if (AuthorizeMerchant.State.success.getCode().equals(state)) {
+            return "签约成功";
+        } else if (AuthorizeMerchant.State.failed.getCode().equals(state)) {
+            return "签约失败";
+        } else {
+            return "等待签约";
+        }
+    }
+
     public Boolean isSuccess() {
         return state.equals(State.success.getCode());
     }

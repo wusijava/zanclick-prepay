@@ -41,12 +41,26 @@ public interface AuthorizeMerchantService extends BaseService<AuthorizeMerchant,
     AuthorizeMerchant queryByAliPayLoginNo(String sellerNo);
 
 
+    /**
+     * 导入商户信息列表
+     *
+     * @param list
+     * @return
+     */
+    void createMerchantList(List<RegisterMerchant> list);
 
     /**
      * 导入商户信息列表
      *
-     * @param
      * @return
      */
-    void createMerchantByExcel(List<AuthorizeMerchant> list);
+    List<RegisterMerchant> createAllSupplier();
+
+    /**
+     * 导入商户信息列表
+     *
+     * @param merchant
+     * @return
+     */
+    RegisterMerchant getRegisterMerchant(AuthorizeMerchant merchant);
 }

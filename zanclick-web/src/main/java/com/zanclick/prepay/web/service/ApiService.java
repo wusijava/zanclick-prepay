@@ -10,12 +10,4 @@ import javax.servlet.http.HttpServletRequest;
  * @date 2019-11-1 17:44:20
  */
 public interface ApiService {
-
-    /**
-     * 批量导入商户信息
-     *
-     * @param file
-     * @param request
-     */
-    void batchImportMerchant(MultipartFile file, HttpServletRequest request);
 }
