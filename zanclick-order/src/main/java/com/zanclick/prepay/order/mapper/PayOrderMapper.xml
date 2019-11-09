@@ -5,6 +5,8 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="app_id" property="appId" jdbcType="VARCHAR"/>
         <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
+        <result column="store_name" property="storeName" jdbcType="VARCHAR"/>
+        <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
         <result column="package_no" property="packageNo" jdbcType="VARCHAR"/>
         <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>
         <result column="request_no" property="requestNo" jdbcType="VARCHAR"/>
@@ -22,6 +24,8 @@
         <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
         <result column="qr_code_url" property="qrCodeUrl" jdbcType="VARCHAR"/>
         <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="deal_state" property="dealState" jdbcType="INTEGER"/>
+        <result column="reason" property="reason" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">pay_order</sql>
@@ -29,6 +33,8 @@
             `id`,
             `app_id`,
             `merchant_no`,
+            `store_name`,
+            `way_id`,
             `package_no`,
             `out_trade_no`,
             `request_no`,
@@ -45,7 +51,9 @@
             `create_time`,
             `finish_time`,
             `qr_code_url`,
-            `state`
+            `state`,
+            `deal_state`,
+            `reason`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -58,6 +66,12 @@
                 </if>
                 <if test="merchantNo != null and merchantNo != ''">
                     AND `merchant_no`=#{merchantNo}
+                </if>
+                <if test="storeName != null and storeName != ''">
+                    AND `store_name`=#{storeName}
+                </if>
+                <if test="wayId != null and wayId != ''">
+                    AND `way_id`=#{wayId}
                 </if>
                 <if test="packageNo != null and packageNo != ''">
                     AND `package_no`=#{packageNo}
@@ -110,8 +124,15 @@
                 <if test="state != null">
                     AND `state`=#{state}
                 </if>
+                <if test="dealState != null">
+                    AND `deal_state`=#{dealState}
+                </if>
+                <if test="reason != null and reason != ''">
+                    AND `reason`=#{reason}
+                </if>
             </trim>
         </where>
+        ORDER BY id DESC
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
@@ -145,6 +166,8 @@
         `id`,
         `app_id`,
         `merchant_no`,
+        `store_name`,
+        `way_id`,
         `package_no`,
         `out_trade_no`,
         `request_no`,
@@ -161,12 +184,16 @@
         `create_time`,
         `finish_time`,
         `qr_code_url`,
-        `state`
+        `state`,
+        `deal_state`,
+        `reason`
         )
         VALUES(
         #{id},
         #{appId},
         #{merchantNo},
+        #{storeName},
+        #{wayId},
         #{packageNo},
         #{outTradeNo},
         #{requestNo},
@@ -183,7 +210,9 @@
         #{createTime},
         #{finishTime},
         #{qrCodeUrl},
-        #{state}
+        #{state},
+        #{dealState},
+        #{reason}
         )
     </insert>
 
@@ -194,6 +223,8 @@
         `id`,
         `app_id`,
         `merchant_no`,
+        `store_name`,
+        `way_id`,
         `package_no`,
         `out_trade_no`,
         `request_no`,
@@ -210,7 +241,9 @@
         `create_time`,
         `finish_time`,
         `qr_code_url`,
-        `state`
+        `state`,
+        `deal_state`,
+        `reason`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -218,6 +251,8 @@
             #{cm.id},
             #{cm.appId},
             #{cm.merchantNo},
+            #{cm.storeName},
+            #{cm.wayId},
             #{cm.packageNo},
             #{cm.outTradeNo},
             #{cm.requestNo},
@@ -234,7 +269,9 @@
             #{cm.createTime},
             #{cm.finishTime},
             #{cm.qrCodeUrl},
-            #{cm.state}
+            #{cm.state},
+            #{cm.dealState},
+            #{cm.reason}
             )
         </foreach>
     </insert>
@@ -263,6 +300,14 @@
         WHERE out_order_no = #{outOrderNo} ORDER BY id DESC LIMIT 1
     </select>
 
+    <delete id="deleteById"  parameterType="java.lang.Long">
+        DELETE
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id = #{id}
+    </delete>
+
     <update id="updateById" parameterType="com.zanclick.prepay.order.entity.PayOrder">
         UPDATE
         <include refid="table"/>
@@ -272,6 +317,12 @@
             </if>
             <if test="merchantNo != null and merchantNo != ''">
                 `merchant_no`=#{merchantNo},
+            </if>
+            <if test="storeName != null and storeName != ''">
+                `store_name`=#{storeName},
+            </if>
+            <if test="wayId != null and wayId != ''">
+                `way_id`=#{wayId},
             </if>
             <if test="packageNo != null and packageNo != ''">
                 `package_no`=#{packageNo},
@@ -323,6 +374,12 @@
             </if>
             <if test="state != null">
                 `state`=#{state},
+            </if>
+            <if test="dealState != null">
+                `deal_state`=#{dealState},
+            </if>
+            <if test="reason != null and reason != ''">
+                `reason`=#{reason},
             </if>
         </set>
         WHERE id=#{id}

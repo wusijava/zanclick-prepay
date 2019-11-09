@@ -26,6 +26,10 @@ public class PayOrder implements Identifiable<Long> {
      */
     private String merchantNo;
 
+    private String storeName;
+
+    private String wayId;
+
     /**
      * 套餐编码
      */
@@ -42,6 +46,8 @@ public class PayOrder implements Identifiable<Long> {
      * 外部编号
      **/
     private String outOrderNo;
+
+    private String authNo;
 
     /**
      * 冻结金额
@@ -88,7 +94,6 @@ public class PayOrder implements Identifiable<Long> {
      */
     private String title;
 
-
     /**
      * 创建时间
      */
@@ -102,6 +107,43 @@ public class PayOrder implements Identifiable<Long> {
     private String qrCodeUrl;
 
     private Integer state;
+
+    private Integer dealState;
+
+    private String reason;
+
+
+    public enum DealState {
+        notice_wait(4, "等待通知"),
+        notice_fail(0, "通知失败"),
+        settle_fail(1, "结算失败"),
+        settle_wait(2, "等待结算"),
+        today_sign(3, "当天签约的");
+
+        private Integer code;
+        private String desc;
+
+        DealState(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
 
     public enum State {
         wait(0, "等待支付"),

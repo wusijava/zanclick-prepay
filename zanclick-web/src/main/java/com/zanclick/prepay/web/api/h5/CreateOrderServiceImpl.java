@@ -1,5 +1,7 @@
 package com.zanclick.prepay.web.api.h5;
 
+import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
+import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.util.MoneyUtil;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
@@ -36,6 +38,8 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
     private PayOrderService payOrderService;
     @Autowired
     private SettleRateService settleRateService;
+    @Autowired
+    private AuthorizeMerchantService authorizeMerchantService;
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
@@ -80,6 +84,11 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         if (DataUtil.isNotEmpty(payOrder) && payOrder.isWait()){
             return;
         }
+        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(pay.getMerchantNo());
+        if (merchant == null || !merchant.isSuccess()){
+            log.error("商户号异常:{}",merchant.getMerchantNo());
+            throw new BizException("商户号异常");
+        }
         SetMeal meal = setMealService.queryByPackageNo(pay.getPackageNo());
         if (DataUtil.isEmpty(meal)) {
             throw new BizException("套餐编码错误");
@@ -91,6 +100,9 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder.setPackageNo(pay.getPackageNo());
         payOrder.setAmount(meal.getTotalAmount());
         payOrder.setAppId(appId);
+        payOrder.setStoreName(merchant.getStoreName());
+        payOrder.setDealState(PayOrder.DealState.notice_wait.getCode());
+        payOrder.setWayId(merchant.getWayId());
         payOrder.setNum(meal.getNum());
         payOrder.setTitle(meal.getTitle());
         payOrder.setCreateTime(new Date());

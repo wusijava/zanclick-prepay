@@ -2,7 +2,7 @@ spring:
   datasource:
     username: lvlu
     password: Lvlu2018.
-    url: jdbc:mysql://172.16.4.201/zanclick_prepay?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&useSSL=false
+    url: jdbc:mysql://172.16.4.201/zanclick_prepay_bak?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
