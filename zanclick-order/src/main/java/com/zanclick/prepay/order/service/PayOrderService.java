@@ -47,9 +47,10 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      * 处理成功支付订单
      *
      * @param outTradeNo
+     * @param authNo
      * @return
      */
-    void handleSuccess(String outTradeNo);
+    void handleSuccess(String outTradeNo,String authNo);
 
 
     /**

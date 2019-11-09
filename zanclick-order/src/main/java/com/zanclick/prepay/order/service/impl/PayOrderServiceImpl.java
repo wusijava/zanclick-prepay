@@ -93,12 +93,13 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void handleSuccess(String outTradeNo) {
+    public void handleSuccess(String outTradeNo,String authNo) {
         PayOrder payOrder = payOrderMapper.selectByOutTradeNo(outTradeNo);
         if (payOrder == null) {
             log.error("交易订单异常:{}", outTradeNo);
             return;
         }
+        payOrder.setAuthNo(authNo);
         payOrder.setState(PayOrder.State.payed.getCode());
         payOrder.setFinishTime(new Date());
         handlePayOrder(payOrder);
