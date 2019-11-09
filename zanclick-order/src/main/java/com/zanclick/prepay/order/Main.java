@@ -2,7 +2,7 @@ package com.zanclick.prepay.order;
 
 import com.zanclick.prepay.common.generator.CodeGenerator;
 import com.zanclick.prepay.order.entity.PayOrder;
-import com.zanclick.prepay.order.entity.SettleOrder;
+import com.zanclick.prepay.order.entity.SettleRate;
 
 /**
  * @author lvlu

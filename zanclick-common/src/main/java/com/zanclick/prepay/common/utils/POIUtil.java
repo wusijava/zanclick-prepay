@@ -1,6 +1,8 @@
 package com.zanclick.prepay.common.utils;
 
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.slf4j.LoggerFactory;
@@ -80,13 +82,12 @@ public class POIUtil {
             throw new IOException(fileName + "不是excel文件");
         }
     }
-    public static Workbook getWorkBook(MultipartFile file) {
-        //创建Workbook工作薄对象，表示整个excel
-        Workbook workbook = null;
+
+    public static HSSFWorkbook getWorkBook(MultipartFile file) {
+        HSSFWorkbook workbook = null;
         try {
-            //获取excel文件的io流
-            InputStream is = file.getInputStream();
-            workbook = WorkbookFactory.create(is);
+            checkFile(file);
+            workbook =new HSSFWorkbook(new POIFSFileSystem(file.getInputStream()));
         } catch (Exception e) {
             logger.info(e.getMessage());
         }

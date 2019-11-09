@@ -2,6 +2,8 @@ package com.zanclick.prepay.web.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author duchong
  * @description
@@ -13,6 +15,7 @@ public interface ApiService {
      * 批量导入商户信息
      *
      * @param file
+     * @param request
      */
-    void batchImportMerchant(MultipartFile file);
+    void batchImportMerchant(MultipartFile file, HttpServletRequest request);
 }

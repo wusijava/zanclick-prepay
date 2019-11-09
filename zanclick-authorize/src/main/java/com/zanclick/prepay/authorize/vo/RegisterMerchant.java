@@ -94,6 +94,10 @@ public class RegisterMerchant extends Param {
 
     private String storeProvinceCode;
 
+    private String state;
+
+    private String reason;
+
     public String check() {
         if (checkNull(wayId)) {
             return "缺少渠道标识";
