@@ -73,8 +73,7 @@ public class AuthorizeWebMerchantController extends BaseController {
         return Response.ok(voPage);
     }
 
-
-    @ApiOperation(value = "导入商户信息")
+    @ApiOperation(value = "导出商户信息")
     @RequestMapping(value = "batchExport", method = RequestMethod.POST)
     @ResponseBody
     public Response<String> batchExport(AuthorizeMerchantQuery query) {

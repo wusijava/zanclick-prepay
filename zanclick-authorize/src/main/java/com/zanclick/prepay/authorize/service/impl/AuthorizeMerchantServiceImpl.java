@@ -59,9 +59,6 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
     private void createMerchant(AuthorizeMerchant merchant) {
         AuthorizeMerchant oldMerchant = authorizeMerchantMapper.selectByAliPayLoginNo(merchant.getSellerNo());
         if (oldMerchant != null && oldMerchant.getState() != null) {
-            if (oldMerchant.getState().equals(AuthorizeMerchant.State.waiting.getCode())) {
-                throw new BizException("资料已提交，请耐心等待审核");
-            }
             if (oldMerchant.getState().equals(AuthorizeMerchant.State.success.getCode())) {
                 if (oldMerchant.getStoreNo() != null && oldMerchant.getStoreNo().equals(merchant.getStoreNo())) {
                     throw new BizException("门店编号重复");
@@ -110,8 +107,10 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
             try {
                 createMerchant(merchant);
             }catch (Exception e){
-               log.error("创建商户出错:{},{}",merchant.getMerchantNo(),merchant.getReason());
-               registerMerchantList.add(getRegisterMerchant(merchant));
+                log.error("创建商户出错:{},{}",merchant.getMerchantNo(),e.getMessage());
+            }
+            if (!merchant.isSuccess()){
+                registerMerchantList.add(getRegisterMerchant(merchant));
             }
         }
         return registerMerchantList;
