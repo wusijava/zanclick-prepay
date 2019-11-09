@@ -91,9 +91,6 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
                 payOrder.setQrCodeUrl(result.getQrCodeUrl());
                 payOrderService.handlePayOrder(payOrder);
             }else {
-                payOrder.setState(PayOrder.State.closed.getCode());
-                payOrder.setFinishTime(new Date());
-                payOrderService.handlePayOrder(payOrder);
                 throw new BizException(result.getMessage());
             }
         }

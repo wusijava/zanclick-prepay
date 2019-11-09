@@ -71,9 +71,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
                     payOrder.setFinishTime(new Date());
                     handlePayOrder(payOrder);
                 }else if (AuthorizeOrder.State.failed.getCode().equals(queryResult.getState()) || AuthorizeOrder.State.closed.getCode().equals(queryResult.getState())){
-                    payOrder.setState(PayOrder.State.closed.getCode());
-                    payOrder.setFinishTime(new Date());
-                    handlePayOrder(payOrder);
+                    payOrder.setRequestNo(null);
                 }
             }else {
                 log.error("交易信息异常:{},{},{}",queryResult.getMessage(),outOrderNo,outTradeNo);
