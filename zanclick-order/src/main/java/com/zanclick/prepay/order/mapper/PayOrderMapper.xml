@@ -11,6 +11,7 @@
         <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>
         <result column="request_no" property="requestNo" jdbcType="VARCHAR"/>
         <result column="out_order_no" property="outOrderNo" jdbcType="VARCHAR"/>
+        <result column="auth_no" property="authNo" jdbcType="VARCHAR"/>
         <result column="amount" property="amount" jdbcType="VARCHAR"/>
         <result column="settle_amount" property="settleAmount" jdbcType="VARCHAR"/>
         <result column="each_money" property="eachMoney" jdbcType="VARCHAR"/>
@@ -39,6 +40,7 @@
             `out_trade_no`,
             `request_no`,
             `out_order_no`,
+            `auth_no`,
             `amount`,
             `settle_amount`,
             `each_money`,
@@ -84,6 +86,9 @@
                 </if>
                 <if test="outOrderNo != null and outOrderNo != ''">
                     AND `out_order_no`=#{outOrderNo}
+                </if>
+                <if test="authNo != null and authNo != ''">
+                    AND `auth_no`=#{authNo}
                 </if>
                 <if test="amount != null and amount != ''">
                     AND `amount`=#{amount}
@@ -172,6 +177,7 @@
         `out_trade_no`,
         `request_no`,
         `out_order_no`,
+        `auth_no`,
         `amount`,
         `settle_amount`,
         `each_money`,
@@ -198,6 +204,7 @@
         #{outTradeNo},
         #{requestNo},
         #{outOrderNo},
+        #{authNo},
         #{amount},
         #{settleAmount},
         #{eachMoney},
@@ -229,6 +236,7 @@
         `out_trade_no`,
         `request_no`,
         `out_order_no`,
+        `auth_no`,
         `amount`,
         `settle_amount`,
         `each_money`,
@@ -257,6 +265,7 @@
             #{cm.outTradeNo},
             #{cm.requestNo},
             #{cm.outOrderNo},
+            #{cm.authNo},
             #{cm.amount},
             #{cm.settleAmount},
             #{cm.eachMoney},
@@ -335,6 +344,9 @@
             </if>
             <if test="outOrderNo != null and outOrderNo != ''">
                 `out_order_no`=#{outOrderNo},
+            </if>
+            <if test="authNo != null and authNo != ''">
+                `auth_no`=#{authNo},
             </if>
             <if test="amount != null and amount != ''">
                 `amount`=#{amount},
