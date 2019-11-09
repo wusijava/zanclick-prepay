@@ -205,6 +205,14 @@
         WHERE  auth_no = #{authNo} ORDER BY id DESC LIMIT 1
     </select>
 
+    <select id="selectByOutRequestNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE  out_request_no = #{outRequestNo} ORDER BY id DESC LIMIT 1
+    </select>
+
     <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.SupplyChainTrade" useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO

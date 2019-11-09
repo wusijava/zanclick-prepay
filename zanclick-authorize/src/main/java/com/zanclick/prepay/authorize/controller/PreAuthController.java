@@ -55,7 +55,7 @@ public class PreAuthController extends BaseController {
                     configuration.getMyBankPublicKey(),
                     configuration.getCharset(), configuration.getSignType());
         }catch (Exception e) {
-            log.warn("异步通知接收失败："+e);
+            log.error("异步通知接收失败："+e);
             return RespInfo.fail("验签失败");
         }
         if(!verify_result){

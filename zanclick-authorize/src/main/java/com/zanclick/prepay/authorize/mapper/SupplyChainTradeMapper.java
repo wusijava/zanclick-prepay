@@ -20,4 +20,13 @@ public interface SupplyChainTradeMapper extends BaseMapper<SupplyChainTrade,Long
      */
     SupplyChainTrade selectByAuthNo(String auth_no);
 
+
+    /**
+     * 根据 outRequestNo
+     *
+     * @param outRequestNo
+     * @return
+     */
+    SupplyChainTrade selectByOutRequestNo(String outRequestNo);
+
 }
