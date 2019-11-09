@@ -12,11 +12,15 @@ import com.zanclick.prepay.authorize.vo.SuppilerCreate;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.common.exception.BizException;
+import com.zanclick.prepay.common.utils.DataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Executors;
 
 /**
  * 预授权商户
@@ -81,6 +85,17 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
     @Override
     public AuthorizeMerchant queryByAliPayLoginNo(String sellerNo) {
         return authorizeMerchantMapper.selectByAliPayLoginNo(sellerNo);
+    }
+
+
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void createMerchantByExcel(List<AuthorizeMerchant> list) {
+        if(DataUtil.isEmpty(list)){
+            return;
+        }
+        authorizeMerchantMapper.insertBatch(list);
     }
 
     /**
