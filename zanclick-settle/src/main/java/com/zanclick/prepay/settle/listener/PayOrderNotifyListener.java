@@ -14,8 +14,7 @@ import com.zanclick.prepay.common.api.client.RestHttpClient;
 import com.zanclick.prepay.common.config.JmsMessaging;
 import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
-import com.zanclick.prepay.settle.entity.SettleOrder;
-import com.zanclick.prepay.settle.service.SettleOrderService;
+import com.zanclick.prepay.order.service.PayOrderService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
@@ -35,21 +34,17 @@ import java.util.Date;
 public class PayOrderNotifyListener {
 
     @Autowired
-    private SettleOrderService settleOrderService;
-    @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
     @Autowired
     private AuthorizePayService authorizePayService;
+    @Autowired
+    private PayOrderService payOrderService;
 
     SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     @JmsListener(destination = JmsMessaging.ORDER_NOTIFY_MESSAGE)
     public void getMessage(String message) {
         PayOrder order = JSONObject.parseObject(message,PayOrder.class);
-        SettleOrder settleOrder = getSettleOrder(order.getRequestNo());
-        if (!settleOrder.getState().equals(SettleOrder.State.notice_fail.getCode()) && !settleOrder.getState().equals(SettleOrder.State.notice_wait.getCode())){
-            return;
-        }
         AsiaInfoHeader header = AsiaInfoUtil.header(getRouteValue(order));
         JSONObject object = new JSONObject();
         object.put("orderNo", order.getOutTradeNo());
@@ -64,74 +59,55 @@ public class PayOrderNotifyListener {
             RespInfo info = JSONObject.parseObject(result, RespInfo.class);
             if (!info.isSuccess()) {
                 log.error("能力系统异常:{},{}",order.getRequestNo(), info.getRespdesc());
-                createSettleOrder(info.getRespdesc(),SettleOrder.State.notice_fail.getCode(),settleOrder.getId());
+                order.setDealState(PayOrder.DealState.notice_fail.getCode());
+                order.setReason(info.getRespdesc());
+                payOrderService.updateById(order);
                 return;
             }
             if (!info.getResult().isSuccess()){
                 log.error("能力业务异常:{},{}",order.getRequestNo(), info.getResult().getRetmsg());
-                createSettleOrder(info.getResult().getRetmsg(),SettleOrder.State.notice_fail.getCode(),settleOrder.getId());
+                order.setDealState(PayOrder.DealState.notice_fail.getCode());
+                order.setReason(info.getResult().getRetmsg());
+                payOrderService.updateById(order);
                 return;
             }
         }catch (Exception e){
             log.error("通知结果转换出错:{},{},{}",order.getRequestNo(),result, e);
-            createSettleOrder("通知结果转换出错",SettleOrder.State.notice_fail.getCode(),settleOrder.getId());
+            order.setDealState(PayOrder.DealState.notice_fail.getCode());
+            order.setReason("通知结果转换出错");
+            payOrderService.updateById(order);
             return;
         }
-        settle(order.getOutTradeNo(),order.getSettleAmount(),order.getMerchantNo(),settleOrder.getId());
+        settle(order);
     }
 
     /**
      * 通知成功，开始结算
      *
-     * @param amount
-     * @param merchantNo
-     * @param outTradeNo
+     * @param order
      */
-    private void settle(String outTradeNo, String amount, String merchantNo,Long id) {
-        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(merchantNo);
+    private void settle(PayOrder order) {
+        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(order.getMerchantNo());
         if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
-            createSettleOrder("当前签约，无法打款", SettleOrder.State.today_sign.getCode(),id);
+            order.setDealState(PayOrder.DealState.today_sign.getCode());
+            order.setReason("当天签约，无法打款");
+            payOrderService.updateById(order);
         } else {
             SettleDTO dto = new SettleDTO();
-            dto.setAmount(amount);
-            dto.setOutTradeNo(outTradeNo);
+            dto.setAmount(order.getSettleAmount());
+            dto.setOutTradeNo(order.getOutTradeNo());
             SettleResult settleResult = authorizePayService.settle(dto);
             if (settleResult.isSuccess()) {
-                createSettleOrder("等待结算", SettleOrder.State.settle_wait.getCode(),id);
+                order.setDealState(PayOrder.DealState.settle_wait.getCode());
+                order.setReason("等待结算");
             } else {
-                createSettleOrder(settleResult.getMessage(), SettleOrder.State.settle_fail.getCode(),id);
+                order.setDealState(PayOrder.DealState.settle_fail.getCode());
+                order.setReason(settleResult.getMessage());
             }
+            payOrderService.updateById(order);
         }
 
     }
-
-    /**
-     * 创建各类型相关记录
-     *
-     * @param state
-     * @param reason
-     */
-    private void createSettleOrder(String reason, Integer state,Long id) {
-        SettleOrder order = new SettleOrder();
-        order.setId(id);
-        order.setReason(reason);
-        order.setState(state);
-        settleOrderService.updateById(order);
-    }
-
-    private SettleOrder getSettleOrder(String orderNo) {
-        SettleOrder order = settleOrderService.queryByOrderNo(orderNo);
-        if (order == null){
-            order = new SettleOrder();
-            order.setCreateTime(new Date());
-            order.setOrderNo(orderNo);
-            order.setReason("等待通知");
-            order.setState(SettleOrder.State.notice_wait.getCode());
-            settleOrderService.insert(order);
-        }
-        return order;
-    }
-
 
     /**
      * 获取路由类型
