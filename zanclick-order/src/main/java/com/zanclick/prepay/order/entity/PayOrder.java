@@ -118,7 +118,7 @@ public class PayOrder implements Identifiable<Long> {
         notice_fail(0, "通知失败"),
         settle_fail(1, "结算失败"),
         settle_wait(2, "等待结算"),
-        settled(4, "结算成功"),
+        settled(5, "结算成功"),
         today_sign(3, "当天签约");
 
         private Integer code;

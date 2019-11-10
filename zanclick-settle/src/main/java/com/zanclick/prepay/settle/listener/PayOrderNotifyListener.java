@@ -45,6 +45,10 @@ public class PayOrderNotifyListener {
     @JmsListener(destination = JmsMessaging.ORDER_NOTIFY_MESSAGE)
     public void getMessage(String message) {
         PayOrder order = JSONObject.parseObject(message,PayOrder.class);
+        if (!order.getDealState().equals(PayOrder.DealState.notice_wait.getCode()) && !order.getDealState().equals(PayOrder.DealState.notice_fail.getCode())){
+           log.error("重复通知:{},{},{}",order.getRequestNo(),order.getDealStateDesc(),order.getReason());
+           return;
+        }
         AsiaInfoHeader header = AsiaInfoUtil.header(getRouteValue(order));
         JSONObject object = new JSONObject();
         object.put("orderNo", order.getOutTradeNo());

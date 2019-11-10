@@ -67,25 +67,25 @@
                     AND `app_id`=#{appId}
                 </if>
                 <if test="merchantNo != null and merchantNo != ''">
-                    AND `merchant_no`=#{merchantNo}
+                    AND `merchant_no` LIKE concat ('%',#{merchantNo},'%')
                 </if>
                 <if test="storeName != null and storeName != ''">
                     AND `store_name`=#{storeName}
                 </if>
                 <if test="wayId != null and wayId != ''">
-                    AND `way_id`=#{wayId}
+                    AND `way_id` LIKE concat ('%',#{wayId},'%')
                 </if>
                 <if test="packageNo != null and packageNo != ''">
                     AND `package_no`=#{packageNo}
                 </if>
                 <if test="outTradeNo != null and outTradeNo != ''">
-                    AND `out_trade_no`=#{outTradeNo}
+                    AND `out_trade_no` LIKE concat ('%',#{outTradeNo},'%')
                 </if>
                 <if test="requestNo != null and requestNo != ''">
-                    AND `request_no`=#{requestNo}
+                    AND `request_no` LIKE concat ('%',#{requestNo},'%')
                 </if>
                 <if test="outOrderNo != null and outOrderNo != ''">
-                    AND `out_order_no`=#{outOrderNo}
+                    AND `out_order_no` LIKE concat ('%',#{outOrderNo},'%')
                 </if>
                 <if test="authNo != null and authNo != ''">
                     AND `auth_no`=#{authNo}
@@ -134,6 +134,12 @@
                 </if>
                 <if test="reason != null and reason != ''">
                     AND `reason`=#{reason}
+                </if>
+                <if test="startTime != null">
+                    and DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
                 </if>
             </trim>
         </where>
