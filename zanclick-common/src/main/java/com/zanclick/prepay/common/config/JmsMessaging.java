@@ -7,5 +7,13 @@ package com.zanclick.prepay.common.config;
  * @version v1.0.0
  **/
 public class JmsMessaging {
+    /**
+     * 推送，结算
+     * */
     public final static String ORDER_NOTIFY_MESSAGE = "order.notify.message";
+
+    /**
+     * 结算完成
+     * */
+    public final static String ORDER_SETTLE_MESSAGE = "order.settle.message";
 }

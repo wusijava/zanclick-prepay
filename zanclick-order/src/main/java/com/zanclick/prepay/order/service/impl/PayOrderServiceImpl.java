@@ -49,6 +49,11 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     }
 
     @Override
+    public PayOrder queryByAuthNo(String authNo) {
+        return payOrderMapper.selectByAuthNo(authNo);
+    }
+
+    @Override
     public PayOrder queryAndHandlePayOrder(String outTradeNo, String outOrderNo) {
         PayOrder payOrder = null;
         if (DataUtil.isNotEmpty(outOrderNo)){
@@ -101,6 +106,17 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         payOrder.setState(PayOrder.State.payed.getCode());
         payOrder.setFinishTime(new Date());
         handlePayOrder(payOrder);
+    }
+
+    @Override
+    public void settle(String outTradeNo) {
+        PayOrder order = payOrderMapper.selectByOutOrderNo(outTradeNo);
+        if (order.getDealState().equals(PayOrder.DealState.settled.getCode())
+                || order.getDealState().equals(PayOrder.DealState.settle_wait.getCode())){
+            log.error("订单状态异常:{},{}",outTradeNo,order.getDealStateDesc());
+            throw new BizException("订单状态异常");
+        }
+        sendMessage(order);
     }
 
     @Override

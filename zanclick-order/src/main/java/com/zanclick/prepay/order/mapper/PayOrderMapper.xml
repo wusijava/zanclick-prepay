@@ -315,6 +315,14 @@
         WHERE out_order_no = #{outOrderNo} ORDER BY id DESC LIMIT 1
     </select>
 
+    <select id="selectByAuthNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE auth_no = #{authNo} ORDER BY id DESC LIMIT 1
+    </select>
+
     <delete id="deleteById"  parameterType="java.lang.Long">
         DELETE
         <include refid="Base_Column_List"/>

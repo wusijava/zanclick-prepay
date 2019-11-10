@@ -45,42 +45,48 @@ public class PayOrderNotifyListener {
     @JmsListener(destination = JmsMessaging.ORDER_NOTIFY_MESSAGE)
     public void getMessage(String message) {
         PayOrder order = JSONObject.parseObject(message,PayOrder.class);
-        if (!order.getDealState().equals(PayOrder.DealState.notice_wait.getCode()) && !order.getDealState().equals(PayOrder.DealState.notice_fail.getCode())){
-           log.error("重复通知:{},{},{}",order.getRequestNo(),order.getDealStateDesc(),order.getReason());
-           return;
-        }
-        AsiaInfoHeader header = AsiaInfoUtil.header(getRouteValue(order));
-        JSONObject object = new JSONObject();
-        object.put("orderNo", order.getOutTradeNo());
-        object.put("outOrderNo", order.getOutOrderNo());
-        object.put("packageNo", order.getPackageNo());
-        object.put("payTime", sdf.format(order.getFinishTime()));
-        object.put("merchantNo", order.getMerchantNo());
-        object.put("orderStatus", getOrderStatus(order.getState()));
-        String result = RestHttpClient.post(header, object.toJSONString(), RestConfig.payOrderNotify);
-        log.error("通知结果：{}", result);
-        try {
-            RespInfo info = JSONObject.parseObject(result, RespInfo.class);
-            if (!info.isSuccess()) {
-                log.error("能力系统异常:{},{}",order.getRequestNo(), info.getRespdesc());
-                order.setDealState(PayOrder.DealState.notice_fail.getCode());
-                order.setReason(info.getRespdesc());
-                payOrderService.updateById(order);
-                return;
-            }
-            if (!info.getResult().isSuccess()){
-                log.error("能力业务异常:{},{}",order.getRequestNo(), info.getResult().getRetmsg());
-                order.setDealState(PayOrder.DealState.notice_fail.getCode());
-                order.setReason(info.getResult().getRetmsg());
-                payOrderService.updateById(order);
-                return;
-            }
-        }catch (Exception e){
-            log.error("通知结果转换出错:{},{},{}",order.getRequestNo(),result, e);
-            order.setDealState(PayOrder.DealState.notice_fail.getCode());
-            order.setReason("通知结果转换出错");
-            payOrderService.updateById(order);
+        if (order.getDealState().equals(PayOrder.DealState.settled.getCode())){
+            log.error("已经结算完成:{}",order.getRequestNo());
             return;
+        }
+        if (order.getDealState().equals(PayOrder.DealState.settle_wait.getCode())){
+            log.error("请等待结算操作:{}",order.getRequestNo());
+            return;
+        }
+        if (order.getDealState().equals(PayOrder.DealState.notice_wait.getCode()) || order.getDealState().equals(PayOrder.DealState.notice_fail.getCode())){
+            AsiaInfoHeader header = AsiaInfoUtil.header(getRouteValue(order));
+            JSONObject object = new JSONObject();
+            object.put("orderNo", order.getOutTradeNo());
+            object.put("outOrderNo", order.getOutOrderNo());
+            object.put("packageNo", order.getPackageNo());
+            object.put("payTime", sdf.format(order.getFinishTime()));
+            object.put("merchantNo", order.getMerchantNo());
+            object.put("orderStatus", getOrderStatus(order.getState()));
+            String result = RestHttpClient.post(header, object.toJSONString(), RestConfig.payOrderNotify);
+            log.error("通知结果：{}", result);
+            try {
+                RespInfo info = JSONObject.parseObject(result, RespInfo.class);
+                if (!info.isSuccess()) {
+                    log.error("能力系统异常:{},{}",order.getRequestNo(), info.getRespdesc());
+                    order.setDealState(PayOrder.DealState.notice_fail.getCode());
+                    order.setReason(info.getRespdesc());
+                    payOrderService.updateById(order);
+                    return;
+                }
+                if (!info.getResult().isSuccess()){
+                    log.error("能力业务异常:{},{}",order.getRequestNo(), info.getResult().getRetmsg());
+                    order.setDealState(PayOrder.DealState.notice_fail.getCode());
+                    order.setReason(info.getResult().getRetmsg());
+                    payOrderService.updateById(order);
+                    return;
+                }
+            }catch (Exception e){
+                log.error("通知结果转换出错:{},{},{}",order.getRequestNo(),result, e);
+                order.setDealState(PayOrder.DealState.notice_fail.getCode());
+                order.setReason("通知结果转换出错");
+                payOrderService.updateById(order);
+                return;
+            }
         }
         settle(order);
     }
@@ -91,26 +97,27 @@ public class PayOrderNotifyListener {
      * @param order
      */
     private void settle(PayOrder order) {
-        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(order.getMerchantNo());
-        if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
-            order.setDealState(PayOrder.DealState.today_sign.getCode());
-            order.setReason("当天签约，无法打款");
-            payOrderService.updateById(order);
-        } else {
-            SettleDTO dto = new SettleDTO();
-            dto.setAmount(order.getSettleAmount());
-            dto.setOutTradeNo(order.getOutTradeNo());
-            SettleResult settleResult = authorizePayService.settle(dto);
-            if (settleResult.isSuccess()) {
-                order.setDealState(PayOrder.DealState.settle_wait.getCode());
-                order.setReason("等待结算");
-            } else {
-                order.setDealState(PayOrder.DealState.settle_fail.getCode());
-                order.setReason(settleResult.getMessage());
+        if (order.getDealState().equals(PayOrder.DealState.notice_wait.getCode()) || order.getDealState().equals(PayOrder.DealState.notice_fail.getCode())){
+            AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(order.getMerchantNo());
+            if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
+                order.setDealState(PayOrder.DealState.today_sign.getCode());
+                order.setReason("当天签约，无法打款");
+                payOrderService.updateById(order);
+                return;
             }
-            payOrderService.updateById(order);
         }
-
+        SettleDTO dto = new SettleDTO();
+        dto.setAmount(order.getSettleAmount());
+        dto.setOutTradeNo(order.getOutTradeNo());
+        SettleResult settleResult = authorizePayService.settle(dto);
+        if (settleResult.isSuccess()) {
+            order.setDealState(PayOrder.DealState.settle_wait.getCode());
+            order.setReason("等待结算");
+        } else {
+            order.setDealState(PayOrder.DealState.settle_fail.getCode());
+            order.setReason(settleResult.getMessage());
+        }
+        payOrderService.updateById(order);
     }
 
     /**

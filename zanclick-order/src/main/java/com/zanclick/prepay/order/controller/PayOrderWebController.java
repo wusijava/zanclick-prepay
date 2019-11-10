@@ -61,6 +61,18 @@ public class PayOrderWebController extends BaseController {
         return Response.ok(voPage);
     }
 
+    @ApiOperation(value = "结算打款")
+    @PostMapping(value = "/settle")
+    @ResponseBody
+    public Response settle(String outTradeNo) {
+        try {
+            payOrderService.settle(outTradeNo);
+        }catch (Exception e){
+            log.error("结算处理失败:{}",e.getMessage());
+        }
+        return Response.fail("处理失败");
+    }
+
     @ApiOperation(value = "导出交易信息")
     @RequestMapping(value = "batchExport", method = RequestMethod.POST)
     @ResponseBody

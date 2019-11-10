@@ -20,6 +20,14 @@ public interface PayOrderMapper extends BaseMapper<PayOrder, Long> {
     PayOrder selectByOutTradeNo(String outTradeNo);
 
     /**
+     * 根据 outTradeNo查找
+     *
+     * @param authNo
+     * @return
+     */
+    PayOrder selectByAuthNo(String authNo);
+
+    /**
      * 根据 outOrderNo查找
      *
      * @param outOrderNo
