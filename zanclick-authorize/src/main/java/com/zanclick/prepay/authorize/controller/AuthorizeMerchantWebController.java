@@ -1,14 +1,10 @@
 package com.zanclick.prepay.authorize.controller;
 
-import com.alipay.api.response.MybankCreditSupplychainFactoringSupplierCreateResponse;
-import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
+import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.query.AuthorizeMerchantQuery;
-import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
-import com.zanclick.prepay.authorize.util.SupplyChainUtils;
 import com.zanclick.prepay.authorize.vo.RegisterMerchant;
-import com.zanclick.prepay.authorize.vo.SuppilerCreate;
 import com.zanclick.prepay.authorize.vo.web.AuthorizeWebListInfo;
 import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.entity.Response;
@@ -33,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -45,7 +40,7 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/web/authorize/merchant")
-public class AuthorizeWebMerchantController extends BaseController {
+public class AuthorizeMerchantWebController extends BaseController {
 
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
@@ -83,7 +78,7 @@ public class AuthorizeWebMerchantController extends BaseController {
             registerMerchantList.add(authorizeMerchantService.getRegisterMerchant(merchant));
         }
         String key = UUID.randomUUID().toString().replaceAll("-", "");
-        RedisUtil.set(key, registerMerchantList, 1000 * 60 * 30L);
+        RedisUtil.set(key, parser(registerMerchantList), 1000 * 60 * 30L);
         String url = excelDownloadUrl + key;
         return Response.ok(url);
     }
@@ -96,7 +91,7 @@ public class AuthorizeWebMerchantController extends BaseController {
             authorizeMerchantService.createMerchantList(getMerchantList(file));
             List<RegisterMerchant> registerMerchantList = authorizeMerchantService.createAllSupplier();
             String key = UUID.randomUUID().toString().replaceAll("-", "");
-            RedisUtil.set(key, registerMerchantList, 1000 * 60 * 30L);
+            RedisUtil.set(key, parser(registerMerchantList), 1000 * 60 * 30L);
             String url = excelDownloadUrl + key;
             return Response.ok(url);
         } catch (Exception e) {
@@ -134,6 +129,10 @@ public class AuthorizeWebMerchantController extends BaseController {
         vo.setState(merchant.getState());
         vo.setStateStr(merchant.getStateDesc());
         return vo;
+    }
+
+    private List<JSONObject> parser(List<RegisterMerchant> merchantList){
+        return JSONObject.parseArray(JSONObject.toJSONString(merchantList),JSONObject.class);
     }
 
     /**

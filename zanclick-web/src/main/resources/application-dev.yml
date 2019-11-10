@@ -59,7 +59,7 @@ authorize:
   #notify: http://api.ngrok.zanclick.cn/api/open/authorize/notify
   notify: http://prepay.utools.club/api/open/authorize/notify
 
-excelDownloadUrl: http://172.16.4.9:8888/api/open/downloadMerchantExcel/
+excelDownloadUrl: http://172.16.4.9:8888/api/open/downloadExcel/
 
 # H5接口访问密钥
 h5:

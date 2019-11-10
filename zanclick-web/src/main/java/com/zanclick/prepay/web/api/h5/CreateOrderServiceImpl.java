@@ -102,6 +102,7 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder.setAppId(appId);
         payOrder.setStoreName(merchant.getStoreName());
         payOrder.setDealState(PayOrder.DealState.notice_wait.getCode());
+        payOrder.setReason("等待通知");
         payOrder.setWayId(merchant.getWayId());
         payOrder.setNum(meal.getNum());
         payOrder.setTitle(meal.getTitle());

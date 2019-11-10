@@ -118,7 +118,8 @@ public class PayOrder implements Identifiable<Long> {
         notice_fail(0, "通知失败"),
         settle_fail(1, "结算失败"),
         settle_wait(2, "等待结算"),
-        today_sign(3, "当天签约的");
+        settled(4, "结算成功"),
+        today_sign(3, "当天签约");
 
         private Integer code;
         private String desc;
@@ -147,9 +148,9 @@ public class PayOrder implements Identifiable<Long> {
 
     public enum State {
         wait(0, "等待支付"),
-        closed(-1, "关闭的"),
-        refund(2, "已退款"),
-        payed(1, "已支付");
+        closed(-1, "交易关闭"),
+        refund(2, "交易退款"),
+        payed(1, "交易完成");
 
         private Integer code;
         private String desc;
@@ -173,6 +174,34 @@ public class PayOrder implements Identifiable<Long> {
 
         public void setDesc(String desc) {
             this.desc = desc;
+        }
+    }
+
+    public String getStateDesc(){
+        if (State.closed.getCode().equals(state)){
+            return State.closed.getDesc();
+        } else if (State.wait.getCode().equals(state)){
+            return State.wait.getDesc();
+        } else if (State.refund.getCode().equals(state)){
+            return State.refund.getDesc();
+        }else {
+            return State.payed.getDesc();
+        }
+    }
+
+    public String getDealStateDesc(){
+        if (DealState.notice_fail.getCode().equals(dealState)){
+            return DealState.notice_fail.getDesc();
+        } else if (DealState.notice_wait.getCode().equals(dealState)){
+            return DealState.notice_wait.getDesc();
+        } else if (DealState.settle_wait.getCode().equals(dealState)){
+            return DealState.settle_wait.getDesc();
+        }else if (DealState.settle_fail.getCode().equals(dealState)){
+            return DealState.settle_fail.getDesc();
+        }else if (DealState.today_sign.getCode().equals(dealState)){
+            return DealState.today_sign.getDesc();
+        }else {
+            return DealState.settled.getDesc();
         }
     }
 
