@@ -64,6 +64,11 @@ public class PayOrderNotifyListener {
             object.put("orderStatus", getOrderStatus(order.getState()));
             String result = RestHttpClient.post(header, object.toJSONString(), RestConfig.payOrderNotify);
             log.error("通知结果：{}", result);
+            if (result == null){
+                order.setDealState(PayOrder.DealState.notice_fail.getCode());
+                order.setReason("未知错误");
+                payOrderService.updateById(order);
+            }
             try {
                 RespInfo info = JSONObject.parseObject(result, RespInfo.class);
                 if (!info.isSuccess()) {
@@ -106,17 +111,19 @@ public class PayOrderNotifyListener {
                 return;
             }
         }
-        SettleDTO dto = new SettleDTO();
-        dto.setAmount(order.getSettleAmount());
-        dto.setOutTradeNo(order.getOutTradeNo());
-        SettleResult settleResult = authorizePayService.settle(dto);
-        if (settleResult.isSuccess()) {
-            order.setDealState(PayOrder.DealState.settle_wait.getCode());
-            order.setReason("等待结算");
-        } else {
-            order.setDealState(PayOrder.DealState.settle_fail.getCode());
-            order.setReason(settleResult.getMessage());
-        }
+//        SettleDTO dto = new SettleDTO();
+//        dto.setAmount(order.getSettleAmount());
+//        dto.setOutTradeNo(order.getOutTradeNo());
+//        SettleResult settleResult = authorizePayService.settle(dto);
+//        if (settleResult.isSuccess()) {
+//            order.setDealState(PayOrder.DealState.settle_wait.getCode());
+//            order.setReason("等待结算");
+//        } else {
+//            order.setDealState(PayOrder.DealState.settle_fail.getCode());
+//            order.setReason(settleResult.getMessage());
+//        }
+        order.setDealState(PayOrder.DealState.settle_wait.getCode());
+        order.setReason("等待结算");
         payOrderService.updateById(order);
     }
 
