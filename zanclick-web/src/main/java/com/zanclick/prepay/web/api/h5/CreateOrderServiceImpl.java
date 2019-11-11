@@ -43,6 +43,7 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
     private SettleRateService settleRateService;
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
+
     @Value("${h5.server}")
     private String h5Server;
 
@@ -91,11 +92,10 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
             throw new BizException("商户号异常:"+pay.getMerchantNo());
         }
         PayOrder payOrder = payOrderService.queryByOutOrderNo(pay.getOutOrderNo());
-        if (DataUtil.isNotEmpty(payOrder) && payOrder.isPayed()){
-            throw new BizException("交易已支付");
-        }
-        if (DataUtil.isNotEmpty(payOrder) && payOrder.isWait()){
-            return getResult(payOrder);
+        if (DataUtil.isNotEmpty(payOrder)){
+            if (payOrder.isPayed() || payOrder.isWait()){
+                return getResult(payOrder);
+            }
         }
         SetMeal meal = setMealService.queryByPackageNo(pay.getPackageNo());
         if (DataUtil.isEmpty(meal)) {

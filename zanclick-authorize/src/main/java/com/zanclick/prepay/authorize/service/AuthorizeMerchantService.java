@@ -25,6 +25,14 @@ public interface AuthorizeMerchantService extends BaseService<AuthorizeMerchant,
 
 
     /**
+     * 创建预授权商户
+     *
+     * @param merchant
+     * @return
+     */
+    void updateMerchant(AuthorizeMerchant merchant);
+
+    /**
      * 查询商户
      *
      * @param merchantNo

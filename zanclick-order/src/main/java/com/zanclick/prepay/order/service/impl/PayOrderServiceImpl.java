@@ -33,6 +33,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     private PayOrderMapper payOrderMapper;
     @Autowired
     private AuthorizePayService authorizePayService;
+
     @Override
     protected BaseMapper<PayOrder, Long> getBaseMapper() {
         return payOrderMapper;
@@ -56,31 +57,41 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     @Override
     public PayOrder queryAndHandlePayOrder(String outTradeNo, String outOrderNo) {
         PayOrder payOrder = null;
-        if (DataUtil.isNotEmpty(outOrderNo)){
+        if (DataUtil.isNotEmpty(outOrderNo)) {
             payOrder = this.queryByOutTradeNo(outOrderNo);
         }
-        if (DataUtil.isEmpty(payOrder) && DataUtil.isNotEmpty(outOrderNo)){
+        if (DataUtil.isEmpty(payOrder) && DataUtil.isNotEmpty(outOrderNo)) {
             payOrder = this.queryByOutOrderNo(outOrderNo);
         }
-        if (payOrder == null){
-            log.error("订单信息异常:{},{}",outOrderNo,outTradeNo);
+        if (payOrder == null) {
+            log.error("订单信息异常:{},{}", outOrderNo, outTradeNo);
             throw new BizException("订单信息异常");
         }
-        if (payOrder.isWait() && payOrder.getRequestNo() != null && payOrder.getQrCodeUrl() !=null){
+        if (payOrder.isWait() && payOrder.getRequestNo() != null && payOrder.getQrCodeUrl() != null) {
             QueryDTO dto = new QueryDTO();
             dto.setOutTradeNo(payOrder.getOutTradeNo());
             QueryResult queryResult = authorizePayService.query(dto);
-            if (queryResult.isSuccess()){
-                if (AuthorizeOrder.State.payed.getCode().equals(queryResult.getState())){
+            if (queryResult.isSuccess()) {
+                if (AuthorizeOrder.State.payed.getCode().equals(queryResult.getState())) {
                     payOrder.setState(PayOrder.State.payed.getCode());
                     payOrder.setFinishTime(new Date());
                     handlePayOrder(payOrder);
-                }else if (AuthorizeOrder.State.failed.getCode().equals(queryResult.getState()) || AuthorizeOrder.State.closed.getCode().equals(queryResult.getState())){
+                } else if (AuthorizeOrder.State.failed.getCode().equals(queryResult.getState()) || AuthorizeOrder.State.closed.getCode().equals(queryResult.getState())) {
+                    //TODO 没有反应到数据库
                     payOrder.setRequestNo(null);
+                    payOrder.setQrCodeUrl(null);
+                    payOrder.setState(PayOrder.State.closed.getCode());
+                    payOrder.setFinishTime(new Date());
+                    handlePayOrder(payOrder);
                 }
-            }else {
-                log.error("交易信息异常:{},{},{}",queryResult.getMessage(),outOrderNo,outTradeNo);
-                throw new RuntimeException(queryResult.getMessage());
+            } else {
+                log.error("交易信息查询异常:{},{},{}", queryResult.getMessage(), outOrderNo, outTradeNo);
+                //TODO 没有反应到数据库
+                payOrder.setRequestNo(null);
+                payOrder.setQrCodeUrl(null);
+                payOrder.setState(PayOrder.State.closed.getCode());
+                payOrder.setFinishTime(new Date());
+                handlePayOrder(payOrder);
             }
         }
         return payOrder;
@@ -96,7 +107,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     @Transactional(rollbackFor = Exception.class)
     @Override
-    public void handleSuccess(String outTradeNo,String authNo) {
+    public void handleSuccess(String outTradeNo, String authNo) {
         PayOrder payOrder = payOrderMapper.selectByOutTradeNo(outTradeNo);
         if (payOrder == null) {
             log.error("交易订单异常:{}", outTradeNo);
@@ -112,8 +123,8 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     public void settle(String outTradeNo) {
         PayOrder order = payOrderMapper.selectByOutTradeNo(outTradeNo);
         if (order.getDealState().equals(PayOrder.DealState.settled.getCode())
-                || order.getDealState().equals(PayOrder.DealState.settle_wait.getCode())){
-            log.error("订单状态异常:{},{}",outTradeNo,order.getDealStateDesc());
+                || order.getDealState().equals(PayOrder.DealState.settle_wait.getCode())) {
+            log.error("订单状态异常:{},{}", outTradeNo, order.getDealStateDesc());
             throw new BizException("订单状态异常");
         }
         sendMessage(order);
@@ -121,9 +132,8 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     @Override
     public void sendMessage(PayOrder order) {
-        SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE,JSONObject.toJSONString(order));
+        SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, JSONObject.toJSONString(order));
     }
-
 
 
 }

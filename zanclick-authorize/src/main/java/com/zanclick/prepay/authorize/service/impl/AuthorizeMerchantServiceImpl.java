@@ -51,6 +51,20 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         createMerchant(merchant);
     }
 
+    @Override
+    public void updateMerchant(AuthorizeMerchant merchant) {
+
+        AuthorizeConfiguration configuration = authorizeConfigurationService.queryDefaultConfiguration();
+        MybankCreditSupplychainFactoringSupplierCreateResponse response = SupplyChainUtils.createSupplier(create(merchant),configuration);
+        if (response.isSuccess()) {
+            merchant.setSupplierNo(response.getSupplierNo());
+            this.updateById(merchant);
+            return;
+        }
+        log.error("修改商户信息异常:{}",response.getSubMsg());
+        throw new BizException("修改商户信息异常");
+    }
+
     /**
      * 创建商户
      *

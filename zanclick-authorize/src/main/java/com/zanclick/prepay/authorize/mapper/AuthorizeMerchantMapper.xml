@@ -64,7 +64,7 @@
                     AND `id`=#{id}
                 </if>
                 <if test="merchantNo != null and merchantNo != ''">
-                    AND `merchant_no` LIKE concat ('%',#{merchantNo},'%')
+                    AND `merchant_no` = #{merchantNo}
                 </if>
                 <if test="wayId != null and wayId != ''">
                     AND `way_id` LIKE concat ('%',#{wayId},'%')

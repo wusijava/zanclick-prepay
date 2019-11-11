@@ -76,15 +76,24 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
      */
     private PayOrder getPayOrder(ApiPay pay) {
         PayOrder payOrder = payOrderService.queryAndHandlePayOrder(null,pay.getOutOrderNo());
-        if (payOrder.isWait() && DataUtil.isEmpty(payOrder.getRequestNo())){
+        if (payOrder.isWait() && DataUtil.isEmpty(payOrder.getRequestNo()) && DataUtil.isEmpty(payOrder.getQrCodeUrl())){
             PayResult result = authorizePayService.prePay(getPay(payOrder));
             if (result.isSuccess()) {
                 payOrder.setRequestNo(result.getRequestNo());
                 payOrder.setQrCodeUrl(result.getQrCodeUrl());
                 payOrderService.handlePayOrder(payOrder);
             }else {
+                log.error("冻结订单创建失败:{},{}",pay.getOutOrderNo(),result.getMessage());
                 throw new BizException(result.getMessage());
             }
+        }
+        if (payOrder.isPayed()){
+            log.error("该笔订单已支付完成，请勿重复支付:{}",pay.getOutOrderNo());
+            throw new BizException("该笔订单已支付完成，请勿重复支付");
+        }
+        if (payOrder.isClosed()){
+            log.error("该笔订单已关闭，请刷新二维码后再试:{}",pay.getOutOrderNo());
+            throw new BizException("该笔订单已关闭，请刷新二维码后再试");
         }
         return payOrder;
     }

@@ -8,6 +8,7 @@ import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.authorize.vo.web.AuthorizeWebListInfo;
 import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.entity.Response;
+import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.POIUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
@@ -66,6 +67,25 @@ public class AuthorizeMerchantWebController extends BaseController {
         }
         Page<AuthorizeWebListInfo> voPage = new PageImpl<>(voList, pageable, page.getTotalElements());
         return Response.ok(voPage);
+    }
+
+    @ApiOperation(value = "修改商户信息")
+    @RequestMapping(value = "updateMerchant", method = RequestMethod.POST)
+    @ResponseBody
+    public Response<String> updateMerchant(AuthorizeMerchant merchant) {
+        if (DataUtil.isEmpty(merchant) || DataUtil.isEmpty(merchant.getId())){
+            return Response.ok("修改商户信息异常");
+        }
+        try {
+            authorizeMerchantService.updateMerchant(merchant);
+        }catch (BizException e){
+            log.error("修改商户信息异常:{},{}",merchant.getId(),e.getMessage());
+            return Response.ok(e.getMessage());
+        }catch (Exception e){
+            log.error("修改商户信息系统异常:{},{}",merchant.getId(),e);
+            return Response.ok("修改失败");
+        }
+        return Response.ok("修改成功");
     }
 
     @ApiOperation(value = "导出商户信息")
