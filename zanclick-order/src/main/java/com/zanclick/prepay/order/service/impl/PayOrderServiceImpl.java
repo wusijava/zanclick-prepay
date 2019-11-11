@@ -110,7 +110,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     @Override
     public void settle(String outTradeNo) {
-        PayOrder order = payOrderMapper.selectByOutOrderNo(outTradeNo);
+        PayOrder order = payOrderMapper.selectByOutTradeNo(outTradeNo);
         if (order.getDealState().equals(PayOrder.DealState.settled.getCode())
                 || order.getDealState().equals(PayOrder.DealState.settle_wait.getCode())){
             log.error("订单状态异常:{},{}",outTradeNo,order.getDealStateDesc());

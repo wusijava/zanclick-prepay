@@ -76,7 +76,8 @@ public class MyBankSupplyChainServiceImpl implements MyBankSupplyChainService {
     @Transactional(rollbackFor = Exception.class)
     @Override
     public void tradeRepay(String auth_no){
-        MybankCreditSupplychainTradeBillrepaybudgetQueryResponse response = SupplyChainUtils.tradeBillRepayBudgetQuery(auth_no,null);
+        AuthorizeConfiguration configuration = authorizeConfigurationService.queryDefaultConfiguration();
+        MybankCreditSupplychainTradeBillrepaybudgetQueryResponse response = SupplyChainUtils.tradeBillRepayBudgetQuery(auth_no,configuration);
         if(response.isSuccess()){
             SupplyChainBill bill = new SupplyChainBill();
             bill.setTotalAmount(response.getTotalAmt());
@@ -93,7 +94,7 @@ public class MyBankSupplyChainServiceImpl implements MyBankSupplyChainService {
                 SupplyChainPay pay = new SupplyChainPay();
                 pay.setAuthNo(auth_no);
                 pay.setPayAmount(response.getTotalAmt());
-                String requestId = SupplyChainUtils.tradePay(pay,null);
+                String requestId = SupplyChainUtils.tradePay(pay,configuration);
                 bill.setRequestId(requestId);
                 supplyChainBillService.updateById(bill);
             }catch (SupplyChainException e){

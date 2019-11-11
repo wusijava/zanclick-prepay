@@ -67,6 +67,7 @@ public class PayOrderWebController extends BaseController {
     public Response settle(String outTradeNo) {
         try {
             payOrderService.settle(outTradeNo);
+            return Response.ok("处理成功");
         }catch (Exception e){
             log.error("结算处理失败:{}",e.getMessage());
         }

@@ -1,5 +1,6 @@
 package com.zanclick.prepay.web.api.h5;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.util.MoneyUtil;
@@ -18,8 +19,10 @@ import com.zanclick.prepay.web.api.AbstractCommonService;
 import com.zanclick.prepay.web.dto.ApiPay;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.net.URLEncoder;
 import java.util.Date;
 
 /**
@@ -40,6 +43,8 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
     private SettleRateService settleRateService;
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
+    @Value("${h5.server}")
+    private String h5Server;
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
@@ -55,9 +60,12 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
                 param.setMessage(check);
                 return param.toString();
             }
-            createPayOrder(dto, appId);
-            param.setMessage("创建成功");
-            param.setSuccess();
+            JSONObject object = createPayOrder(dto, appId);
+            StringBuffer sb = new StringBuffer();
+            sb.append(h5Server+"/order/orderConfirmation");
+            sb.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
+            object.put("url",sb.toString());
+            param.setData(object);
             return param.toString();
         } catch (BizException be) {
             param.setMessage(be.getMessage());
@@ -76,18 +84,18 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
      * @param pay
      * @return
      */
-    private void createPayOrder(ApiPay pay, String appId) {
+    private JSONObject createPayOrder(ApiPay pay, String appId) {
+        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(pay.getMerchantNo());
+        if (merchant == null || !merchant.isSuccess()){
+            log.error("商户号异常:{}",pay.getMerchantNo());
+            throw new BizException("商户号异常:"+pay.getMerchantNo());
+        }
         PayOrder payOrder = payOrderService.queryByOutOrderNo(pay.getOutOrderNo());
         if (DataUtil.isNotEmpty(payOrder) && payOrder.isPayed()){
             throw new BizException("交易已支付");
         }
         if (DataUtil.isNotEmpty(payOrder) && payOrder.isWait()){
-            return;
-        }
-        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(pay.getMerchantNo());
-        if (merchant == null || !merchant.isSuccess()){
-            log.error("商户号异常:{}",merchant.getMerchantNo());
-            throw new BizException("商户号异常");
+            return getResult(payOrder);
         }
         SetMeal meal = setMealService.queryByPackageNo(pay.getPackageNo());
         if (DataUtil.isEmpty(meal)) {
@@ -123,5 +131,16 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder.setEachMoney(eachAmount);
         payOrder.setFirstMoney(firstAmount);
         payOrderService.insert(payOrder);
+        return getResult(payOrder);
+    }
+
+
+    private JSONObject getResult(PayOrder payOrder){
+        JSONObject object = new JSONObject();
+        object.put("num",payOrder.getNum());
+        object.put("title",payOrder.getTitle());
+        object.put("totalMoney",payOrder.getAmount());
+        object.put("eachMoney",payOrder.getEachMoney());
+        return object;
     }
 }

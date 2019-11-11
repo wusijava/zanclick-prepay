@@ -39,9 +39,6 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
 
-    @Value("${h5.server}")
-    private String h5Server;
-
     @Override
     public String resolve(String appId, String cipherJson, String request) {
         ResponseParam param = new ResponseParam();
@@ -56,12 +53,8 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
                 param.setMessage(check);
                 return param.toString();
             }
-            StringBuffer sb = new StringBuffer();
-            sb.append(h5Server+"/order/orderConfirmation");
-            sb.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
             PayOrder order = getPayOrder(dto);
             ApiPayResult result = getPayResult(order);
-            result.setUrl(sb.toString());
             param.setData(result);
             return param.toString();
         } catch (BizException be) {

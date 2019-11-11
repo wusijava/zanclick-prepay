@@ -36,36 +36,17 @@ public class ApiOpenController {
     }
 
     @GetMapping(value = "/createQr")
-    public void createQr(String appId, String cipherJson, HttpServletResponse response) {
-        String method = "com.zanclick.create.order";
-        String message = null;
+    public void createQr(String appId, String cipherJson, HttpServletResponse response) throws IOException {
         StringBuffer sb = new StringBuffer();
         try {
-            ResponseParam param = resolver(method,appId, cipherJson);
-            if (!param.isSuccess()) {
-                sb.append("/auth/fail");
-                sb.append("?desc="+URLEncoder.encode(param.getMessage(), "utf-8"));
-                response.sendRedirect(h5Server + sb.toString());
-                return;
-            }else {
-                sb.append("/trade/create");
-                sb.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
-                response.sendRedirect(h5Server + sb.toString());
-                return;
-            }
-        } catch (DecryptException e) {
-            log.error("订单创建,解密失败:{}", e);
-            message = "解密失败，请检查加密信息";
-        } catch (Exception e) {
-            log.error("订单创建,系统异常:{}", e);
-            message = "系统繁忙，请稍后再试";
-        }
-        try {
-            sb.append("/auth/fail");
-            sb.append("?desc="+URLEncoder.encode(message, "utf-8"));
+            sb.append("/trade/create");
+            sb.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
             response.sendRedirect(h5Server + sb.toString());
-        } catch (IOException e) {
-            log.error("重定向失败:{}", e);
+        }catch (Exception e) {
+            log.error("订单创建,系统异常:{},{},{}",appId,cipherJson, e);
+            sb.append("/auth/fail");
+            sb.append("?desc="+URLEncoder.encode("订单创建异常，请稍后再试", "utf-8"));
+            response.sendRedirect(h5Server + sb.toString());
         }
     }
 
