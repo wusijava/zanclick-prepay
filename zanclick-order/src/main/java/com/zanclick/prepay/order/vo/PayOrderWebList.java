@@ -32,6 +32,7 @@ public class PayOrderWebList {
      **/
     private String outOrderNo;
 
+    private String authNo;
 
     /**
      * 冻结金额

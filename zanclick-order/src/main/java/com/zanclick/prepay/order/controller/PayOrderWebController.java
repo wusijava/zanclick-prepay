@@ -110,6 +110,7 @@ public class PayOrderWebController extends BaseController {
         vo.setPhoneNumber(order.getPhoneNumber());
         vo.setOutOrderNo(order.getOutOrderNo());
         vo.setOutTradeNo(order.getOutTradeNo());
+        vo.setAuthNo(order.getAuthNo());
         vo.setDealState(order.getDealState());
         vo.setDealStateStr(order.getDealStateDesc());
         return vo;

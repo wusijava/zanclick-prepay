@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.utils.DataUtil;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,6 +53,67 @@ public abstract class BaseController {
      */
     protected HttpSession getSession() {
         return ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest().getSession();
+    }
+
+    private static final String AUTHORIZATION = "authorization";
+
+    /**
+     * 获取authorization
+     *
+     * @return
+     * */
+    protected String getAuthorization(){
+        String authorization = getRequest().getHeader(AUTHORIZATION);
+        getAuthorization(authorization);
+        return authorization;
+    }
+    /**
+     * 获取authorization
+     *
+     * @return
+     * */
+    protected void getAuthorization(String authorization) {
+        if (authorization == null || "".equals(authorization) || "null".equals(authorization) || "undefined".equals(authorization)) {
+            HttpServletResponse response = getResponse();
+            response.setStatus(401);
+            response.setHeader("WWW-authenticate", "Basic realm=\"请输入密码\"");
+            response.setCharacterEncoding("UTF-8");
+            response.setContentType("text/html;charset=utf-8");
+            try {
+                response.getWriter().print("对不起你没有权限！！");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return ;
+        }
+    }
+
+    /**
+     * 验证authorization
+     *
+     * @return
+     * */
+    protected boolean verifyAuthorization(String authorization,String uPwd) {
+        String userAndPass = null;
+        try {
+            userAndPass = new String(new BASE64Decoder().decodeBuffer(authorization.split(" ")[1]));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (!userAndPass.equals(uPwd)) {
+            HttpServletResponse response = getResponse();
+            response.setStatus(401);
+            response.setHeader("WWW-authenticate", "Basic realm=\"请输入密码\"");
+            try {
+                response.setCharacterEncoding("UTF-8");
+                response.setContentType("application/json;charset=utf-8");
+                response.getWriter().print("对不起你没有权限！！");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -122,11 +184,6 @@ public abstract class BaseController {
      */
     public static Boolean isNotEmpty(Object object) {
         return DataUtil.isNotEmpty(object);
-    }
-
-    public static JSONObject getRequestJsonObject(HttpServletRequest request) {
-        String json = getRequestJsonString(request);
-        return JSONObject.parseObject(json);
     }
 
     /***

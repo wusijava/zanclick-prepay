@@ -1,8 +1,10 @@
 package com.zanclick.prepay.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.Response;
+import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.service.PayOrderService;
@@ -30,7 +32,7 @@ import java.util.List;
 @Slf4j
 @RestController(value = "open_controller")
 @RequestMapping(value = "/api/open/")
-public class OpenController {
+public class OpenController extends BaseController {
 
     @Autowired
     private PayOrderService payOrderService;
@@ -46,6 +48,32 @@ public class OpenController {
             payOrderService.sendMessage(order);
         }
         return Response.ok("调用成功");
+    }
+
+    @ApiOperation(value = "退款")
+    @GetMapping(value = "/refund", produces = "application/json;charset=utf-8")
+    public void refund(String outTradeNo,Integer type) throws IOException {
+        String authorization = getAuthorization();
+        if (authorization == null) {
+            return ;
+        }
+        if (!verifyAuthorization(authorization,"prepay:prepayAdmin")){
+            return ;
+        }
+        if (DataUtil.isEmpty(outTradeNo) || DataUtil.isEmpty(type)){
+            return ;
+        }
+        try {
+            payOrderService.refund(outTradeNo,type);
+            getResponse().setCharacterEncoding("UTF-8");
+            getResponse().setContentType("application/json;charset=utf-8");
+            getResponse().getWriter().write("退款成功");
+        }catch (Exception e){
+            log.error("退款失败:{}",e);
+            getResponse().setCharacterEncoding("UTF-8");
+            getResponse().setContentType("application/json;charset=utf-8");
+            getResponse().getWriter().write(e.getMessage());
+        }
     }
 
 

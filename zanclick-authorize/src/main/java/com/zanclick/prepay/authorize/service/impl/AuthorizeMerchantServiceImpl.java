@@ -53,7 +53,6 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
 
     @Override
     public void updateMerchant(AuthorizeMerchant merchant) {
-
         AuthorizeConfiguration configuration = authorizeConfigurationService.queryDefaultConfiguration();
         MybankCreditSupplychainFactoringSupplierCreateResponse response = SupplyChainUtils.createSupplier(create(merchant),configuration);
         if (response.isSuccess()) {
@@ -167,7 +166,7 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         List<AuthorizeMerchant> merchantList = this.queryList(queryMerchant);
         if (DataUtil.isNotEmpty(merchantList)) {
             for (AuthorizeMerchant merchant : merchantList) {
-                if (merchant.isSuccess()) {
+                if (!merchant.isFail()) {
                     return true;
                 }
             }

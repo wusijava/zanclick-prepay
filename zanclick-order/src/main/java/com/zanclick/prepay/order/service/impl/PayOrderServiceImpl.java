@@ -1,16 +1,19 @@
 package com.zanclick.prepay.order.service.impl;
 
-import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
+import com.zanclick.prepay.authorize.service.MyBankSupplyChainService;
 import com.zanclick.prepay.authorize.vo.QueryDTO;
 import com.zanclick.prepay.authorize.vo.QueryResult;
+import com.zanclick.prepay.authorize.vo.Refund;
+import com.zanclick.prepay.authorize.vo.RefundResult;
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.common.config.JmsMessaging;
 import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.mapper.PayOrderMapper;
 import com.zanclick.prepay.order.service.PayOrderService;
@@ -33,6 +36,8 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     private PayOrderMapper payOrderMapper;
     @Autowired
     private AuthorizePayService authorizePayService;
+    @Autowired
+    private MyBankSupplyChainService myBankSupplyChainService;
 
     @Override
     protected BaseMapper<PayOrder, Long> getBaseMapper() {
@@ -77,7 +82,6 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
                     payOrder.setFinishTime(new Date());
                     handlePayOrder(payOrder);
                 } else if (AuthorizeOrder.State.failed.getCode().equals(queryResult.getState()) || AuthorizeOrder.State.closed.getCode().equals(queryResult.getState())) {
-                    //TODO 没有反应到数据库
                     payOrder.setRequestNo(null);
                     payOrder.setQrCodeUrl(null);
                     payOrder.setState(PayOrder.State.closed.getCode());
@@ -86,7 +90,6 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
                 }
             } else {
                 log.error("交易信息查询异常:{},{},{}", queryResult.getMessage(), outOrderNo, outTradeNo);
-                //TODO 没有反应到数据库
                 payOrder.setRequestNo(null);
                 payOrder.setQrCodeUrl(null);
                 payOrder.setState(PayOrder.State.closed.getCode());
@@ -135,5 +138,29 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, order.getOutTradeNo());
     }
 
-
+    @Override
+    public synchronized void refund(String outTradeNo, Integer type) {
+        PayOrder order = payOrderMapper.selectByOutTradeNo(outTradeNo);
+        if (order == null || !order.isPayed()){
+            log.error("订单状态异常,无法退款:{},{}",outTradeNo,type);
+            throw new BizException("订单状态异常,无法退款");
+        }
+        Refund refund = new Refund();
+        refund.setType(0);
+        refund.setAmount(order.getAmount());
+        refund.setReason(order.getTitle()+"退款_"+order.getOutOrderNo());
+        refund.setOutRequestNo(StringUtils.getTradeNo());
+        refund.setOutTradeNo(order.getOutTradeNo());
+        RefundResult result = authorizePayService.refund(refund);
+        if (result.isSuccess()){
+            order.setState(PayOrder.State.refund.getCode());
+            payOrderMapper.updateById(order);
+            if (type.equals(0)){
+                myBankSupplyChainService.tradeRepay(order.getAuthNo());
+            }
+        }else {
+            log.error("退款失败:{},{}",outTradeNo,type,result.getMessage());
+            throw new BizException(result.getMessage());
+        }
+    }
 }

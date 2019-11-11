@@ -91,7 +91,6 @@ public class ApiRegisterMerchant extends Param {
             return "缺少渠道标识";
         }
         if (checkNull(merchantNo)) {
-            //TODO 商户号生成规则
             merchantNo = "DZ" + wayId;
         }
         if (checkNull(name)) {

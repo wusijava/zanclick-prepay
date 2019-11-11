@@ -74,4 +74,13 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      */
     void sendMessage(PayOrder order);
 
+
+    /**
+     * 向能力平台推送消息
+     *
+     * @param outTradeNo
+     * @param type 0 需要结清 1不需要结清
+     * @return
+     */
+    void refund(String outTradeNo,Integer type);
 }
