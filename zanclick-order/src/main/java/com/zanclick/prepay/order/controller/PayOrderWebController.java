@@ -1,13 +1,18 @@
 package com.zanclick.prepay.order.controller;
 
-import com.zanclick.prepay.authorize.query.AuthorizeMerchantQuery;
+import com.alibaba.fastjson.JSONObject;
+import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
+import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
+import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.common.base.controller.BaseController;
+import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.query.PayOrderQuery;
 import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.order.vo.PayOrderExcelList;
 import com.zanclick.prepay.order.vo.PayOrderWebList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,6 +42,8 @@ public class PayOrderWebController extends BaseController {
 
     @Autowired
     private PayOrderService payOrderService;
+    @Autowired
+    private AuthorizeMerchantService authorizeMerchantService;
 
     @Value("${excelDownloadUrl}")
     private String excelDownloadUrl;
@@ -68,8 +75,8 @@ public class PayOrderWebController extends BaseController {
         try {
             payOrderService.settle(outTradeNo);
             return Response.ok("处理成功");
-        }catch (Exception e){
-            log.error("结算处理失败:{}",e.getMessage());
+        } catch (Exception e) {
+            log.error("结算处理失败:{}", e.getMessage());
         }
         return Response.fail("处理失败");
     }
@@ -77,11 +84,34 @@ public class PayOrderWebController extends BaseController {
     @ApiOperation(value = "导出交易信息")
     @RequestMapping(value = "batchExport", method = RequestMethod.POST)
     @ResponseBody
-    public Response<String> batchExport(AuthorizeMerchantQuery query) {
+    public Response<String> batchExport(PayOrderQuery query) {
+        List<PayOrder> orderList = payOrderService.queryList(query);
+        if (DataUtil.isEmpty(orderList)) {
+            return Response.fail("没有数据");
+        }
+        List<PayOrderExcelList> orderExcelList = new ArrayList<>();
+        for (PayOrder order : orderList) {
+            PayOrderExcelList list = getExcelVo(order);
+            if (DataUtil.isNotEmpty(list)) {
+                orderExcelList.add(list);
+            }
+        }
+        if (DataUtil.isEmpty(orderExcelList)) {
+            return Response.fail("没有数据");
+        }
+        ExcelDto dto = new ExcelDto();
+        dto.setHeaders(PayOrderExcelList.headers);
+        dto.setKeys(PayOrderExcelList.keys);
+        dto.setObjectList(parser(orderExcelList));
         String key = UUID.randomUUID().toString().replaceAll("-", "");
-        RedisUtil.set(key, null, 1000 * 60 * 30L);
+        RedisUtil.set(key, dto, 1000 * 60 * 30L);
         String url = excelDownloadUrl + key;
         return Response.ok(url);
+    }
+
+
+    private List<JSONObject> parser(List<PayOrderExcelList> merchantList) {
+        return JSONObject.parseArray(JSONObject.toJSONString(merchantList), JSONObject.class);
     }
 
 
@@ -92,6 +122,7 @@ public class PayOrderWebController extends BaseController {
      * @return
      */
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     private PayOrderWebList getListVo(PayOrder order) {
         PayOrderWebList vo = new PayOrderWebList();
         vo.setId(order.getId());
@@ -113,6 +144,32 @@ public class PayOrderWebController extends BaseController {
         vo.setAuthNo(order.getAuthNo());
         vo.setDealState(order.getDealState());
         vo.setDealStateStr(order.getDealStateDesc());
+        return vo;
+    }
+
+    private PayOrderExcelList getExcelVo(PayOrder order) {
+        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(order.getMerchantNo());
+        if (DataUtil.isEmpty(merchant)) {
+            return null;
+        }
+        PayOrderExcelList vo = new PayOrderExcelList();
+        vo.setWayId(order.getWayId());
+        vo.setCreateTime(sdf.format(order.getCreateTime()));
+        vo.setFinishTime(order.getFinishTime() == null ? "" : sdf.format(order.getFinishTime()));
+        vo.setAmount(order.getAmount());
+        vo.setSettleAmount(order.getSettleAmount());
+        vo.setNum(String.valueOf(order.getNum()));
+        vo.setTitle(order.getTitle());
+        vo.setStoreName(order.getStoreName());
+        vo.setStateStr(order.getStateDesc());
+        vo.setPhoneNumber(order.getPhoneNumber());
+        vo.setOutOrderNo(order.getOutOrderNo());
+        vo.setOutTradeNo(order.getOutTradeNo());
+        vo.setSellerNo(merchant.getSellerNo());
+        vo.setName(merchant.getName());
+        vo.setProvince(merchant.getStoreProvince());
+        vo.setCity(merchant.getStoreCity());
+        vo.setCounty(merchant.getStoreCounty());
         return vo;
     }
 

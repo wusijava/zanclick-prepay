@@ -124,7 +124,7 @@ public class OpenController extends BaseController {
                 cell.setCellValue(obj.getString(keys[i]));
             }
         }
-        String filename = "商户信息" + sdf1.format(new Date()) + ".xlsx";
+        String filename = "导出信息" + sdf1.format(new Date()) + ".xlsx";
         String filepath = request.getRealPath("/") + filename;
         FileOutputStream out = new FileOutputStream(filepath);
         wb.write(out);
