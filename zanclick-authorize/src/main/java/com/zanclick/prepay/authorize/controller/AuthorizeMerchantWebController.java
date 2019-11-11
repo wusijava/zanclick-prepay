@@ -7,6 +7,7 @@ import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.authorize.vo.web.AuthorizeWebListInfo;
 import com.zanclick.prepay.common.base.controller.BaseController;
+import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
@@ -97,8 +98,12 @@ public class AuthorizeMerchantWebController extends BaseController {
         for (AuthorizeMerchant merchant : merchantList) {
             registerMerchantList.add(authorizeMerchantService.getRegisterMerchant(merchant));
         }
+        ExcelDto dto = new ExcelDto();
+        dto.setHeaders(RegisterMerchant.headers);
+        dto.setKeys(RegisterMerchant.keys);
+        dto.setObjectList(parser(registerMerchantList));
         String key = UUID.randomUUID().toString().replaceAll("-", "");
-        RedisUtil.set(key, parser(registerMerchantList), 1000 * 60 * 30L);
+        RedisUtil.set(key, dto, 1000 * 60 * 30L);
         String url = excelDownloadUrl + key;
         return Response.ok(url);
     }
@@ -110,8 +115,12 @@ public class AuthorizeMerchantWebController extends BaseController {
         try {
             authorizeMerchantService.createMerchantList(getMerchantList(file));
             List<RegisterMerchant> registerMerchantList = authorizeMerchantService.createAllSupplier();
+            ExcelDto dto = new ExcelDto();
+            dto.setHeaders(RegisterMerchant.headers);
+            dto.setKeys(RegisterMerchant.keys);
+            dto.setObjectList(parser(registerMerchantList));
             String key = UUID.randomUUID().toString().replaceAll("-", "");
-            RedisUtil.set(key, parser(registerMerchantList), 1000 * 60 * 30L);
+            RedisUtil.set(key, dto, 1000 * 60 * 30L);
             String url = excelDownloadUrl + key;
             return Response.ok(url);
         } catch (Exception e) {

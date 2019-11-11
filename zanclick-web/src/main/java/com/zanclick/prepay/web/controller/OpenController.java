@@ -1,7 +1,7 @@
 package com.zanclick.prepay.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.authorize.vo.RegisterMerchant;
+import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
@@ -53,12 +53,13 @@ public class OpenController {
     @ResponseBody
     public void downloadExcel(@PathVariable(value = "key") String key, HttpServletRequest request, HttpServletResponse response) throws Exception {
         Object object = RedisUtil.get(key);
-        List<JSONObject> objectList = object == null ? null : (List<JSONObject>) object;
-        if (objectList == null) {
+        ExcelDto dto = object == null ? null : (ExcelDto) object;
+        if (dto == null) {
             log.error("key已经过期:{}", key);
             return;
         }
-        batchExport(RegisterMerchant.headers, RegisterMerchant.keys, objectList, request, response);
+        batchExport(dto.getHeaders(), dto.getKeys(),dto.getObjectList(), request, response);
+        RedisUtil.del(key);
     }
 
     static SimpleDateFormat sdf1 = new SimpleDateFormat("yyyyMMddHHmmss");

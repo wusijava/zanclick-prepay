@@ -132,7 +132,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
 
     @Override
     public void sendMessage(PayOrder order) {
-        SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, JSONObject.toJSONString(order));
+        SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, order.getOutTradeNo());
     }
 
 

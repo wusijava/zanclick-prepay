@@ -44,16 +44,20 @@ public class PayOrderNotifyListener {
 
     @JmsListener(destination = JmsMessaging.ORDER_NOTIFY_MESSAGE)
     public void getMessage(String message) {
-        PayOrder order = JSONObject.parseObject(message,PayOrder.class);
-        if (order.getDealState().equals(PayOrder.DealState.settled.getCode())){
-            log.error("已经结算完成:{}",order.getRequestNo());
+        PayOrder order = payOrderService.queryByOutTradeNo(getOutTradeNo(message));
+        if (order == null){
+            log.error("数据有问题:{}", order.getRequestNo());
             return;
         }
-        if (order.getDealState().equals(PayOrder.DealState.settle_wait.getCode())){
-            log.error("请等待结算操作:{}",order.getRequestNo());
+        if (order.getDealState().equals(PayOrder.DealState.settled.getCode())) {
+            log.error("已经结算完成:{}", order.getRequestNo());
             return;
         }
-        if (order.getDealState().equals(PayOrder.DealState.notice_wait.getCode()) || order.getDealState().equals(PayOrder.DealState.notice_fail.getCode())){
+        if (order.getDealState().equals(PayOrder.DealState.settle_wait.getCode())) {
+            log.error("请等待结算操作:{}", order.getRequestNo());
+            return;
+        }
+        if (order.getDealState().equals(PayOrder.DealState.notice_wait.getCode()) || order.getDealState().equals(PayOrder.DealState.notice_fail.getCode())) {
             AsiaInfoHeader header = AsiaInfoUtil.header(getRouteValue(order));
             JSONObject object = new JSONObject();
             object.put("orderNo", order.getOutTradeNo());
@@ -64,7 +68,7 @@ public class PayOrderNotifyListener {
             object.put("orderStatus", getOrderStatus(order.getState()));
             String result = RestHttpClient.post(header, object.toJSONString(), RestConfig.payOrderNotify);
             log.error("通知结果：{}", result);
-            if (result == null){
+            if (result == null) {
                 order.setDealState(PayOrder.DealState.notice_fail.getCode());
                 order.setReason("未知福哦呜");
                 payOrderService.updateById(order);
@@ -72,21 +76,21 @@ public class PayOrderNotifyListener {
             try {
                 RespInfo info = JSONObject.parseObject(result, RespInfo.class);
                 if (!info.isSuccess()) {
-                    log.error("能力系统异常:{},{}",order.getRequestNo(), info.getRespdesc());
+                    log.error("能力系统异常:{},{}", order.getRequestNo(), info.getRespdesc());
                     order.setDealState(PayOrder.DealState.notice_fail.getCode());
                     order.setReason(info.getRespdesc());
                     payOrderService.updateById(order);
                     return;
                 }
-                if (!info.getResult().isSuccess()){
-                    log.error("能力业务异常:{},{}",order.getRequestNo(), info.getResult().getRetmsg());
+                if (!info.getResult().isSuccess()) {
+                    log.error("能力业务异常:{},{}", order.getRequestNo(), info.getResult().getRetmsg());
                     order.setDealState(PayOrder.DealState.notice_fail.getCode());
                     order.setReason(info.getResult().getRetmsg());
                     payOrderService.updateById(order);
                     return;
                 }
-            }catch (Exception e){
-                log.error("通知结果转换出错:{},{},{}",order.getRequestNo(),result, e);
+            } catch (Exception e) {
+                log.error("通知结果转换出错:{},{},{}", order.getRequestNo(), result, e);
                 order.setDealState(PayOrder.DealState.notice_fail.getCode());
                 order.setReason("通知结果转换出错");
                 payOrderService.updateById(order);
@@ -102,7 +106,7 @@ public class PayOrderNotifyListener {
      * @param order
      */
     private void settle(PayOrder order) {
-        if (order.getDealState().equals(PayOrder.DealState.notice_wait.getCode()) || order.getDealState().equals(PayOrder.DealState.notice_fail.getCode())){
+        if (order.getDealState().equals(PayOrder.DealState.notice_wait.getCode()) || order.getDealState().equals(PayOrder.DealState.notice_fail.getCode())) {
             AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(order.getMerchantNo());
             if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
                 order.setDealState(PayOrder.DealState.today_sign.getCode());
@@ -133,9 +137,9 @@ public class PayOrderNotifyListener {
      */
     private String getRouteValue(PayOrder order) {
         String routeValue = null;
-        if (RestConfig.isPhone()){
+        if (RestConfig.isPhone()) {
             routeValue = order.getPhoneNumber();
-        }else {
+        } else {
             routeValue = order.getCity();
         }
         return routeValue;
@@ -157,6 +161,22 @@ public class PayOrderNotifyListener {
             return "TRADE_REFUND";
         }
         return "TRADE_CLOSED";
+    }
+
+
+    /**
+     * 版本迭代，为了防止有存量数据
+     *
+     * @param message
+     */
+    private String getOutTradeNo(String message) {
+        try {
+            PayOrder order = JSONObject.parseObject(message, PayOrder.class);
+            return order.getOutTradeNo();
+        } catch (Exception e) {
+            log.error("转换出错:{}", e);
+            return message;
+        }
     }
 }
 
