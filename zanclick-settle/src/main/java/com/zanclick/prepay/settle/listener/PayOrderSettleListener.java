@@ -31,19 +31,13 @@ public class PayOrderSettleListener {
         Integer state = object.getInteger("state");
         String authNo = object.getString("authNo");
         PayOrder order = payOrderService.queryByAuthNo(object.getString("authNo"));
-        if (!order.getDealState().equals(PayOrder.DealState.settle_wait.getCode())){
-            log.error("结算状态异常:{},{}",authNo,order.getDealStateDesc());
+        if (!order.getDealState().equals(PayOrder.DealState.settle_wait.getCode()) && !order.getDealState().equals(PayOrder.DealState.settled.getCode())){
+            log.error("结算状态异常:{},{},{}",authNo,order.getDealStateDesc(),message);
             return;
         }
-        if (state.equals(1)){
-            order.setDealState(PayOrder.DealState.settled.getCode());
-            order.setReason(order.getDealStateDesc());
-            payOrderService.updateById(order);
-        }else if (state.equals(-1)){
-            order.setDealState(PayOrder.DealState.settle_fail.getCode());
-            order.setReason(object.getString("reason"));
-            payOrderService.updateById(order);
-        }
+        order.setDealState(state);
+        order.setReason(object.getString("reason"));
+        payOrderService.updateById(order);
     }
 }
 

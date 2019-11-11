@@ -116,9 +116,10 @@ public class PayOrder implements Identifiable<Long> {
     public enum DealState {
         notice_wait(4, "等待通知"),
         notice_fail(0, "通知失败"),
-        settle_fail(1, "结算失败"),
-        settle_wait(2, "等待结算"),
-        settled(5, "结算成功"),
+        settle_wait(2, "等待打款"),
+        settle_fail(1, "打款失败"),
+        settled(5, "打款成功"),
+        repayment_success(6, "还款成功"),
         today_sign(3, "当天签约");
 
         private Integer code;
@@ -200,8 +201,10 @@ public class PayOrder implements Identifiable<Long> {
             return DealState.settle_fail.getDesc();
         }else if (DealState.today_sign.getCode().equals(dealState)){
             return DealState.today_sign.getDesc();
-        }else {
+        }else if (DealState.settled.getCode().equals(dealState)){
             return DealState.settled.getDesc();
+        }else {
+            return DealState.repayment_success.getDesc();
         }
     }
 

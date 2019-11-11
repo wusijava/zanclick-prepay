@@ -3,6 +3,7 @@ package com.zanclick.prepay.authorize.event.impl;
 import com.alibaba.fastjson.JSON;
 import com.zanclick.prepay.authorize.entity.SupplyChainTrade;
 import com.zanclick.prepay.authorize.enums.TradeStateEnum;
+import com.zanclick.prepay.authorize.event.AbstractBaseEventResolver;
 import com.zanclick.prepay.authorize.event.BaseEventResolver;
 import com.zanclick.prepay.authorize.event.domain.LoanResultEvent;
 import com.zanclick.prepay.authorize.exception.SupplyChainException;
@@ -21,7 +22,7 @@ import java.util.Date;
  **/
 @Slf4j
 @Service(value = "loanResultEventResolver")
-public class LoanResultEventResolver implements BaseEventResolver {
+public class LoanResultEventResolver extends AbstractBaseEventResolver implements BaseEventResolver {
 
     @Autowired
     private SupplyChainTradeService supplyChainTradeService;
@@ -54,8 +55,10 @@ public class LoanResultEventResolver implements BaseEventResolver {
             trade.setCurrency(event.getCurrency());
             trade.setLoanTime(new Date());
             supplyChainTradeService.updateById(trade);
+            sendMessage(5,"打款成功",trade.getAuthNo());
         }else{
             log.error("out_order_no:{}放款失败,原因为：{}",out_order_no,event.getErrorMsg());
+            sendMessage(1,event.getErrorMsg(),trade.getAuthNo());
         }
     }
 }

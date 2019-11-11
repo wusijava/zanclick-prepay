@@ -1,16 +1,14 @@
 package com.zanclick.prepay.authorize.event.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.SupplyChainTrade;
 import com.zanclick.prepay.authorize.enums.TradeStateEnum;
+import com.zanclick.prepay.authorize.event.AbstractBaseEventResolver;
 import com.zanclick.prepay.authorize.event.BaseEventResolver;
 import com.zanclick.prepay.authorize.event.domain.TradeCreateEvent;
 import com.zanclick.prepay.authorize.exception.SupplyChainException;
 import com.zanclick.prepay.authorize.service.SupplyChainTradeService;
 import com.zanclick.prepay.authorize.util.SupplyChainUtils;
-import com.zanclick.prepay.common.config.JmsMessaging;
-import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.utils.DataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,7 @@ import org.springframework.stereotype.Service;
  **/
 @Slf4j
 @Service(value = "tradeCreateEventResolver")
-public class TradeCreateEventResolver implements BaseEventResolver {
+public class TradeCreateEventResolver extends AbstractBaseEventResolver implements BaseEventResolver {
 
     @Autowired
     private SupplyChainTradeService supplyChainTradeService;
@@ -51,31 +49,12 @@ public class TradeCreateEventResolver implements BaseEventResolver {
         if (Boolean.TRUE.toString().equalsIgnoreCase(success)) {
             trade.setState(TradeStateEnum.WAIT_RECEIPT.getCode());
             supplyChainTradeService.updateById(trade);
-            sendMessage(1,null,trade.getAuthNo());
         } else {
             trade.setState(TradeStateEnum.FAILED.getCode());
             trade.setFailReason(event.getErrorMsg());
             supplyChainTradeService.updateById(trade);
-            sendMessage(-1,event.getErrorMsg(),trade.getAuthNo());
+            sendMessage(1,event.getErrorMsg(),trade.getAuthNo());
         }
-    }
-
-
-    /**
-     * 推送结算成功/失败的消息
-     *
-     * @param state  1成功 -1 失败
-     * @param reason
-     * @param authNo
-     */
-    private void sendMessage(Integer state, String reason, String authNo) {
-        JSONObject object = new JSONObject();
-        object.put("state",state);
-        object.put("authNo",authNo);
-        if (DataUtil.isNotEmpty(reason)){
-            object.put("reason",reason);
-        }
-        SendMessage.sendMessage(JmsMessaging.ORDER_SETTLE_MESSAGE,object.toJSONString());
     }
 
 }

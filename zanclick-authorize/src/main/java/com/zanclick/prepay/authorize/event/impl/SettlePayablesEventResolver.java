@@ -3,6 +3,7 @@ package com.zanclick.prepay.authorize.event.impl;
 import com.alibaba.fastjson.JSON;
 import com.zanclick.prepay.authorize.entity.SupplyChainTrade;
 import com.zanclick.prepay.authorize.enums.TradeStateEnum;
+import com.zanclick.prepay.authorize.event.AbstractBaseEventResolver;
 import com.zanclick.prepay.authorize.event.BaseEventResolver;
 import com.zanclick.prepay.authorize.event.domain.SettlePayablesEvent;
 import com.zanclick.prepay.authorize.exception.SupplyChainException;
@@ -21,7 +22,7 @@ import java.util.Date;
  **/
 @Slf4j
 @Service(value = "settlePayablesEventResolver")
-public class SettlePayablesEventResolver implements BaseEventResolver {
+public class SettlePayablesEventResolver extends AbstractBaseEventResolver implements BaseEventResolver {
 
     @Autowired
     private SupplyChainTradeService supplyChainTradeService;
@@ -50,5 +51,6 @@ public class SettlePayablesEventResolver implements BaseEventResolver {
         trade.setState(TradeStateEnum.FINISHED.getCode());
         trade.setFinishTime(new Date());
         supplyChainTradeService.updateById(trade);
+        sendMessage(6,"结清消息",trade.getAuthNo());
     }
 }
