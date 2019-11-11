@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.query.AuthorizeMerchantQuery;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
+import com.zanclick.prepay.authorize.vo.MerchantDetail;
 import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.authorize.vo.web.AuthorizeWebListInfo;
 import com.zanclick.prepay.common.base.controller.BaseController;
@@ -70,20 +71,35 @@ public class AuthorizeMerchantWebController extends BaseController {
         return Response.ok(voPage);
     }
 
+    @ApiOperation(value = "商户信息详情")
+    @RequestMapping(value = "detail", method = RequestMethod.POST)
+    @ResponseBody
+    public Response<MerchantDetail> detail(Long id) {
+        AuthorizeMerchant merchant = authorizeMerchantService.queryById(id);
+        if (DataUtil.isEmpty(merchant)) {
+            return Response.fail("商户信息异常");
+        }
+        return Response.ok(getMerchantDetail(merchant));
+    }
+
     @ApiOperation(value = "修改商户信息")
     @RequestMapping(value = "updateMerchant", method = RequestMethod.POST)
     @ResponseBody
-    public Response<String> updateMerchant(AuthorizeMerchant merchant) {
-        if (DataUtil.isEmpty(merchant) || DataUtil.isEmpty(merchant.getId())){
-            return Response.ok("修改商户信息异常");
+    public Response<String> updateMerchant(MerchantDetail merchant) {
+        if (DataUtil.isEmpty(merchant) || DataUtil.isEmpty(merchant.getId()) || DataUtil.isEmpty(merchant.getWayId())) {
+            return Response.fail("修改商户信息异常");
+        }
+        AuthorizeMerchant oldMerchant = authorizeMerchantService.queryMerchant(merchant.getMerchantNo());
+        if (DataUtil.isNotEmpty(oldMerchant) && !oldMerchant.getId().equals(merchant.getId()) && !oldMerchant.isFail()) {
+            return Response.fail("渠道编码重复");
         }
         try {
-            authorizeMerchantService.updateMerchant(merchant);
-        }catch (BizException e){
-            log.error("修改商户信息异常:{},{}",merchant.getId(),e.getMessage());
+            authorizeMerchantService.updateMerchant(setMerchantDetail(merchant));
+        } catch (BizException e) {
+            log.error("修改商户信息异常:{},{}", merchant.getId(), e.getMessage());
             return Response.ok(e.getMessage());
-        }catch (Exception e){
-            log.error("修改商户信息系统异常:{},{}",merchant.getId(),e);
+        } catch (Exception e) {
+            log.error("修改商户信息系统异常:{},{}", merchant.getId(), e);
             return Response.ok("修改失败");
         }
         return Response.ok("修改成功");
@@ -124,7 +140,7 @@ public class AuthorizeMerchantWebController extends BaseController {
             String url = excelDownloadUrl + key;
             return Response.ok(url);
         } catch (Exception e) {
-            log.error("导入商户出错:{}",e);
+            log.error("导入商户出错:{}", e);
             return Response.fail("导入商户失败");
         }
     }
@@ -137,6 +153,7 @@ public class AuthorizeMerchantWebController extends BaseController {
      * @return
      */
     static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
     private AuthorizeWebListInfo getListVo(AuthorizeMerchant merchant) {
         AuthorizeWebListInfo vo = new AuthorizeWebListInfo();
         vo.setId(merchant.getId());
@@ -160,8 +177,8 @@ public class AuthorizeMerchantWebController extends BaseController {
         return vo;
     }
 
-    private List<JSONObject> parser(List<RegisterMerchant> merchantList){
-        return JSONObject.parseArray(JSONObject.toJSONString(merchantList),JSONObject.class);
+    private List<JSONObject> parser(List<RegisterMerchant> merchantList) {
+        return JSONObject.parseArray(JSONObject.toJSONString(merchantList), JSONObject.class);
     }
 
     /**
@@ -246,5 +263,54 @@ public class AuthorizeMerchantWebController extends BaseController {
             return "";
         }
         return s.trim().replaceAll("\r", "").replaceAll("\n", "");
+    }
+
+
+    /**
+     * 获取详情
+     *
+     * @param merchant
+     */
+    private MerchantDetail getMerchantDetail(AuthorizeMerchant merchant) {
+        MerchantDetail detail = new MerchantDetail();
+        detail.setContactName(merchant.getContactName());
+        detail.setContactPhone(merchant.getContactPhone());
+        detail.setId(merchant.getId());
+        detail.setMerchantNo(merchant.getMerchantNo());
+        detail.setWayId(merchant.getWayId());
+        detail.setStoreSubjectName(merchant.getStoreSubjectName());
+        detail.setStoreSubjectCertNo(merchant.getStoreSubjectCertNo());
+        detail.setStoreProvince(merchant.getStoreProvince());
+        detail.setStoreNo(merchant.getStoreNo());
+        detail.setStoreName(merchant.getStoreName());
+        detail.setStoreCounty(merchant.getStoreCounty());
+        detail.setStoreCity(merchant.getStoreCity());
+        detail.setSellerNo(merchant.getSellerNo());
+        detail.setName(merchant.getName());
+        return detail;
+    }
+
+    /**
+     * 设置详情
+     *
+     * @param merchant
+     */
+    private AuthorizeMerchant setMerchantDetail(MerchantDetail merchant) {
+        AuthorizeMerchant detail = new AuthorizeMerchant();
+        detail.setContactName(merchant.getContactName());
+        detail.setContactPhone(merchant.getContactPhone());
+        detail.setId(merchant.getId());
+        merchant.setMerchantNo("DZ" + merchant.getWayId());
+        detail.setWayId(merchant.getWayId());
+        detail.setStoreSubjectName(merchant.getStoreSubjectName());
+        detail.setStoreSubjectCertNo(merchant.getStoreSubjectCertNo());
+        detail.setStoreProvince(merchant.getStoreProvince());
+        detail.setStoreNo(merchant.getStoreNo());
+        detail.setStoreName(merchant.getStoreName());
+        detail.setStoreCounty(merchant.getStoreCounty());
+        detail.setStoreCity(merchant.getStoreCity());
+        detail.setSellerNo(merchant.getSellerNo());
+        detail.setName(merchant.getName());
+        return detail;
     }
 }
