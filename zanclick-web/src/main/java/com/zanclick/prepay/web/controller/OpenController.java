@@ -95,7 +95,7 @@ public class OpenController extends BaseController {
         // 声明一个工作薄
         XSSFWorkbook wb = new XSSFWorkbook();
         //声明一个sheet并命名
-        XSSFSheet sheet = wb.createSheet("京东聚合订单");
+        XSSFSheet sheet = wb.createSheet("Sheet1");
         //给sheet名称一个长度
         sheet.setDefaultColumnWidth(18);
         //创建第一行（也可以称为表头）
