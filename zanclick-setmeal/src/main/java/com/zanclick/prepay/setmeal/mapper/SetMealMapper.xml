@@ -97,7 +97,7 @@
         VALUES(
             #{id},
             #{packageNo},
-            #{trade_mark},
+            #{tradeMark},
             #{appId},
             #{totalAmount},
             #{num},
@@ -126,7 +126,7 @@
             (
             #{cm.id},
             #{cm.packageNo},
-            #{cm.trade_mark},
+            #{cm.tradeMark},
             #{cm.appId},
             #{cm.totalAmount},
             #{cm.num},

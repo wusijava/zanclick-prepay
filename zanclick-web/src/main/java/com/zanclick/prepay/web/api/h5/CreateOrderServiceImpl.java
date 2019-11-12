@@ -139,6 +139,7 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         JSONObject object = new JSONObject();
         object.put("num",payOrder.getNum());
         object.put("title",payOrder.getTitle());
+        object.put("orderNo",payOrder.getOutTradeNo());
         object.put("totalMoney",payOrder.getAmount());
         object.put("eachMoney",payOrder.getEachMoney());
         return object;

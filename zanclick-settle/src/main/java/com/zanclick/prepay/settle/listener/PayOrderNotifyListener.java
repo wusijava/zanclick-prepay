@@ -174,7 +174,7 @@ public class PayOrderNotifyListener {
             PayOrder order = JSONObject.parseObject(message, PayOrder.class);
             return order.getOutTradeNo();
         } catch (Exception e) {
-            log.error("转换出错:{}", e);
+            log.error("转换出错:{}", message);
             return message;
         }
     }
