@@ -300,7 +300,7 @@ public class AuthorizeMerchantWebController extends BaseController {
         detail.setContactName(merchant.getContactName());
         detail.setContactPhone(merchant.getContactPhone());
         detail.setId(merchant.getId());
-        merchant.setMerchantNo("DZ" + merchant.getWayId());
+        detail.setMerchantNo("DZ" + merchant.getWayId());
         detail.setWayId(merchant.getWayId());
         detail.setStoreSubjectName(merchant.getStoreSubjectName());
         detail.setStoreSubjectCertNo(merchant.getStoreSubjectCertNo());

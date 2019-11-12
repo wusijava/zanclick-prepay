@@ -148,7 +148,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         Refund refund = new Refund();
         refund.setType(0);
         refund.setAmount(order.getAmount());
-        refund.setReason(order.getTitle()+"退款_"+order.getOutOrderNo());
+        refund.setReason("移动套餐退款_"+order.getOutOrderNo());
         refund.setOutRequestNo(StringUtils.getTradeNo());
         refund.setOutTradeNo(order.getOutTradeNo());
         RefundResult result = authorizePayService.refund(refund);
