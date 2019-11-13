@@ -12,7 +12,7 @@ import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
-import com.zanclick.prepay.common.utils.POIUtil;
+import com.zanclick.prepay.common.utils.PoiUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -188,7 +188,7 @@ public class AuthorizeMerchantWebController extends BaseController {
      */
     private List<RegisterMerchant> getMerchantList(MultipartFile file) {
         List<RegisterMerchant> list = new ArrayList<>();
-        HSSFWorkbook workbook = POIUtil.getWorkBook(file);
+        HSSFWorkbook workbook = PoiUtil.getWorkBook(file);
         if (workbook == null) {
             throw new RuntimeException("导入excel出错");
         }

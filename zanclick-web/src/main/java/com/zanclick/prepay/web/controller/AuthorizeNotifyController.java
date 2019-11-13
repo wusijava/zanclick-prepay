@@ -7,6 +7,8 @@ import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.service.AuthorizeOrderService;
 import com.zanclick.prepay.order.service.PayOrderService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,6 +26,7 @@ import java.util.Map;
  * @date 2019-7-10 10:39:55
  */
 @Slf4j
+@Api(value = "第三方放get请求调用接口")
 @RestController("authorize_notify")
 @RequestMapping(value = "/api/open/authorize")
 public class AuthorizeNotifyController extends BaseController {
@@ -35,6 +38,7 @@ public class AuthorizeNotifyController extends BaseController {
     @Autowired
     private PayOrderService payOrderService;
 
+    @ApiOperation(value = "预授权回调地址")
     @PostMapping(value = "/notify")
     @ResponseBody
     public String notify(HttpServletRequest request) {

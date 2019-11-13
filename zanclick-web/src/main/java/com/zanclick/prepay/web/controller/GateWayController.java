@@ -9,6 +9,8 @@ import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.app.entity.MethodSwitch;
 import com.zanclick.prepay.app.service.MethodSwitchService;
 import com.zanclick.prepay.web.dto.ApiRequestContent;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2019-9-6 10:43:11
  */
 @Slf4j
+@Api(value = "第三方调用接口网关")
 @RestController(value = "gate_way_controller")
 public class GateWayController {
 
@@ -32,6 +35,7 @@ public class GateWayController {
     @Autowired
     private MethodSwitchService methodSwitchService;
 
+    @ApiOperation(value = "网关")
     @PostMapping(value = "/gateway.do",produces = "application/json;charset=utf-8")
     public String param(@RequestBody String encrypt) {
         ResponseParam param = new ResponseParam();
