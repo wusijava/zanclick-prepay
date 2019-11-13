@@ -1,6 +1,8 @@
 package com.zanclick.prepay.permission.secure.resolver.impl;
 
 import com.zanclick.prepay.permission.secure.resolver.UserPermissionResolver;
+import com.zanclick.prepay.permission.service.RoleService;
+import com.zanclick.prepay.permission.vo.HomeMenuList;
 import com.zanclick.prepay.permission.vo.LoginUser;
 import com.zanclick.prepay.permission.vo.UsernamePasswordToken;
 import com.zanclick.prepay.common.utils.PassWordUtil;
@@ -23,10 +25,12 @@ public class MyUserPermissionResolver extends UserPermissionResolver {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleService roleService;
 
     @Override
-    public List<String> getUserPermissions(Integer type) {
-        return null;
+    public List<HomeMenuList> getUserPermissions(Integer type) {
+        return roleService.findPermissionByType(type);
     }
 
     @Override
