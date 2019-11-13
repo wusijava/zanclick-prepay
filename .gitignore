@@ -119,7 +119,6 @@ gen
 .idea/zanclick-prepay.iml
 zanclick-app/target/
 zanclick-app/zanclick-app.iml
-zanclick-auth/
 zanclick-authorize/target/
 zanclick-authorize/zanclick-authorize.iml
 zanclick-common/target/

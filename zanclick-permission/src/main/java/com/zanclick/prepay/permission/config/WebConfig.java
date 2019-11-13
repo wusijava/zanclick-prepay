@@ -1,4 +1,4 @@
-package com.zanclick.prepay.web.config;
+package com.zanclick.prepay.permission.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,6 +34,8 @@ public class WebConfig extends WebMvcConfigurationSupport {
         registry.addMapping("/**")
                 .allowedOrigins("*")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
-                .allowedHeaders("Content-Type");
+                .allowedHeaders("Authorization")
+                .exposedHeaders("Authorization");
+
     }
 }

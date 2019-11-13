@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zanclick.prepay.user.mapper.UserMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.user.entity.User">
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="uid" property="uid" jdbcType="VARCHAR"/>
+            <result column="username" property="username" jdbcType="VARCHAR"/>
+            <result column="password" property="password" jdbcType="VARCHAR"/>
+            <result column="mobile" property="mobile" jdbcType="VARCHAR"/>
+            <result column="nick_name" property="nickName" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="state" property="state" jdbcType="INTEGER"/>
+            <result column="type" property="type" jdbcType="INTEGER"/>
+            <result column="salt" property="salt" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="table">user</sql>
+    <sql id="Base_Column_List">
+            `id`,
+            `uid`,
+            `username`,
+            `password`,
+            `mobile`,
+            `nick_name`,
+            `create_time`,
+            `state`,
+            `type`,
+            `salt`
+    </sql>
+    <sql id="Base_Where_Clause">
+        <where>
+            <trim prefixOverrides="and">
+                    <if test="id != null">
+                        AND `id`=#{id}
+                    </if>
+                    <if test="uid != null and uid != ''">
+                        AND `uid`=#{uid}
+                    </if>
+                    <if test="username != null and username != ''">
+                        AND `username`LIKE concat ('%',#{username},'%')
+                    </if>
+                    <if test="password != null and password != ''">
+                        AND `password`=#{password}
+                    </if>
+                    <if test="mobile != null and mobile != ''">
+                        AND `mobile`=#{mobile}
+                    </if>
+                    <if test="nickName != null and nickName != ''">
+                        AND `nick_name`=#{nickName}
+                    </if>
+                    <if test="createTime != null">
+                        AND `create_time`=#{createTime}
+                    </if>
+                    <if test="state != null">
+                        AND `state`=#{state}
+                    </if>
+                    <if test="type != null">
+                        AND `type`=#{type}
+                    </if>
+                    <if test="salt != null and salt != ''">
+                        AND `salt`=#{salt}
+                    </if>
+            </trim>
+        </where>
+        <if test="offset == null and limit != null">
+            limit #{limit}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </sql>
+
+    <!-- 查询总数 -->
+    <select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT count(id)
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <!-- 查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.user.entity.User" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `uid`,
+            `username`,
+            `password`,
+            `mobile`,
+            `nick_name`,
+            `create_time`,
+            `state`,
+            `type`,
+            `salt`
+        )
+        VALUES(
+            #{id},
+            #{uid},
+            #{username},
+            #{password},
+            #{mobile},
+            #{nickName},
+            #{createTime},
+            #{state},
+            #{type},
+            #{salt}
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `uid`,
+            `username`,
+            `password`,
+            `mobile`,
+            `nick_name`,
+            `create_time`,
+            `state`,
+            `type`,
+            `salt`
+        )
+        VALUES
+        <foreach collection="list" item="cm" index="index" separator=",">
+            (
+            #{cm.id},
+            #{cm.uid},
+            #{cm.username},
+            #{cm.password},
+            #{cm.mobile},
+            #{cm.nickName},
+            #{cm.createTime},
+            #{cm.state},
+            #{cm.type},
+            #{cm.salt}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
+    <select id="findByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE username=#{username} ORDER BY id DESC LIMIT 1
+    </select>
+
+    <select id="findByUid" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE uid=#{uid} ORDER BY id DESC LIMIT 1
+    </select>
+
+    <update id="updateById" parameterType="com.zanclick.prepay.user.entity.User">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="uid != null and uid != ''">
+                 `uid`=#{uid},
+            </if>
+            <if test="username != null and username != ''">
+                 `username`=#{username},
+            </if>
+            <if test="password != null and password != ''">
+                 `password`=#{password},
+            </if>
+            <if test="mobile != null and mobile != ''">
+                 `mobile`=#{mobile},
+            </if>
+            <if test="nickName != null and nickName != ''">
+                 `nick_name`=#{nickName},
+            </if>
+            <if test="createTime != null">
+                 `create_time`=#{createTime},
+            </if>
+            <if test="state != null">
+                 `state`=#{state},
+            </if>
+            <if test="type != null">
+                 `type`=#{type},
+            </if>
+            <if test="salt != null and salt != ''">
+                 `salt`=#{salt},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+</mapper>
