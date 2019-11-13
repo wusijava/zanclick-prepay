@@ -26,7 +26,7 @@ import java.util.Map;
  * @date 2019-7-10 10:39:55
  */
 @Slf4j
-@Api(value = "第三方放get请求调用接口")
+@Api(description = "第三方放get请求调用接口")
 @RestController("authorize_notify")
 @RequestMapping(value = "/api/open/authorize")
 public class AuthorizeNotifyController extends BaseController {
