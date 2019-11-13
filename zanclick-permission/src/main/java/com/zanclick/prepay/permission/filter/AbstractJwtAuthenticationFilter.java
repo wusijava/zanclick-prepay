@@ -60,7 +60,7 @@ public abstract class AbstractJwtAuthenticationFilter extends OncePerRequestFilt
                     requestUser.setPassword(user.getPassword());
                     RequestContext.setCurrentUser(requestUser);
                     if (!isLogoutUrl(request)) {
-                        JwtUtil.refreshAndAddTokenToResponseHeader(request, response, user.getId(), user.getUsername(), getToLong(user), getTokenStoreResolver());
+                        JwtUtil.refreshAndAddTokenToResponseHeader(request, response, user.getId(), user.getUsername(), getTokenStoreResolver());
                     }
                 }
             } catch (UserPermissionResolver.UsernameAndPasswordException e) {
