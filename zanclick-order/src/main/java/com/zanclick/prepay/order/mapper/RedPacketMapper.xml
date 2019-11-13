@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zanclick.prepay.order.mapper.RedPacketMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.order.entity.RedPacket">
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="amount" property="amount" jdbcType="VARCHAR"/>
+            <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+            <result column="receive_no" property="receiveNo" jdbcType="VARCHAR"/>
+            <result column="app_id" property="appId" jdbcType="VARCHAR"/>
+            <result column="state" property="state" jdbcType="VARCHAR"/>
+            <result column="reason" property="reason" jdbcType="VARCHAR"/>
+            <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
+            <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="table">red_packet</sql>
+    <sql id="Base_Column_List">
+            `id`,
+            `amount`,
+            `order_no`,
+            `create_time`,
+            `receive_no`,
+            `app_id`,
+            `state`,
+            `reason`,
+            `way_id`,
+            `seller_no`
+    </sql>
+    <sql id="Base_Where_Clause">
+        <where>
+            <trim prefixOverrides="and">
+                    <if test="id != null">
+                        AND `id`=#{id}
+                    </if>
+                    <if test="amount != null and amount != ''">
+                        AND `amount`=#{amount}
+                    </if>
+                    <if test="orderNo != null and orderNo != ''">
+                        AND `order_no`=#{orderNo}
+                    </if>
+                    <if test="createTime != null and createTime != ''">
+                        AND `create_time`=#{createTime}
+                    </if>
+                    <if test="receiveNo != null and receiveNo != ''">
+                        AND `receive_no`=#{receiveNo}
+                    </if>
+                    <if test="appId != null and appId != ''">
+                        AND `app_id`=#{appId}
+                    </if>
+                    <if test="state != null and state != ''">
+                        AND `state`=#{state}
+                    </if>
+                    <if test="reason != null and reason != ''">
+                        AND `reason`=#{reason}
+                    </if>
+                    <if test="wayId != null and wayId != ''">
+                        AND `way_id`=#{wayId}
+                    </if>
+                    <if test="sellerNo != null and sellerNo != ''">
+                        AND `seller_no`=#{sellerNo}
+                    </if>
+            </trim>
+        </where>
+        <if test="offset == null and limit != null">
+            limit #{limit}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </sql>
+
+    <!-- 查询总数 -->
+    <select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT count(id)
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <!-- 查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.order.entity.RedPacket" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `amount`,
+            `order_no`,
+            `create_time`,
+            `receive_no`,
+            `app_id`,
+            `state`,
+            `reason`,
+            `way_id`,
+            `seller_no`
+        )
+        VALUES(
+            #{id},
+            #{amount},
+            #{orderNo},
+            #{createTime},
+            #{receiveNo},
+            #{appId},
+            #{state},
+            #{reason},
+            #{wayId},
+            #{sellerNo}
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `amount`,
+            `order_no`,
+            `create_time`,
+            `receive_no`,
+            `app_id`,
+            `state`,
+            `reason`,
+            `way_id`,
+            `seller_no`
+        )
+        VALUES
+        <foreach collection="list" item="cm" index="index" separator=",">
+            (
+            #{cm.id},
+            #{cm.amount},
+            #{cm.orderNo},
+            #{cm.createTime},
+            #{cm.receiveNo},
+            #{cm.appId},
+            #{cm.state},
+            #{cm.reason},
+            #{cm.wayId},
+            #{cm.sellerNo}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
+    <update id="updateById" parameterType="com.zanclick.prepay.order.entity.RedPacket">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="amount != null and amount != ''">
+                 `amount`=#{amount},
+            </if>
+            <if test="orderNo != null and orderNo != ''">
+                 `order_no`=#{orderNo},
+            </if>
+            <if test="createTime != null and createTime != ''">
+                 `create_time`=#{createTime},
+            </if>
+            <if test="receiveNo != null and receiveNo != ''">
+                 `receive_no`=#{receiveNo},
+            </if>
+            <if test="appId != null and appId != ''">
+                 `app_id`=#{appId},
+            </if>
+            <if test="state != null and state != ''">
+                 `state`=#{state},
+            </if>
+            <if test="reason != null and reason != ''">
+                 `reason`=#{reason},
+            </if>
+            <if test="wayId != null and wayId != ''">
+                 `way_id`=#{wayId},
+            </if>
+            <if test="sellerNo != null and sellerNo != ''">
+                 `seller_no`=#{sellerNo},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+</mapper>

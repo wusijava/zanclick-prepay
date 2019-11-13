@@ -506,4 +506,30 @@
         </set>
         WHERE id=#{id}
     </update>
+    <select id="redPacketList" resultType="com.zanclick.prepay.order.vo.RedPacketList">
+        select po.out_Trade_No,po.amount,po.way_id,po.seller_No,rp.createTime,rp.state from  pay_order  po inner  join redpacket rp
+        on po.out_Trade_No=rp.orderno
+         <where>
+        <trim prefixOverrides="and">
+        <if test="outTradeNo != null">
+            AND `out_Trade_No`=#{outTradeNo}
+        </if>
+        <if test="wayId != null and wayId != ''">
+            AND `way_Id`=#{wayId}
+        </if>
+        <if test="sellerNo != null and sellerNo != ''">
+            AND `seller_No` =#{sellerNo}
+        </if>
+
+        <if test="createTime != null and createTime != ''">
+                AND `create_Time` &gt;=#{createTime}
+            </if>
+        <if test="finishTime != null and finishTime != ''">
+                AND `finish_time` &lt;= #{finishTime}
+         </if>
+        </trim>
+    </where>
+     order by rp.createTime desc
+
+    </select>
 </mapper>

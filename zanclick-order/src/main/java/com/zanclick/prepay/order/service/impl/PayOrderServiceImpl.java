@@ -16,13 +16,16 @@ import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.mapper.PayOrderMapper;
+import com.zanclick.prepay.order.query.PayOrderQuery;
 import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.order.vo.RedPacketList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author Administrator
@@ -162,5 +165,10 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             log.error("退款失败:{},{}",outTradeNo,type,result.getMessage());
             throw new BizException(result.getMessage());
         }
+    }
+
+    @Override
+    public List<RedPacketList>  redPacketList(PayOrderQuery query) {
+        return payOrderMapper.redPacketList(query);
     }
 }

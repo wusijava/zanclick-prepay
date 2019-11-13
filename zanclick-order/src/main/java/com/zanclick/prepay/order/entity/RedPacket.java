@@ -5,58 +5,106 @@ import lombok.Data;
 
 import java.util.Date;
 
-/**
- * 红包领取记录
- *
- * @author duchong
- * @date 2019-7-8 14:19:20
- */
 @Data
 public class RedPacket implements Identifiable<Long> {
 
-    private Long id;
+  private Long id;
+  private String amount;
+  private String orderNo;
+  private Date createTime;
+  private String receiveNo;
+  private String appId;
+  private Integer state;
+  private String reason;
+  private String wayId;
+  private String sellerNo;
 
-    private String amount;
 
-    private String orderNo;
+  public Long getId() {
+    return id;
+  }
 
-    private Date createTime;
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    private String receiveNo;
 
-    private String appId;
+  public String getAmount() {
+    return amount;
+  }
 
-    private Integer state;
+  public void setAmount(String amount) {
+    this.amount = amount;
+  }
 
-    private String reason;
 
-    public enum State {
-        success(1, "领取成功"),
-        fail(-1, "领取失败"),
-        wait(0, "等待领取");
+  public String getOrderNo() {
+    return orderNo;
+  }
 
-        private Integer code;
-        private String desc;
+  public void setOrderNo(String orderNo) {
+    this.orderNo = orderNo;
+  }
 
-        State(Integer code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
 
-        public Integer getCode() {
-            return code;
-        }
+  public Date getCreateTime() {
+    return createTime;
+  }
 
-        public void setCode(Integer code) {
-            this.code = code;
-        }
+  public void setCreateTime(Date createTime) {
+    this.createTime = createTime;
+  }
 
-        public String getDesc() {
-            return desc;
-        }
+  public String getReceiveNo() {
+    return receiveNo;
+  }
 
-        public void setDesc(String desc) {
-            this.desc = desc;
-        }
-    }
+  public void setReceiveNo(String receiveNo) {
+    this.receiveNo = receiveNo;
+  }
+
+
+  public String getAppId() {
+    return appId;
+  }
+
+  public void setAppId(String appId) {
+    this.appId = appId;
+  }
+
+
+  public Integer getState() {
+    return state;
+  }
+
+  public void setState(Integer state) {
+    this.state = state;
+  }
+
+  public String getReason() {
+    return reason;
+  }
+
+  public void setReason(String reason) {
+    this.reason = reason;
+  }
+
+
+  public String getWayId() {
+    return wayId;
+  }
+
+  public void setWayId(String wayId) {
+    this.wayId = wayId;
+  }
+
+
+  public String getSellerNo() {
+    return sellerNo;
+  }
+
+  public void setSellerNo(String sellerNo) {
+    this.sellerNo = sellerNo;
+  }
+
 }
