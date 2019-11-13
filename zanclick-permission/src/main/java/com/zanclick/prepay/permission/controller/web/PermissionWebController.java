@@ -38,11 +38,8 @@ public class PermissionWebController extends BaseController {
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseBody
     public Response<List<HomeMenuList>> list() {
-        long startTime = System.currentTimeMillis();
         RequestContext.RequestUser user = RequestContext.getCurrentUser();
         List<HomeMenuList> list = roleService.findPermissionByType(user.getType());
-        long endTime = System.currentTimeMillis();
-        System.err.println(endTime-startTime);
         return Response.ok(list);
     }
 }
