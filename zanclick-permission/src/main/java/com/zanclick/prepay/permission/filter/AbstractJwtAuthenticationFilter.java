@@ -36,6 +36,7 @@ public abstract class AbstractJwtAuthenticationFilter extends OncePerRequestFilt
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Headers", "Content-Type,x-requested-with,Authorization");
         response.setHeader("Access-Control-Expose-Headers", "Authorization");
+        System.err.println(request.getRequestURI());
         if (request.getMethod().equalsIgnoreCase("options")) {
             filterChain.doFilter(request, response);
         } else {
@@ -60,7 +61,7 @@ public abstract class AbstractJwtAuthenticationFilter extends OncePerRequestFilt
                     requestUser.setPassword(user.getPassword());
                     RequestContext.setCurrentUser(requestUser);
                     if (!isLogoutUrl(request)) {
-                        JwtUtil.refreshAndAddTokenToResponseHeader(request, response, user.getId(), user.getUsername(), getToLong(user), getTokenStoreResolver());
+                        JwtUtil.refreshAndAddTokenToResponseHeader(request, response, user.getId(), user.getUsername(), getTokenStoreResolver());
                     }
                 }
             } catch (UserPermissionResolver.UsernameAndPasswordException e) {

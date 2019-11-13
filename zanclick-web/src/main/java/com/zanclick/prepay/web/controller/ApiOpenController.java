@@ -25,7 +25,7 @@ import java.net.URLEncoder;
  * @date 2019-9-6 10:43:11
  */
 @Slf4j
-@Api(value = "第三方放get请求调用接口")
+@Api(description = "第三方放get请求调用接口")
 @RestController(value = "api_open_controller")
 public class ApiOpenController {
 

@@ -1,5 +1,6 @@
 package com.zanclick.prepay.permission.secure.resolver;
 
+import com.zanclick.prepay.permission.vo.HomeMenuList;
 import com.zanclick.prepay.permission.vo.LoginUser;
 import com.zanclick.prepay.permission.vo.UsernamePasswordToken;
 import lombok.Data;
@@ -18,7 +19,7 @@ public abstract class UserPermissionResolver {
      * @param type
      * @return
      */
-    public abstract List<String> getUserPermissions(Integer type);
+    public abstract List<HomeMenuList> getUserPermissions(Integer type);
 
     /**
      * 获取登录用户

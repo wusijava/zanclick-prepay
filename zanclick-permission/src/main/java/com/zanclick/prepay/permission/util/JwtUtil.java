@@ -252,10 +252,9 @@ public class JwtUtil {
     /**
      * @param userId
      * @param userName
-     * @param toLong 是否为长期缓存
      * @param tokenStoreResolver
      * */
-    public static String generateToken(String userId, String userName,Boolean toLong, TokenStoreResolver tokenStoreResolver) {
+    public static String generateToken(String userId, String userName, TokenStoreResolver tokenStoreResolver) {
         HashMap<String, Object> map = new HashMap<>(8);
         map.put(USER_NAME, userName);
         map.put(USER_ID, userId);
@@ -267,7 +266,7 @@ public class JwtUtil {
                 .compact();
         String token = JWT_SEPARATOR + jwt;
         if (DataUtil.isNotEmpty(tokenStoreResolver)) {
-            tokenStoreResolver.addOrUpdateToken(token, userId, toLong ? null : expire);
+            tokenStoreResolver.addOrUpdateToken(token, userId, expire);
         }
         return token;
     }
@@ -355,9 +354,9 @@ public class JwtUtil {
         }
     }
 
-    public static void refreshAndAddTokenToResponseHeader(HttpServletRequest request, HttpServletResponse response, String userId, String userName,Boolean toLong, TokenStoreResolver tokenStoreResolver) {
+    public static void refreshAndAddTokenToResponseHeader(HttpServletRequest request, HttpServletResponse response, String userId, String userName, TokenStoreResolver tokenStoreResolver) {
         try {
-            String jwtToken = generateToken(userId, userName,toLong, tokenStoreResolver);
+            String jwtToken = generateToken(userId, userName, tokenStoreResolver);
             response.setHeader(HEADER_STRING, jwtToken);
         } catch (NoSuchBeanDefinitionException e) {
             throw e;

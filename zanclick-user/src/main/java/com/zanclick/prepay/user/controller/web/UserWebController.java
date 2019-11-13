@@ -1,11 +1,13 @@
 package com.zanclick.prepay.user.controller.web;
 
 import com.zanclick.prepay.common.base.controller.BaseController;
+import com.zanclick.prepay.common.entity.RequestContext;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.user.entity.User;
 import com.zanclick.prepay.user.query.UserQuery;
 import com.zanclick.prepay.user.service.UserService;
+import com.zanclick.prepay.user.vo.web.UserInfo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -52,6 +54,22 @@ public class UserWebController extends BaseController {
         Pageable pageable = PageRequest.of(query.getPage(), query.getLimit());
         Page<User> page = userService.queryPage(query, pageable);
         return Response.ok(page);
+    }
+
+    @ApiOperation(value = "用户登录")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "username", value = "用户登录名", required = true, dataType = "String", paramType = "form"),
+            @ApiImplicitParam(name = "password", value = "用户密码", required = true, dataType = "String", paramType = "form")
+    })
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @ResponseBody
+    public Response<UserInfo> login(String username, String password) {
+        RequestContext.RequestUser user = RequestContext.getCurrentUser();
+        UserInfo info = new UserInfo();
+        info.setMobile(user.getMobile());
+        info.setUsername(user.getUsername());
+        info.setUid(user.getUid());
+        return Response.ok(info);
     }
 
 }

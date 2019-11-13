@@ -25,7 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @date 2019-9-6 10:43:11
  */
 @Slf4j
-@Api(value = "第三方调用接口网关")
+@Api(description = "第三方调用接口网关")
 @RestController(value = "gate_way_controller")
 public class GateWayController {
 

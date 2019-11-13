@@ -159,7 +159,7 @@ public class AuthorizeMerchantWebController extends BaseController {
         vo.setId(merchant.getId());
         vo.setMerchantNo(merchant.getMerchantNo());
         vo.setWayId(merchant.getWayId());
-        vo.setCreateTime(sdf.format(merchant.getCreateTime()));
+        vo.setCreateTime(merchant.getCreateTime() == null ? null : sdf.format(merchant.getCreateTime()));
         vo.setContactName(merchant.getContactName());
         vo.setContactPhone(merchant.getContactPhone());
         vo.setName(merchant.getName());
