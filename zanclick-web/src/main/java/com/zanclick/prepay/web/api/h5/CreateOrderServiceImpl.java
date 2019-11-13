@@ -122,6 +122,19 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder.setCity(pay.getCity());
         payOrder.setState(PayOrder.State.wait.getCode());
         payOrder.setPhoneNumber(pay.getPhoneNumber());
+        payOrder.setName(merchant.getName());
+        payOrder.setSellerNo(merchant.getSellerNo());
+        payOrder.setProvinceName(merchant.getStoreProvince());
+        payOrder.setCityName(merchant.getStoreCity());
+        payOrder.setDistrictName(merchant.getStoreCounty());
+        if (SetMeal.RedPackState.open.getCode().equals(meal.getRedPackState())){
+            payOrder.setRedPackAmount(meal.getRedPackAmount());
+            payOrder.setRedPackState(PayOrder.RedPackState.un_receive.getCode());
+        }else {
+            payOrder.setRedPackAmount("0.00");
+            payOrder.setRedPackState(PayOrder.RedPackState.receive.getCode());
+            payOrder.setSellerNo("11111111111");
+        }
         SettleRate rate = settleRateService.queryByAppId(payOrder.getAppId(),payOrder.getNum());
         String settleAmount = MoneyUtil.divide(payOrder.getAmount(),rate.getRate());
         payOrder.setSettleAmount(settleAmount);

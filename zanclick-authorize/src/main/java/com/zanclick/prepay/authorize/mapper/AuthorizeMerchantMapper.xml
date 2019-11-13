@@ -17,16 +17,18 @@
         <result column="store_subject_name" property="storeSubjectName" jdbcType="VARCHAR"/>
         <result column="store_subject_cert_no" property="storeSubjectCertNo" jdbcType="VARCHAR"/>
         <result column="store_province" property="storeProvince" jdbcType="VARCHAR"/>
-        <result column="store_city" property="storeCity" jdbcType="VARCHAR"/>
-        <result column="store_county" property="storeCounty" jdbcType="VARCHAR"/>
         <result column="store_province_code" property="storeProvinceCode" jdbcType="VARCHAR"/>
+        <result column="store_city" property="storeCity" jdbcType="VARCHAR"/>
         <result column="store_city_code" property="storeCityCode" jdbcType="VARCHAR"/>
+        <result column="store_county" property="storeCounty" jdbcType="VARCHAR"/>
         <result column="store_county_code" property="storeCountyCode" jdbcType="VARCHAR"/>
         <result column="supplier_no" property="supplierNo" jdbcType="VARCHAR"/>
-        <result column="reason" property="reason" jdbcType="VARCHAR"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
-        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="red_pack_state" property="redPackState" jdbcType="INTEGER"/>
+        <result column="red_pack_seller_no" property="redPackSellerNo" jdbcType="VARCHAR"/>
+        <result column="reason" property="reason" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">authorize_merchant</sql>
@@ -46,16 +48,18 @@
             `store_subject_name`,
             `store_subject_cert_no`,
             `store_province`,
-            `store_city`,
-            `store_county`,
             `store_province_code`,
+            `store_city`,
             `store_city_code`,
+            `store_county`,
             `store_county_code`,
             `supplier_no`,
-            `reason`,
+            `state`,
             `create_time`,
             `finish_time`,
-            `state`
+            `red_pack_state`,
+            `red_pack_seller_no`,
+            `reason`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -63,17 +67,17 @@
                 <if test="id != null">
                     AND `id`=#{id}
                 </if>
-                <if test="merchantNo != null and merchantNo != ''">
-                    AND `merchant_no` = #{merchantNo}
-                </if>
                 <if test="wayId != null and wayId != ''">
-                    AND `way_id` LIKE concat ('%',#{wayId},'%')
+                    AND `way_id`=#{wayId}
+                </if>
+                <if test="merchantNo != null and merchantNo != ''">
+                    AND `merchant_no`=#{merchantNo}
                 </if>
                 <if test="appId != null and appId != ''">
                     AND `app_id`=#{appId}
                 </if>
                 <if test="sellerNo != null and sellerNo != ''">
-                    AND `seller_no` LIKE concat ('%',#{sellerNo},'%')
+                    AND `seller_no`=#{sellerNo}
                 </if>
                 <if test="sellerId != null and sellerId != ''">
                     AND `seller_id`=#{sellerId}
@@ -105,17 +109,17 @@
                 <if test="storeProvince != null and storeProvince != ''">
                     AND `store_province`=#{storeProvince}
                 </if>
-                <if test="storeCity != null and storeCity != ''">
-                    AND `store_city`=#{storeCity}
-                </if>
-                <if test="storeCounty != null and storeCounty != ''">
-                    AND `store_county`=#{storeCounty}
-                </if>
                 <if test="storeProvinceCode != null and storeProvinceCode != ''">
                     AND `store_province_code`=#{storeProvinceCode}
                 </if>
+                <if test="storeCity != null and storeCity != ''">
+                    AND `store_city`=#{storeCity}
+                </if>
                 <if test="storeCityCode != null and storeCityCode != ''">
                     AND `store_city_code`=#{storeCityCode}
+                </if>
+                <if test="storeCounty != null and storeCounty != ''">
+                    AND `store_county`=#{storeCounty}
                 </if>
                 <if test="storeCountyCode != null and storeCountyCode != ''">
                     AND `store_county_code`=#{storeCountyCode}
@@ -123,8 +127,8 @@
                 <if test="supplierNo != null and supplierNo != ''">
                     AND `supplier_no`=#{supplierNo}
                 </if>
-                <if test="reason != null and reason != ''">
-                    AND `reason`=#{reason}
+                <if test="state != null">
+                    AND `state`=#{state}
                 </if>
                 <if test="createTime != null">
                     AND `create_time`=#{createTime}
@@ -132,8 +136,14 @@
                 <if test="finishTime != null">
                     AND `finish_time`=#{finishTime}
                 </if>
-                <if test="state != null">
-                    AND `state`=#{state}
+                <if test="redPackState != null">
+                    AND `red_pack_state`=#{redPackState}
+                </if>
+                <if test="redPackSellerNo != null and redPackSellerNo != ''">
+                    AND `red_pack_seller_no`=#{redPackSellerNo}
+                </if>
+                <if test="reason != null and reason != ''">
+                    AND `reason`=#{reason}
                 </if>
                 <if test="startTime != null">
                     and DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
@@ -189,16 +199,18 @@
         `store_subject_name`,
         `store_subject_cert_no`,
         `store_province`,
-        `store_city`,
-        `store_county`,
         `store_province_code`,
+        `store_city`,
         `store_city_code`,
+        `store_county`,
         `store_county_code`,
         `supplier_no`,
-        `reason`,
+        `state`,
         `create_time`,
         `finish_time`,
-        `state`
+        `red_pack_state`,
+        `red_pack_seller_no`,
+        `reason`
         )
         VALUES(
         #{id},
@@ -216,16 +228,18 @@
         #{storeSubjectName},
         #{storeSubjectCertNo},
         #{storeProvince},
-        #{storeCity},
-        #{storeCounty},
         #{storeProvinceCode},
+        #{storeCity},
         #{storeCityCode},
+        #{storeCounty},
         #{storeCountyCode},
         #{supplierNo},
-        #{reason},
+        #{state},
         #{createTime},
         #{finishTime},
-        #{state}
+        #{redPackState},
+        #{redPackSellerNo},
+        #{reason}
         )
     </insert>
 
@@ -248,16 +262,18 @@
         `store_subject_name`,
         `store_subject_cert_no`,
         `store_province`,
-        `store_city`,
-        `store_county`,
         `store_province_code`,
+        `store_city`,
         `store_city_code`,
+        `store_county`,
         `store_county_code`,
         `supplier_no`,
-        `reason`,
+        `state`,
         `create_time`,
         `finish_time`,
-        `state`
+        `red_pack_state`,
+        `red_pack_seller_no`,
+        `reason`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -277,16 +293,18 @@
             #{cm.storeSubjectName},
             #{cm.storeSubjectCertNo},
             #{cm.storeProvince},
-            #{cm.storeCity},
-            #{cm.storeCounty},
             #{cm.storeProvinceCode},
+            #{cm.storeCity},
             #{cm.storeCityCode},
+            #{cm.storeCounty},
             #{cm.storeCountyCode},
             #{cm.supplierNo},
-            #{cm.reason},
+            #{cm.state},
             #{cm.createTime},
             #{cm.finishTime},
-            #{cm.state}
+            #{cm.redPackState},
+            #{cm.redPackSellerNo},
+            #{cm.reason}
             )
         </foreach>
     </insert>
@@ -319,7 +337,7 @@
         UPDATE
         <include refid="table"/>
         <set>
-            <if test="wayId != null">
+            <if test="wayId != null and wayId != ''">
                 `way_id`=#{wayId},
             </if>
             <if test="merchantNo != null and merchantNo != ''">
@@ -361,17 +379,17 @@
             <if test="storeProvince != null and storeProvince != ''">
                 `store_province`=#{storeProvince},
             </if>
-            <if test="storeCity != null and storeCity != ''">
-                `store_city`=#{storeCity},
-            </if>
-            <if test="storeCounty != null and storeCounty != ''">
-                `store_county`=#{storeCounty},
-            </if>
             <if test="storeProvinceCode != null and storeProvinceCode != ''">
                 `store_province_code`=#{storeProvinceCode},
             </if>
+            <if test="storeCity != null and storeCity != ''">
+                `store_city`=#{storeCity},
+            </if>
             <if test="storeCityCode != null and storeCityCode != ''">
                 `store_city_code`=#{storeCityCode},
+            </if>
+            <if test="storeCounty != null and storeCounty != ''">
+                `store_county`=#{storeCounty},
             </if>
             <if test="storeCountyCode != null and storeCountyCode != ''">
                 `store_county_code`=#{storeCountyCode},
@@ -379,8 +397,8 @@
             <if test="supplierNo != null and supplierNo != ''">
                 `supplier_no`=#{supplierNo},
             </if>
-            <if test="reason != null and reason != ''">
-                `reason`=#{reason},
+            <if test="state != null">
+                `state`=#{state},
             </if>
             <if test="createTime != null">
                 `create_time`=#{createTime},
@@ -388,11 +406,16 @@
             <if test="finishTime != null">
                 `finish_time`=#{finishTime},
             </if>
-            <if test="state != null">
-                `state`=#{state},
+            <if test="redPackState != null">
+                `red_pack_state`=#{redPackState},
+            </if>
+            <if test="redPackSellerNo != null and redPackSellerNo != ''">
+                `red_pack_seller_no`=#{redPackSellerNo},
+            </if>
+            <if test="reason != null and reason != ''">
+                `reason`=#{reason},
             </if>
         </set>
         WHERE id=#{id}
     </update>
-
 </mapper>

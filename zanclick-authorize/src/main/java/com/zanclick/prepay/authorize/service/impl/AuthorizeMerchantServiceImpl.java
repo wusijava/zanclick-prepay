@@ -202,6 +202,7 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         merchant.setStoreCountyCode(dto.getStoreCountyCode());
         merchant.setSellerNo(dto.getSellerNo());
         merchant.setState(AuthorizeMerchant.State.waiting.getCode());
+        merchant.setRedPackState(AuthorizeMerchant.RedPackState.open.getCode());
         this.insert(merchant);
         return merchant;
     }

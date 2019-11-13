@@ -26,6 +26,14 @@
         <result column="qr_code_url" property="qrCodeUrl" jdbcType="VARCHAR"/>
         <result column="state" property="state" jdbcType="INTEGER"/>
         <result column="deal_state" property="dealState" jdbcType="INTEGER"/>
+        <result column="red_pack_state" property="redPackState" jdbcType="INTEGER"/>
+        <result column="red_pack_amount" property="redPackAmount" jdbcType="VARCHAR"/>
+        <result column="red_pack_seller_no" property="redPackSellerNo" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR"/>
+        <result column="city_name" property="cityName" jdbcType="VARCHAR"/>
+        <result column="district_name" property="districtName" jdbcType="VARCHAR"/>
         <result column="reason" property="reason" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -55,6 +63,14 @@
             `qr_code_url`,
             `state`,
             `deal_state`,
+            `red_pack_state`,
+            `red_pack_amount`,
+            `red_pack_seller_no`,
+            `name`,
+            `seller_no`,
+            `province_name`,
+            `city_name`,
+            `district_name`,
             `reason`
     </sql>
     <sql id="Base_Where_Clause">
@@ -132,6 +148,30 @@
                 <if test="dealState != null">
                     AND `deal_state`=#{dealState}
                 </if>
+                <if test="redPackState != null">
+                    AND `red_pack_state`=#{redPackState}
+                </if>
+                <if test="redPackAmount != null and redPackAmount != ''">
+                    AND `red_pack_amount`=#{redPackAmount}
+                </if>
+                <if test="redPackSellerNo != null and redPackSellerNo != ''">
+                    AND `red_pack_seller_no`=#{redPackSellerNo}
+                </if>
+                <if test="name != null and name != ''">
+                    AND `name`=#{name}
+                </if>
+                <if test="sellerNo != null and sellerNo != ''">
+                    AND `seller_no`=#{sellerNo}
+                </if>
+                <if test="provinceName != null and provinceName != ''">
+                    AND `province_name`=#{provinceName}
+                </if>
+                <if test="cityName != null and cityName != ''">
+                    AND `city_name`=#{cityName}
+                </if>
+                <if test="districtName != null and districtName != ''">
+                    AND `district_name`=#{districtName}
+                </if>
                 <if test="reason != null and reason != ''">
                     AND `reason`=#{reason}
                 </if>
@@ -198,6 +238,14 @@
         `qr_code_url`,
         `state`,
         `deal_state`,
+        `red_pack_state`,
+        `red_pack_amount`,
+        `red_pack_seller_no`,
+        `name`,
+        `seller_no`,
+        `province_name`,
+        `city_name`,
+        `district_name`,
         `reason`
         )
         VALUES(
@@ -225,6 +273,14 @@
         #{qrCodeUrl},
         #{state},
         #{dealState},
+        #{redPackState},
+        #{redPackAmount},
+        #{redPackSellerNo},
+        #{name},
+        #{sellerNo},
+        #{provinceName},
+        #{cityName},
+        #{districtName},
         #{reason}
         )
     </insert>
@@ -257,6 +313,14 @@
         `qr_code_url`,
         `state`,
         `deal_state`,
+        `red_pack_state`,
+        `red_pack_amount`,
+        `red_pack_seller_no`,
+        `name`,
+        `seller_no`,
+        `province_name`,
+        `city_name`,
+        `district_name`,
         `reason`
         )
         VALUES
@@ -286,6 +350,14 @@
             #{cm.qrCodeUrl},
             #{cm.state},
             #{cm.dealState},
+            #{cm.redPackState},
+            #{cm.redPackAmount},
+            #{cm.redPackSellerNo},
+            #{cm.name},
+            #{cm.sellerNo},
+            #{cm.provinceName},
+            #{cm.cityName},
+            #{cm.districtName},
             #{cm.reason}
             )
         </foreach>
@@ -404,11 +476,34 @@
             <if test="dealState != null">
                 `deal_state`=#{dealState},
             </if>
+            <if test="redPackState != null">
+                `red_pack_state`=#{redPackState},
+            </if>
+            <if test="redPackAmount != null and redPackAmount != ''">
+                `red_pack_amount`=#{redPackAmount},
+            </if>
+            <if test="redPackSellerNo != null and redPackSellerNo != ''">
+                `red_pack_seller_no`=#{redPackSellerNo},
+            </if>
+            <if test="name != null and name != ''">
+                `name`=#{name},
+            </if>
+            <if test="sellerNo != null and sellerNo != ''">
+                `seller_no`=#{sellerNo},
+            </if>
+            <if test="provinceName != null and provinceName != ''">
+                `province_name`=#{provinceName},
+            </if>
+            <if test="cityName != null and cityName != ''">
+                `city_name`=#{cityName},
+            </if>
+            <if test="districtName != null and districtName != ''">
+                `district_name`=#{districtName},
+            </if>
             <if test="reason != null and reason != ''">
                 `reason`=#{reason},
             </if>
         </set>
         WHERE id=#{id}
     </update>
-
 </mapper>

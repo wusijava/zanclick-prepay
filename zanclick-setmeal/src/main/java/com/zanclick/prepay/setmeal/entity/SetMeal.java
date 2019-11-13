@@ -44,12 +44,45 @@ public class SetMeal implements Identifiable<Long> {
      **/
     private String amount;
 
+    private String redPackAmount;
+
+    private Integer redPackState;
+
     /**
      * 标题
      */
     private String title;
 
     private Integer state;
+
+    public enum RedPackState {
+        open(1, "开启"),
+        closed(0, "关闭的");
+
+        private Integer code;
+        private String desc;
+
+        RedPackState(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
 
     public enum State {
         open(1, "开启"),
