@@ -6,7 +6,7 @@ import lombok.Data;
 import java.util.Date;
 
 /**
- * 资金授权商户
+ * 红包领取记录
  *
  * @author duchong
  * @date 2019-7-8 14:19:20
