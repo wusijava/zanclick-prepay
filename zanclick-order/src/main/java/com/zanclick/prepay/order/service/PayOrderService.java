@@ -87,6 +87,4 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      * @return
      */
     void refund(String outTradeNo,Integer type);
-    //按条件查找红包记录
-    List<RedPacketList> redPacketList(PayOrderQuery query);
 }

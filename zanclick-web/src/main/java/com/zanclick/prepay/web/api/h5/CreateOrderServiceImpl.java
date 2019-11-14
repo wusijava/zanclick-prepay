@@ -87,9 +87,13 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
      */
     private JSONObject createPayOrder(ApiPay pay, String appId) {
         AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(pay.getMerchantNo());
-        if (merchant == null || !merchant.isSuccess()){
-            log.error("商户号异常:{}",pay.getMerchantNo());
-            throw new BizException("商户号异常:"+pay.getMerchantNo());
+        if (merchant == null){
+            log.error("商户未注册:{}",pay.getMerchantNo());
+            throw new BizException("商户未注册:"+pay.getMerchantNo());
+        }
+        if (!merchant.isSuccess()){
+            log.error("商户未注册成功:{},{}",pay.getMerchantNo(),merchant.getReason());
+            throw new BizException("商户未注册成功:"+merchant.getReason());
         }
         PayOrder payOrder = payOrderService.queryByOutOrderNo(pay.getOutOrderNo());
         if (DataUtil.isNotEmpty(payOrder)){
@@ -99,7 +103,8 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         }
         SetMeal meal = setMealService.queryByPackageNo(pay.getPackageNo());
         if (DataUtil.isEmpty(meal)) {
-            throw new BizException("套餐编码错误");
+            log.error("套餐编码错误:{}",meal == null ? "" : meal.getPackageNo());
+            throw new BizException("套餐编码错误,请联系客服确认该套餐是否上架");
         }
         if (SetMeal.State.closed.getCode().equals(meal.getState())) {
             throw new BizException("套餐已下架");

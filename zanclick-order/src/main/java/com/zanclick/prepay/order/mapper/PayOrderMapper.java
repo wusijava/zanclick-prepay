@@ -37,9 +37,6 @@ public interface PayOrderMapper extends BaseMapper<PayOrder, Long> {
      * @return
      */
     PayOrder selectByOutOrderNo(String outOrderNo);
-     //按条件查找红包记录
-
-    List<RedPacketList> redPacketList(PayOrderQuery query);
 
 
 }

@@ -166,9 +166,4 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             throw new BizException(result.getMessage());
         }
     }
-
-    @Override
-    public List<RedPacketList>  redPacketList(PayOrderQuery query) {
-        return payOrderMapper.redPacketList(query);
-    }
 }
