@@ -2,7 +2,9 @@ package com.zanclick.prepay.order.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
+import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
+import com.zanclick.prepay.authorize.service.AuthorizeOrderService;
 import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.entity.ExcelDto;
@@ -44,6 +46,8 @@ public class PayOrderWebController extends BaseController {
     private PayOrderService payOrderService;
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
+    @Autowired
+    private AuthorizeOrderService authorizeOrderService;
 
     @Value("${excelDownloadUrl}")
     private String excelDownloadUrl;
@@ -152,21 +156,26 @@ public class PayOrderWebController extends BaseController {
         if (DataUtil.isEmpty(merchant)) {
             return null;
         }
+        AuthorizeOrder authorizeOrder = authorizeOrderService.queryByOutTradeNo(order.getOutTradeNo());
+        if (DataUtil.isEmpty(authorizeOrder)) {
+            return null;
+        }
         PayOrderExcelList vo = new PayOrderExcelList();
         vo.setWayId(order.getWayId());
-        vo.setCreateTime(sdf.format(order.getCreateTime()));
-        vo.setFinishTime(order.getFinishTime() == null ? "" : sdf.format(order.getFinishTime()));
+        vo.setStoreName(order.getStoreName());
+        vo.setOutOrderNo(order.getOutOrderNo());
+        vo.setOutTradeNo(order.getOutTradeNo());
         vo.setAmount(order.getAmount());
         vo.setSettleAmount(order.getSettleAmount());
         vo.setNum(String.valueOf(order.getNum()));
         vo.setTitle(order.getTitle());
-        vo.setStoreName(order.getStoreName());
-        vo.setStateStr(order.getStateDesc());
         vo.setPhoneNumber(order.getPhoneNumber());
-        vo.setOutOrderNo(order.getOutOrderNo());
-        vo.setOutTradeNo(order.getOutTradeNo());
+        vo.setBuyerNo(authorizeOrder.getBuyerNo());
         vo.setSellerNo(merchant.getSellerNo());
         vo.setName(merchant.getName());
+        vo.setStateStr(order.getStateDesc());
+        vo.setCreateTime(sdf.format(order.getCreateTime()));
+        vo.setFinishTime(order.getFinishTime() == null ? "" : sdf.format(order.getFinishTime()));
         vo.setProvince(merchant.getStoreProvince());
         vo.setCity(merchant.getStoreCity());
         vo.setCounty(merchant.getStoreCounty());

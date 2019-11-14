@@ -129,6 +129,8 @@ public class MyBankSupplyChainServiceImpl implements MyBankSupplyChainService {
         create.setRcvContactName(trade.getRcvContactName());
         create.setRcvContactPhone(trade.getRcvContactPhone());
         create.setRcvContactEmail(trade.getRcvContactEmail());
+        create.setPurchaseContent(trade.getPurchaseContent());
+        create.setReceivableRemark(trade.getReceivableRemark());
         return create;
     }
 

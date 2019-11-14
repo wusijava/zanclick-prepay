@@ -136,6 +136,16 @@ public class SupplyChainTrade implements Identifiable<Long> {
      */
     private String failReason;
 
+    /**
+     * 采购内容
+     */
+    private String purchaseContent;
+
+    /**
+     * 账款备注
+     */
+    private String receivableRemark;
+
 
     public boolean isFail(){
         return TradeStateEnum.FAILED.getCode().equals(state) || TradeStateEnum.CANCELED.getCode().equals(state);

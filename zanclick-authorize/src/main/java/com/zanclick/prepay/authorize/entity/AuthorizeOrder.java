@@ -67,6 +67,11 @@ public class AuthorizeOrder implements Identifiable<Long> {
 
     private Date finishTime;
 
+    /**
+     * 办理号码
+     */
+    private String phoneNumber;
+
     private String buyerId;
 
     private String buyerNo;

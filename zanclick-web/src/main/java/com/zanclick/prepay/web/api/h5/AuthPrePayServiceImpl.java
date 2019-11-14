@@ -135,6 +135,7 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
         dto.setDesc(order.getTitle());
         dto.setNum(order.getNum());
         dto.setOutTradeNo(order.getOutTradeNo());
+        dto.setPhoneNumber(order.getPhoneNumber());
         return dto;
     }
 }

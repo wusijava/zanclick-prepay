@@ -86,4 +86,14 @@ public class SupplyChainCreate {
      * 收款门店联系人邮箱
      * */
     private String rcvContactEmail;
+
+    /**
+     * 采购内容
+     */
+    private String purchaseContent;
+
+    /**
+     * 账款备注
+     */
+    private String receivableRemark;
 }
