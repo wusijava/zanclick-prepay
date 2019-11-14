@@ -236,7 +236,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             boolean cancel = authorizeOrderService.maintainAuthorizeOrder(order);
             if (cancel) {
                 result.setMessage("交易超时，已撤销");
-                result.setFail();
+                result.setSuccess();
                 result.setState(order.getState());
                 return result;
             }
@@ -261,6 +261,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
             }
         }
         result.setState(order.getState());
+        result.setAuthNo(order.getAuthNo());
         result.setSuccess();
         return result;
     }

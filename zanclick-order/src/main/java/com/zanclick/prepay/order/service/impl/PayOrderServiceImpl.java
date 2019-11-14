@@ -73,6 +73,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             log.error("订单信息异常:{},{}", outOrderNo, outTradeNo);
             throw new BizException("订单信息异常");
         }
+        JSONObject object = null;
         if (payOrder.isWait() && payOrder.getRequestNo() != null && payOrder.getQrCodeUrl() != null) {
             QueryDTO dto = new QueryDTO();
             dto.setOutTradeNo(payOrder.getOutTradeNo());
@@ -81,22 +82,25 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
                 if (AuthorizeOrder.State.payed.getCode().equals(queryResult.getState())) {
                     payOrder.setState(PayOrder.State.payed.getCode());
                     payOrder.setFinishTime(new Date());
-                    handlePayOrder(payOrder);
+                    payOrder.setAuthNo(queryResult.getAuthNo());
+                    object = new JSONObject();
                 } else if (AuthorizeOrder.State.failed.getCode().equals(queryResult.getState()) || AuthorizeOrder.State.closed.getCode().equals(queryResult.getState())) {
                     payOrder.setRequestNo(null);
                     payOrder.setQrCodeUrl(null);
                     payOrder.setState(PayOrder.State.closed.getCode());
                     payOrder.setFinishTime(new Date());
-                    handlePayOrder(payOrder);
+                    object = new JSONObject();
                 }
-            } else {
-                log.error("交易信息查询异常:{},{},{}", queryResult.getMessage(), outOrderNo, outTradeNo);
-                payOrder.setRequestNo(null);
-                payOrder.setQrCodeUrl(null);
-                payOrder.setState(PayOrder.State.closed.getCode());
-                payOrder.setFinishTime(new Date());
-                handlePayOrder(payOrder);
             }
+        }
+        if (object != null){
+            object.put("outTradeNo",payOrder.getOutTradeNo());
+            object.put("state",payOrder.getState());
+            if (DataUtil.isNotEmpty(payOrder.getAuthNo())){
+                object.put("authNo",payOrder.getAuthNo());
+            }
+            SendMessage.sendMessage(JmsMessaging.ORDER_STATE_MESSAGE, object.toJSONString());
+            syncQueryState(payOrder.getOutTradeNo(),payOrder.getState());
         }
         return payOrder;
     }
@@ -205,7 +209,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         refund.setType(0);
         refund.setAmount(refundOrder.getAmount());
         refund.setReason("移动套餐退款_" + refundOrder.getOutOrderNo());
-        refund.setOutRequestNo(StringUtils.getTradeNo());
+        refund.setOutRequestNo(refundOrder.getOutRequestNo());
         refund.setOutTradeNo(refundOrder.getOutTradeNo());
         RefundResult result = authorizePayService.refund(refund);
         if (result.isSuccess()) {
