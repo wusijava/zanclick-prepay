@@ -85,6 +85,20 @@ public class PayOrderWebController extends BaseController {
         return Response.ok("处理成功");
     }
 
+    @ApiOperation(value = "退款")
+    @PostMapping(value = "/refund")
+    @ResponseBody
+    public Response refund(String outTradeNo) {
+        if (DataUtil.isEmpty(outTradeNo)){
+            return Response.fail("缺少外部订单号");
+        }
+        String reason = payOrderService.refund(outTradeNo,null);
+        if (reason == null){
+            return Response.ok("退款成功");
+        }
+        return Response.fail(reason);
+    }
+
     @ApiOperation(value = "导出交易信息")
     @RequestMapping(value = "batchExport", method = RequestMethod.POST)
     @ResponseBody
@@ -148,6 +162,11 @@ public class PayOrderWebController extends BaseController {
         vo.setAuthNo(order.getAuthNo());
         vo.setDealState(order.getDealState());
         vo.setDealStateStr(order.getDealStateDesc());
+        vo.setSellerNo(order.getSellerNo());
+        vo.setName(order.getName());
+        vo.setRedPacketAmount(order.getRedPackAmount());
+        vo.setRedPacketStateDesc(order.getRedPacketStateDesc());
+        vo.setRedPacketSellerNo(order.getRedPackSellerNo());
         return vo;
     }
 

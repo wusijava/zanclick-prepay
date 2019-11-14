@@ -44,6 +44,15 @@ public class PayOrderWebList {
      */
     private String settleAmount;
 
+    private String sellerNo;
+
+    private String name;
+
+    private String redPacketAmount;
+
+    private String redPacketStateDesc;
+
+    private String redPacketSellerNo;
 
     /**
      * 交易期数

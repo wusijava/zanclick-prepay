@@ -31,7 +31,7 @@ public class PayOrderStateListener {
 
     @JmsListener(destination = JmsMessaging.ORDER_STATE_MESSAGE)
     public void getMessage(String message) {
-        JSONObject object = new JSONObject();
+        JSONObject object = JSONObject.parseObject(message);
         if (!object.containsKey(outTradeNoKey) || !object.containsKey(stateKey)){
             log.error("订单状态处理出错:{}",message);
             return;

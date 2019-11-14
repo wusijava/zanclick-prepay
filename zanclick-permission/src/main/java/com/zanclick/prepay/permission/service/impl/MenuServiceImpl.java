@@ -40,7 +40,7 @@ public class MenuServiceImpl extends BaseMybatisServiceImpl<Menu,Long> implement
         query.setCode(code);
         query.setState(Menu.State.open.getCode());
         List<Menu> menuList = this.queryList(query);
-        return menuList == null ? null : menuList.get(0);
+        return menuList == null || menuList.size() == 0 ? null : menuList.get(0);
     }
 
 }

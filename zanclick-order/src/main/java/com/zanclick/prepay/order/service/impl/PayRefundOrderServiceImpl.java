@@ -38,7 +38,7 @@ public class PayRefundOrderServiceImpl extends BaseMybatisServiceImpl<PayRefundO
         PayRefundOrderQuery query = new PayRefundOrderQuery();
         query.setOutTradeNo(outTradeNo);
         List<PayRefundOrder> orderList = this.queryList(query);
-        return orderList == null ? null : orderList.get(0);
+        return orderList == null || orderList.size() == 0 ? null : orderList.get(0);
     }
 
     @Override
@@ -60,6 +60,6 @@ public class PayRefundOrderServiceImpl extends BaseMybatisServiceImpl<PayRefundO
         PayRefundOrderQuery query = new PayRefundOrderQuery();
         query.setOutOrderNo(outOrderNo);
         List<PayRefundOrder> orderList = this.queryList(query);
-        return orderList == null ? null : orderList.get(0);
+        return orderList == null || orderList.size() == 0  ? null : orderList.get(0);
     }
 }

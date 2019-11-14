@@ -2,6 +2,8 @@ package com.zanclick.prepay.web.api.h5;
 
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
+import com.zanclick.prepay.common.config.JmsMessaging;
+import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
@@ -39,9 +41,8 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
     public String resolve(String appId, String cipherJson, String request) {
         ResponseParam param = new ResponseParam();
         param.setSuccess();
-        param.setMessage("退款成功");
+        param.setMessage("领取成功");
         try {
-            verifyCipherJson(appId, cipherJson);
             ReceiveRedPacket query = parser(request, ReceiveRedPacket.class);
             PayOrder order = queryOrder(query);
             createRedPacket(order,query);
@@ -74,7 +75,7 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
             log.error("请填写领取账号:{}", query.getReceiveNo());
             throw new BizException("请填写领取账号");
         }
-        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(query.getWayId());
+        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(order.getMerchantNo());
         if (!merchant.isSuccess()) {
             log.error("商户注册状态异常:{}", merchant.getWayId());
             throw new BizException("商户注册状态异常");
@@ -99,7 +100,7 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
      */
     private void createRedPacket(PayOrder order, ReceiveRedPacket receive) {
         RedPacket packet = redPacketService.queryByOutOrderNo(receive.getOutOrderNo());
-        if (packet == null){
+        if (packet == null || packet.getState().equals(RedPacket.State.failed.getCode())){
             packet = new RedPacket();
             packet.setAmount(order.getRedPackAmount());
             packet.setAppId(order.getAppId());
@@ -109,8 +110,19 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
             packet.setOutTradeNo(order.getOutTradeNo());
             packet.setWayId(order.getWayId());
             packet.setState(0);
+            packet.setTitle(order.getTitle());
             packet.setReceiveNo(receive.getReceiveNo());
             redPacketService.insert(packet);
+            SendMessage.sendMessage(JmsMessaging.ORDER_RED_PACKET_MESSAGE,order.getOutTradeNo());
+            RedPacket redPacket = redPacketService.syncQueryState(order.getOutTradeNo(),packet.getState());
+            if (redPacket == null){
+                log.error("未知错误，:{}", receive.getOutOrderNo());
+                throw new BizException("未知错误");
+            }
+            if (redPacket.getState().equals(RedPacket.State.failed.getCode())){
+                log.error("红包发放错误，:{}", redPacket.getReason());
+                throw new BizException("红包发放出错，"+redPacket.getReason());
+            }
         }else if (RedPacket.State.success.getCode().equals(packet.getState())){
             log.error("单笔订单红包只可以领取一次:{}", receive.getOutOrderNo());
             throw new BizException("单笔订单红包只可以领取一次");

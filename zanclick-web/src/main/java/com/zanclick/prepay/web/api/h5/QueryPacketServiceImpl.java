@@ -1,6 +1,5 @@
 package com.zanclick.prepay.web.api.h5;
 
-import com.zanclick.prepay.common.entity.KeyValue;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
@@ -12,9 +11,6 @@ import com.zanclick.prepay.web.dto.QueryRedPacketResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * 查询红包领取信息
@@ -34,7 +30,7 @@ public class QueryPacketServiceImpl extends AbstractCommonService implements Api
         param.setSuccess();
         param.setMessage("查询成功");
         try {
-            verifyCipherJson(appId, cipherJson);
+//            String decrypt = verifyCipherJson(appId, cipherJson);
             QueryRedPacket query = parser(request, QueryRedPacket.class);
             PayOrder order = payOrderService.queryRedPacketOrder(query.getOutOrderNo());
             param.setData(getQueryResult(order));
@@ -58,10 +54,6 @@ public class QueryPacketServiceImpl extends AbstractCommonService implements Api
      */
     private QueryRedPacketResult getQueryResult(PayOrder order) {
         QueryRedPacketResult result = new QueryRedPacketResult();
-        List<KeyValue> valueList = new ArrayList<>();
-        valueList.add(new KeyValue("订单编号",order.getOutOrderNo()));
-        valueList.add(new KeyValue("红包金额",order.getRedPackAmount()));
-        result.setValueList(valueList);
         result.setAmount(order.getRedPackAmount());
         result.setOutOrderNo(order.getOutOrderNo());
         return result;

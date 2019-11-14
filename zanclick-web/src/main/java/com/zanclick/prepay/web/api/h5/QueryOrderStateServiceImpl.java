@@ -10,7 +10,10 @@ import com.zanclick.prepay.web.dto.QueryOrder;
 import com.zanclick.prepay.web.dto.QueryOrderStateResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import java.net.URLEncoder;
 
 /**
  * 查询并修改当前订单状态
@@ -24,6 +27,9 @@ public class QueryOrderStateServiceImpl extends AbstractCommonService implements
 
     @Autowired
     private PayOrderService payOrderService;
+
+    @Value("${h5.server}")
+    private String h5Server;
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
@@ -40,6 +46,11 @@ public class QueryOrderStateServiceImpl extends AbstractCommonService implements
                 return param.toString();
             }
             QueryOrderStateResult result = queryOrder(query);
+            StringBuffer sb = new StringBuffer();
+            sb.append(h5Server+"/h5/red/packet/receive");
+            sb.append("?appId=" + appId);
+            sb.append("&outOrderNo=" + query.getOutOrderNo());
+            result.setUrl(sb.toString());
             param.setData(result);
             return param.toString();
         } catch (BizException be) {

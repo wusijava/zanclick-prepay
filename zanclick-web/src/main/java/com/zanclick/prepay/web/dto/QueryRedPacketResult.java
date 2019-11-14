@@ -1,9 +1,6 @@
 package com.zanclick.prepay.web.dto;
 
-import com.zanclick.prepay.common.entity.KeyValue;
 import lombok.Data;
-
-import java.util.List;
 
 /**
  * @author duchong
@@ -12,8 +9,6 @@ import java.util.List;
  */
 @Data
 public class QueryRedPacketResult {
-
-    private List<KeyValue> valueList;
 
     private String outOrderNo;
 

@@ -254,6 +254,15 @@ public class PayOrder implements Identifiable<Long> {
         }
     }
 
+
+    public String getRedPacketStateDesc(){
+        if (RedPackState.receive.getCode().equals(redPackState)){
+            return RedPackState.receive.getDesc();
+        } else {
+            return RedPackState.un_receive.getDesc();
+        }
+    }
+
     public Boolean isRepaymentSuccess() {
         return DealState.repayment_success.getCode().equals(state);
     }

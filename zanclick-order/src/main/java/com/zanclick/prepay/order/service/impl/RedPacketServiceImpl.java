@@ -2,6 +2,7 @@ package com.zanclick.prepay.order.service.impl;
 
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
+import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.entity.RedPacket;
 import com.zanclick.prepay.order.mapper.RedPacketMapper;
 import com.zanclick.prepay.order.query.RedPacketQuery;
@@ -32,7 +33,7 @@ public class RedPacketServiceImpl extends BaseMybatisServiceImpl<RedPacket,Long>
         RedPacketQuery query = new RedPacketQuery();
         query.setOutTradeNo(outTradeNo);
         List<RedPacket> packetList = this.queryList(query);
-        return packetList == null ? null : packetList.get(0);
+        return packetList == null || packetList.size() == 0 ? null : packetList.get(0);
     }
 
     @Override
@@ -40,6 +41,23 @@ public class RedPacketServiceImpl extends BaseMybatisServiceImpl<RedPacket,Long>
         RedPacketQuery query = new RedPacketQuery();
         query.setOutOrderNo(outOrderNo);
         List<RedPacket> packetList = this.queryList(query);
-        return packetList == null ? null : packetList.get(0);
+        return packetList == null || packetList.size() == 0 ? null : packetList.get(0);
+    }
+
+    @Override
+    public RedPacket syncQueryState(String outTradeNo, Integer state) {
+        int times = 30;
+        for (int i = 0; i <= times; i++) {
+            RedPacket packet = this.queryByOutTradeNo(outTradeNo);
+            if (!state.equals(packet.getState())) {
+                return packet;
+            }
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 }

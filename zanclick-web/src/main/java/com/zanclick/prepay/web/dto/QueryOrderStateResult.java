@@ -20,4 +20,5 @@ public class QueryOrderStateResult {
 
     private String totalMoney;
 
+    private String url;
 }

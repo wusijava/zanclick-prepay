@@ -26,4 +26,14 @@ public interface RedPacketService extends BaseService<RedPacket,Long> {
      */
     RedPacket queryByOutOrderNo(String outOrderNo);
 
+
+    /**
+     * 同步查询一分钟(数据库里的状态与传入的状态一样的时候停止)
+     *
+     * @param outTradeNo
+     * @param state 原来的处理状态
+     * @return
+     */
+    RedPacket syncQueryState(String outTradeNo,Integer state);
+
 }

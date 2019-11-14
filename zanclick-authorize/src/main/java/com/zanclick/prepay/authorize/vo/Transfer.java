@@ -1,5 +1,6 @@
 package com.zanclick.prepay.authorize.vo;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.Data;
 
 /**
@@ -23,4 +24,9 @@ public class Transfer {
     private String payee_real_name;
 
     private String remark;
+
+    @Override
+    public String toString() {
+        return JSONObject.toJSONString(this);
+    }
 }

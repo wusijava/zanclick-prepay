@@ -89,7 +89,7 @@ public class PayOrderRedPacketListener {
     }
 
     private void transfer(RedPacket packet,PayOrder order){
-        AlipayClient client = authorizeConfigurationService.queryDefaultAlipayClient();
+        AlipayClient client = authorizeConfigurationService.queryAlipayClientById(30L);
         packet.setBizNo(StringUtils.getTradeNo());
         Transfer transfer = new Transfer();
         transfer.setAmount(packet.getAmount());
@@ -101,6 +101,7 @@ public class PayOrderRedPacketListener {
         AlipayFundTransToaccountTransferResponse response = AuthorizePayUtil.transfer(client,transfer);
         if (response.isSuccess()){
             packet.setState(RedPacket.State.success.getCode());
+            packet.setPayNo(response.getOrderId());
             redPacketService.updateById(packet);
             order.setRedPackState(PayOrder.RedPackState.receive.getCode());
             order.setRedPackSellerNo(packet.getReceiveNo());

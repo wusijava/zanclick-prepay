@@ -34,6 +34,6 @@ public class HomeMenuServiceImpl extends BaseMybatisServiceImpl<HomeMenu,Long> i
         query.setCode(code);
         query.setState(Menu.State.open.getCode());
         List<HomeMenu> menuList = this.queryList(query);
-        return menuList == null ? null : menuList.get(0);
+        return menuList == null || menuList.size() == 0 ? null : menuList.get(0);
     }
 }
