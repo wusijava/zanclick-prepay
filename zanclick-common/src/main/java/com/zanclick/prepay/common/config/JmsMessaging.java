@@ -8,9 +8,14 @@ package com.zanclick.prepay.common.config;
  **/
 public class JmsMessaging {
     /**
-     * 推送，结算
+     * 通知，结算
      * */
     public final static String ORDER_NOTIFY_MESSAGE = "order.notify.message";
+
+    /**
+     * 支付订单状态变更
+     * */
+    public final static String ORDER_STATE_MESSAGE = "order.state.message";
 
     /**
      * 结算完成

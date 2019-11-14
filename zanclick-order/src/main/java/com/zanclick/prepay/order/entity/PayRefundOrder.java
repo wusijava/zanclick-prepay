@@ -36,9 +36,11 @@ public class PayRefundOrder implements Identifiable<Long> {
 
     private String amount;
 
-    private String redPackAmount;
+    private String redPacketAmount;
 
     private Date createTime;
+
+    private Date finishTime;
 
     /**
      * 退款状态
@@ -48,7 +50,7 @@ public class PayRefundOrder implements Identifiable<Long> {
     /**
      * 红包状态
      */
-    private String redPackState;
+    private Integer redPacketState;
 
     /**
      * 贷款状态
@@ -56,7 +58,7 @@ public class PayRefundOrder implements Identifiable<Long> {
     private Integer repaymentState;
 
 
-    public enum RedPackState {
+    public enum RedPacketState {
         receive(1, "未退还"),
         un_receive(0, "未领取"),
         refund(2,"已退还");
@@ -64,7 +66,7 @@ public class PayRefundOrder implements Identifiable<Long> {
         private Integer code;
         private String desc;
 
-        RedPackState(Integer code, String desc) {
+        RedPacketState(Integer code, String desc) {
             this.code = code;
             this.desc = desc;
         }
@@ -157,12 +159,12 @@ public class PayRefundOrder implements Identifiable<Long> {
     }
 
     public String getRedPacketDesc() {
-        if (RedPackState.un_receive.getCode().equals(redPackState)) {
-            return RedPackState.un_receive.getDesc();
-        } else if (RedPackState.receive.getCode().equals(redPackState)) {
-            return RedPackState.receive.getDesc();
+        if (RedPacketState.un_receive.getCode().equals(redPacketState)) {
+            return RedPacketState.un_receive.getDesc();
+        } else if (RedPacketState.receive.getCode().equals(redPacketState)) {
+            return RedPacketState.receive.getDesc();
         } else{
-            return RedPackState.refund.getDesc();
+            return RedPacketState.refund.getDesc();
         }
     }
 

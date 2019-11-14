@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.common.base.controller.BaseController;
+import com.zanclick.prepay.common.config.JmsMessaging;
+import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
@@ -82,7 +84,8 @@ public class PayOrderWebController extends BaseController {
             log.error("订单状态异常:{},{}", outTradeNo, order.getDealStateDesc());
             return Response.fail("处理成功");
         }
-        payOrderService.syncQueryPayOrder(outTradeNo,order.getDealState());
+        SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, outTradeNo);
+        payOrderService.syncQueryDealState(outTradeNo,order.getDealState());
         return Response.ok("处理成功");
     }
 

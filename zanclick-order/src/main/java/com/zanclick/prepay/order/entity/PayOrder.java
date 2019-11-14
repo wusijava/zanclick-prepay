@@ -274,6 +274,11 @@ public class PayOrder implements Identifiable<Long> {
         return State.payed.getCode().equals(state);
     }
 
+    public Boolean isRefund() {
+        return State.refund.getCode().equals(state);
+    }
+
+
     public Boolean isClosed() {
         return State.closed.getCode().equals(state);
     }

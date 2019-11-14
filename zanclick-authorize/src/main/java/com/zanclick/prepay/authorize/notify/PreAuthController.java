@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.controller;
+package com.zanclick.prepay.authorize.notify;
 
 import com.alibaba.fastjson.JSON;
 import com.zanclick.prepay.authorize.event.BaseEventResolver;

@@ -1,12 +1,14 @@
-package com.zanclick.prepay.web.controller;
+package com.zanclick.prepay.authorize.notify;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alipay.api.internal.util.AlipaySignature;
-import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.service.AuthorizeOrderService;
-import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.common.base.controller.BaseController;
+import com.zanclick.prepay.common.config.JmsMessaging;
+import com.zanclick.prepay.common.config.SendMessage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -35,8 +37,6 @@ public class AuthorizeNotifyController extends BaseController {
     private AuthorizeOrderService authorizeOrderService;
     @Autowired
     private AuthorizeConfigurationService authorizeConfigurationService;
-    @Autowired
-    private PayOrderService payOrderService;
 
     @ApiOperation(value = "预授权回调地址")
     @PostMapping(value = "/notify")
@@ -78,12 +78,26 @@ public class AuthorizeNotifyController extends BaseController {
                 order.setBuyerNo(params.get("payer_logon_id"));
                 order.setState(AuthorizeOrder.State.payed.getCode());
                 authorizeOrderService.handleAuthorizeOrder(order);
-                payOrderService.handleSuccess(order.getOutTradeNo(),order.getAuthNo());
+                sendSuccessMessage(order);
             }
         } catch (Exception e) {
             log.error("处理结果失败{}", e);
             return "failure";
         }
         return "success";
+    }
+
+
+    /**
+     * 推送订单支付成功的消息
+     *
+     * @param order
+     */
+    private void sendSuccessMessage(AuthorizeOrder order) {
+        JSONObject object = new JSONObject();
+        object.put("outTradeNo",order.getOutTradeNo());
+        object.put("state",1);
+        object.put("authNo",order.getAuthNo());
+        SendMessage.sendMessage(JmsMessaging.ORDER_STATE_MESSAGE, object.toJSONString());
     }
 }
