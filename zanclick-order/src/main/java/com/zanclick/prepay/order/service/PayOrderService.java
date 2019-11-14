@@ -37,7 +37,7 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      */
     PayOrder queryByAuthNo(String authNo);
     /**
-     * 根据 outOrderNo查找
+     * 查询并处理当前订单状态
      *
      * @param outTradeNo
      * @param outOrderNo
@@ -78,6 +78,15 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      */
     void sendMessage(PayOrder order);
 
+
+    /**
+     * 向能力平台推送消息
+     *
+     * @param outTradeNo
+     * @param dealState 原来的处理状态
+     * @return
+     */
+    String syncQueryPayOrder(String outTradeNo,Integer dealState);
 
     /**
      * 向能力平台推送消息

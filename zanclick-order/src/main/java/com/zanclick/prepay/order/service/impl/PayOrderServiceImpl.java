@@ -16,16 +16,13 @@ import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.mapper.PayOrderMapper;
-import com.zanclick.prepay.order.query.PayOrderQuery;
 import com.zanclick.prepay.order.service.PayOrderService;
-import com.zanclick.prepay.order.vo.RedPacketList;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author Administrator
@@ -139,6 +136,24 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     @Override
     public void sendMessage(PayOrder order) {
         SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, order.getOutTradeNo());
+    }
+
+    @Override
+    public String syncQueryPayOrder(String outTradeNo,Integer dealState) {
+        SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, outTradeNo);
+        int times = 30;
+        for (int i = 0;i<=times;i++){
+            PayOrder order = this.queryByOutTradeNo(outTradeNo);
+            if (!dealState.equals(order.getDealState())){
+                return null;
+            }
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return "退款超时，请稍后再试";
     }
 
     @Override
