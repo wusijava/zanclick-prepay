@@ -250,6 +250,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         refundOrder.setAmount(order.getAmount());
         refundOrder.setAppId(order.getAppId());
         refundOrder.setCreateTime(new Date());
+        refundOrder.setAuthNo(order.getAuthNo());
         refundOrder.setMerchantNo(order.getMerchantNo());
         refundOrder.setOutOrderNo(order.getOutOrderNo());
         refundOrder.setOutTradeNo(order.getOutTradeNo());

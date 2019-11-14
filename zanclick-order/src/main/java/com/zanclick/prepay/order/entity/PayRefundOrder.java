@@ -28,6 +28,8 @@ public class PayRefundOrder implements Identifiable<Long> {
 
     private String wayId;
 
+    private String authNo;
+
     private String outTradeNo;
 
     private String outOrderNo;
@@ -89,9 +91,10 @@ public class PayRefundOrder implements Identifiable<Long> {
     }
 
     public enum RepaymentState {
-        no_need_paid(2, "无需打款"),
-        paid(1, "已打款"),
-        no_paid(2, "等待打款");
+        no_need_paid(0, "无需结清"),
+        paid(3, "成功回款"),
+        success(1, "结清贷款"),
+        no_paid(2, "等待回款");
 
         private Integer code;
         private String desc;
@@ -173,6 +176,8 @@ public class PayRefundOrder implements Identifiable<Long> {
             return RepaymentState.paid.getDesc();
         } else if (RepaymentState.no_need_paid.getCode().equals(repaymentState)) {
             return RepaymentState.no_need_paid.getDesc();
+        } else if (RepaymentState.success.getCode().equals(repaymentState)) {
+            return RepaymentState.success.getDesc();
         } else{
             return RepaymentState.no_paid.getDesc();
         }

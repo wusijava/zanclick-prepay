@@ -22,6 +22,14 @@ public interface PayRefundOrderService extends BaseService<PayRefundOrder,Long> 
     /**
      * 根据 outOrderNo查找
      *
+     * @param outTradeNo
+     * @return
+     */
+    void settle(String outTradeNo);
+
+    /**
+     * 根据 outOrderNo查找
+     *
      * @param outOrderNo
      * @return
      */
