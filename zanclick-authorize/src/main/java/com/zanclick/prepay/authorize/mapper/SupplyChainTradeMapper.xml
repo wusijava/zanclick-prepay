@@ -34,6 +34,8 @@
             <result column="state" property="state" jdbcType="INTEGER"/>
             <result column="configuration_id" property="configurationId" jdbcType="BIGINT"/>
             <result column="fail_reason" property="failReason" jdbcType="VARCHAR"/>
+            <result column="purchase_content" property="purchaseContent" jdbcType="VARCHAR"/>
+            <result column="receivable_remark" property="receivableRemark" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">supply_chain_trade</sql>
@@ -69,7 +71,9 @@
             `clear_date`,
             `state`,
             `configuration_id`,
-            `fail_reason`
+            `fail_reason`,
+            `purchase_content`,
+            `receivable_remark`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -249,7 +253,9 @@
             `clear_date`,
             `state`,
             `configuration_id`,
-            `fail_reason`
+            `fail_reason`,
+            `purchase_content`,
+            `receivable_remark`
         )
         VALUES(
             #{id},
@@ -283,7 +289,9 @@
             #{clearDate},
             #{state},
             #{configurationId},
-            #{failReason}
+            #{failReason},
+            #{purchaseContent},
+            #{receivableRemark}
         )
     </insert>
 
@@ -322,7 +330,9 @@
             `clear_date`,
             `state`,
             `configuration_id`,
-            `fail_reason`
+            `fail_reason`,
+            `purchase_content`,
+            `receivable_remark`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -358,7 +368,9 @@
             #{cm.clearDate},
             #{cm.state},
             #{cm.configurationId},
-            #{cm.failReason}
+            #{cm.failReason},
+            #{cm.purchaseContent},
+            #{cm.receivableRemark}
             )
         </foreach>
     </insert>
@@ -467,6 +479,12 @@
             </if>
             <if test="failReason != null and failReason != ''">
                  `fail_reason`=#{failReason},
+            </if>
+            <if test="purchaseContent != null and purchaseContent != ''">
+                 `purchase_content`=#{purchaseContent},
+            </if>
+            <if test="receivableRemark != null and receivableRemark != ''">
+                 `receivable_remark`=#{receivableRemark},
             </if>
         </set>
         WHERE id=#{id}

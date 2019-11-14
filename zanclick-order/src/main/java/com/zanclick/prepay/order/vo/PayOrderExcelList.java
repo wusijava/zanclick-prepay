@@ -16,8 +16,14 @@ public class PayOrderExcelList {
      */
     private String wayId;
 
+    /**
+     * 门店名称
+     */
     private String storeName;
 
+    /**
+     * 订单号
+     */
     private String outTradeNo;
 
     /**
@@ -50,11 +56,16 @@ public class PayOrderExcelList {
      */
     private String phoneNumber;
 
-    private String stateStr;
+    /**
+     * 付款人
+     */
+    private String buyerNo;
 
     private String sellerNo;
 
     private String name;
+
+    private String stateStr;
 
     /**
      * 创建时间
@@ -73,8 +84,46 @@ public class PayOrderExcelList {
 
     private String county;
 
-    public static String[] headers = {"渠道编码","门店名称","订单号","外部订单号","套餐金额","结算金额","捆绑期数","套餐标题","办理号码","订单状态","收款账号","收款人","创建时间","交易时间","省","市","区"};
-    public static String[] keys = {"wayId","storeName","outTradeNo","outOrderNo","amount","settleAmount","num","title","phoneNumber","stateStr","sellerNo","name","createTime","finishTime","province","city","county"};
+    public static String[] headers = {
+            "渠道编码",
+            "门店名称",
+            "订单号",
+            "外部订单号",
+            "套餐金额",
+            "结算金额",
+            "捆绑期数",
+            "套餐标题",
+            "办理号码",
+            "付款人",
+            "收款账号",
+            "收款人",
+            "订单状态",
+            "创建时间",
+            "交易时间",
+            "省",
+            "市",
+            "区"
+    };
+    public static String[] keys = {
+            "wayId",
+            "storeName",
+            "outTradeNo",
+            "outOrderNo",
+            "amount",
+            "settleAmount",
+            "num",
+            "title",
+            "phoneNumber",
+            "buyerNo",
+            "sellerNo",
+            "name",
+            "stateStr",
+            "createTime",
+            "finishTime",
+            "province",
+            "city",
+            "county"
+    };
 
     public static void main(String[] args) {
         System.err.println(headers.length);

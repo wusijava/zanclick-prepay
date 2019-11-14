@@ -12,10 +12,16 @@ import lombok.Data;
  */
 @Data
 public class AuthorizePay extends RequestParam {
+
     /**
      * 商品描述
      */
     private String desc;
+
+    /**
+     * 办理号码
+     */
+    private String phoneNumber;
 
     private Integer num;
 

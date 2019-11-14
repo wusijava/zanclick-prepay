@@ -22,6 +22,7 @@
         <result column="request_no" property="requestNo" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
+        <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR"/>
         <result column="buyer_id" property="buyerId" jdbcType="VARCHAR"/>
         <result column="buyer_no" property="buyerNo" jdbcType="VARCHAR"/>
         <result column="operation_id" property="operationId" jdbcType="VARCHAR"/>
@@ -55,6 +56,7 @@
             `request_no`,
             `create_time`,
             `finish_time`,
+            `phone_number`,
             `buyer_id`,
             `buyer_no`,
             `operation_id`,
@@ -127,6 +129,9 @@
                 </if>
                 <if test="finishTime != null">
                     AND `finish_time`=#{finishTime}
+                </if>
+                <if test="phoneNumber != null and phoneNumber != ''">
+                    AND `phone_number`=#{phoneNumber}
                 </if>
                 <if test="buyerId != null and buyerId != ''">
                     AND `buyer_id`=#{buyerId}
@@ -207,6 +212,7 @@
         `request_no`,
         `create_time`,
         `finish_time`,
+        `phone_number`,
         `buyer_id`,
         `buyer_no`,
         `operation_id`,
@@ -238,6 +244,7 @@
         #{requestNo},
         #{createTime},
         #{finishTime},
+        #{phoneNumber},
         #{buyerId},
         #{buyerNo},
         #{operationId},
@@ -274,6 +281,7 @@
         `request_no`,
         `create_time`,
         `finish_time`,
+        `phone_number`,
         `buyer_id`,
         `buyer_no`,
         `operation_id`,
@@ -307,6 +315,7 @@
             #{cm.requestNo},
             #{cm.createTime},
             #{cm.finishTime},
+            #{cm.phoneNumber},
             #{cm.buyerId},
             #{cm.buyerNo},
             #{cm.operationId},
@@ -420,6 +429,9 @@
             </if>
             <if test="finishTime != null">
                 `finish_time`=#{finishTime},
+            </if>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                `phone_number`=#{phoneNumber},
             </if>
             <if test="buyerId != null and buyerId != ''">
                 `buyer_id`=#{buyerId},

@@ -64,6 +64,9 @@ public class SupplyChainUtils {
         model.setExpireDate(getExpireDate(create.getFqNum()));
         model.setTradeAmount(create.getAmount());
         TradeCreateExtData extData = new TradeCreateExtData();
+        //垫资订单添加采购内容和账款备注
+        extData.setPurchase_content(create.getPurchaseContent());
+        extData.setReceivable_remark(create.getReceivableRemark());
         extData.setRcv_login_id(create.getRcvLoginId());
         extData.setRcv_name(create.getRcvAliPayName());
         extData.setRcv_contact_name(create.getRcvContactName());
@@ -249,6 +252,7 @@ public class SupplyChainUtils {
         private String rcv_contact_phone;
         private String rcv_contact_email;
         private String purchase_content = "话费分期";
+        private String receivable_remark = "";
         private String rcv_fee_rate_term_unit = "DAY";
         private String rcv_fee_rate = "0";
         private String auth_no;

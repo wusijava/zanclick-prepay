@@ -467,6 +467,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         order.setPayWay(getPayWay(dto.getPayWay()));
         order.setSellerNo(merchant.getSellerNo());
         order.setSellerName(merchant.getName());
+        order.setPhoneNumber(dto.getPhoneNumber());
         order.setContactName(merchant.getContactName());
         order.setContactPhone(merchant.getContactPhone());
         order.setCreateTime(new Date());
@@ -542,6 +543,12 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         trade.setFreezeDate(order.getFinishTime());
         trade.setExpireDate(DateUtil.addTime(order.getFinishTime(),3,Calendar.YEAR));
         trade.setMybankFee(order.getFee());
+        if (!DataUtil.isEmpty(order.getPhoneNumber())) {
+            trade.setReceivableRemark("[办理号码]" + order.getPhoneNumber());
+        }
+        if (!DataUtil.isEmpty(order.getTitle())) {
+            trade.setRcvContactPhone("[套餐名称]" + order.getTitle());
+        }
         myBankSupplyChainService.tradeCreate(trade);
         return trade;
     }
