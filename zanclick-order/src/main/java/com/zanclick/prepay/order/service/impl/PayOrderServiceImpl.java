@@ -3,6 +3,7 @@ package com.zanclick.prepay.order.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
+import com.zanclick.prepay.authorize.util.MoneyUtil;
 import com.zanclick.prepay.authorize.vo.QueryDTO;
 import com.zanclick.prepay.authorize.vo.QueryResult;
 import com.zanclick.prepay.authorize.vo.Refund;
@@ -58,6 +59,31 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     @Override
     public PayOrder queryByAuthNo(String authNo) {
         return payOrderMapper.selectByAuthNo(authNo);
+    }
+
+    @Override
+    public PayOrder queryRedPacketOrder(String outOrderNo) {
+        PayOrder order = this.queryByOutOrderNo(outOrderNo);
+        if (order == null) {
+            log.error("订单编号错误:{}", outOrderNo);
+            throw new BizException("订单编号错误");
+        }
+        if (order.isWait()) {
+            throw new BizException("订单未支付，无法领取红包");
+        }
+        if (order.isClosed()) {
+            throw new BizException("订单已关闭，无法领取红包");
+        }
+        if (order.isRefund()) {
+            throw new BizException("订单已退款，无法领取红包");
+        }
+        if (PayOrder.RedPackState.receive.getCode().equals(order.getRedPackState())) {
+            throw new BizException("该笔订单红包已被领取");
+        }
+        if (!MoneyUtil.largeMoney(order.getRedPackAmount(), "0.00")) {
+            throw new BizException("该笔订单可领取红包金额为0.00");
+        }
+        return order;
     }
 
     @Override

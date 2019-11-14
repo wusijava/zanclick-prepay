@@ -13,6 +13,11 @@ public class JmsMessaging {
     public final static String ORDER_NOTIFY_MESSAGE = "order.notify.message";
 
     /**
+     * 通知，结算
+     * */
+    public final static String ORDER_RED_PACKET_MESSAGE = "order.red.packet.message";
+
+    /**
      * 支付订单状态变更
      * */
     public final static String ORDER_STATE_MESSAGE = "order.state.message";

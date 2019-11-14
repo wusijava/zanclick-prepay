@@ -3,6 +3,7 @@ package com.zanclick.prepay.authorize.util;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.response.*;
 import com.zanclick.prepay.authorize.dto.AuthorizeDTO;
+import com.zanclick.prepay.authorize.vo.Transfer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -86,4 +87,14 @@ public class AuthorizePayUtil {
         return AuthorizeClientUtil.refund(client,null,dto.toString());
     }
 
+    /**
+     * 单笔转账
+     *
+     * @param client
+     * @param transfer
+     * @return
+     */
+    public static AlipayFundTransToaccountTransferResponse transfer(AlipayClient client, Transfer transfer){
+        return AuthorizeClientUtil.transfer(client,null,transfer.toString());
+    }
 }

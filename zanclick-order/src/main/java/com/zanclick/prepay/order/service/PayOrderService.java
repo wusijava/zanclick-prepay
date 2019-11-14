@@ -36,6 +36,15 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      * @return
      */
     PayOrder queryByAuthNo(String authNo);
+
+
+    /**
+     * 根据 outOrderNo查找
+     *
+     * @param outOrderNo
+     * @return
+     */
+    PayOrder queryRedPacketOrder(String outOrderNo);
     /**
      * 查询并处理当前订单状态
      *

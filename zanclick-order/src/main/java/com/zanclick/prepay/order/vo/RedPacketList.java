@@ -2,8 +2,6 @@ package com.zanclick.prepay.order.vo;
 
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * @ Description   :  java类作用描述
  * @ Author        :  wusi
@@ -11,23 +9,23 @@ import java.util.Date;
  */
 @Data
 public class RedPacketList  {
-    //订单编号
-    private String orderNo;
-    //订单红包金额
+
+    private String outTradeNo;
+
+    private String outOrderNo;
+
     private String amount;
-    //订单门店渠道编码
+
     private String wayId;
-     //商户收款支付宝账号
-    private String sellerNo;
-    //红包领取时间
-    private Date createTime;
-    //红包状态
+
+    private String receiveNo;
+
+    private String createTime;
+
     private Integer state;
 
+    private String stateDesc;
 
-
-
-
-
+    private String reason;
 
 }
