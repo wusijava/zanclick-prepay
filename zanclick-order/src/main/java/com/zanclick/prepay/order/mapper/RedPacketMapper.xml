@@ -5,10 +5,10 @@
             <id column="id" property="id" jdbcType="BIGINT"/>
             <result column="amount" property="amount" jdbcType="VARCHAR"/>
             <result column="order_no" property="orderNo" jdbcType="VARCHAR"/>
-            <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
             <result column="receive_no" property="receiveNo" jdbcType="VARCHAR"/>
             <result column="app_id" property="appId" jdbcType="VARCHAR"/>
-            <result column="state" property="state" jdbcType="VARCHAR"/>
+            <result column="state" property="state" jdbcType="INTEGER"/>
             <result column="reason" property="reason" jdbcType="VARCHAR"/>
             <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
             <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
@@ -39,7 +39,7 @@
                     <if test="orderNo != null and orderNo != ''">
                         AND `order_no`=#{orderNo}
                     </if>
-                    <if test="createTime != null and createTime != ''">
+                    <if test="createTime != null">
                         AND `create_time`=#{createTime}
                     </if>
                     <if test="receiveNo != null and receiveNo != ''">
@@ -48,7 +48,7 @@
                     <if test="appId != null and appId != ''">
                         AND `app_id`=#{appId}
                     </if>
-                    <if test="state != null and state != ''">
+                    <if test="state != null">
                         AND `state`=#{state}
                     </if>
                     <if test="reason != null and reason != ''">
@@ -167,7 +167,7 @@
             <if test="orderNo != null and orderNo != ''">
                  `order_no`=#{orderNo},
             </if>
-            <if test="createTime != null and createTime != ''">
+            <if test="createTime != null">
                  `create_time`=#{createTime},
             </if>
             <if test="receiveNo != null and receiveNo != ''">
@@ -176,7 +176,7 @@
             <if test="appId != null and appId != ''">
                  `app_id`=#{appId},
             </if>
-            <if test="state != null and state != ''">
+            <if test="state != null">
                  `state`=#{state},
             </if>
             <if test="reason != null and reason != ''">

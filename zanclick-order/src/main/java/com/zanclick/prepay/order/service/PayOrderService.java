@@ -64,13 +64,6 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
     void handleSuccess(String outTradeNo,String authNo);
 
     /**
-     * 结算处理
-     * @param outTradeNo
-     *
-     * */
-    void settle(String outTradeNo);
-
-    /**
      * 向能力平台推送消息
      *
      * @param order
