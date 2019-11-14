@@ -24,4 +24,6 @@ public class QueryResult extends AuthorizeResponseParam {
 
     private String authNo;
 
+    private String buyerNo;
+
 }

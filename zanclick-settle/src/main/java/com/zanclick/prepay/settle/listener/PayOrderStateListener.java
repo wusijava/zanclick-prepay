@@ -27,6 +27,7 @@ public class PayOrderStateListener {
     static String outTradeNoKey = "outTradeNo";
     static String stateKey = "state";
     static String authNoKey = "authNo";
+    static String buyerNoKey = "buyerNo";
 
     @JmsListener(destination = JmsMessaging.ORDER_STATE_MESSAGE)
     public void getMessage(String message) {
@@ -38,6 +39,7 @@ public class PayOrderStateListener {
         String outTradeNo = object.getString(outTradeNoKey);
         String authNo = object.getString(authNoKey);
         Integer state = object.getInteger(stateKey);
+        String buyerNo = object.getString(buyerNoKey);
         PayOrder order = payOrderService.queryByOutTradeNo(outTradeNo);
         if (order == null){
             log.error("订单编号错误:{}", outTradeNo);
@@ -63,6 +65,7 @@ public class PayOrderStateListener {
         if (order.isPayed() || order.isClosed()){
             order.setFinishTime(new Date());
             order.setAuthNo(authNo);
+            order.setBuyerNo(buyerNo);
         }
         payOrderService.handlePayOrder(order);
     }

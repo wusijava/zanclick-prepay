@@ -262,6 +262,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
         }
         result.setState(order.getState());
         result.setAuthNo(order.getAuthNo());
+        result.setBuyerNo(order.getBuyerNo());
         result.setSuccess();
         return result;
     }

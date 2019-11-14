@@ -98,6 +98,7 @@ public class AuthorizeNotifyController extends BaseController {
         object.put("outTradeNo",order.getOutTradeNo());
         object.put("state",1);
         object.put("authNo",order.getAuthNo());
+        object.put("buyerNo",order.getBuyerNo());
         SendMessage.sendMessage(JmsMessaging.ORDER_STATE_MESSAGE, object.toJSONString());
     }
 }

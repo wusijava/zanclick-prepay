@@ -109,6 +109,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
                     payOrder.setState(PayOrder.State.payed.getCode());
                     payOrder.setFinishTime(new Date());
                     payOrder.setAuthNo(queryResult.getAuthNo());
+                    payOrder.setBuyerNo(queryResult.getBuyerNo());
                     object = new JSONObject();
                 } else if (AuthorizeOrder.State.failed.getCode().equals(queryResult.getState()) || AuthorizeOrder.State.closed.getCode().equals(queryResult.getState())) {
                     payOrder.setRequestNo(null);
@@ -124,6 +125,9 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             object.put("state",payOrder.getState());
             if (DataUtil.isNotEmpty(payOrder.getAuthNo())){
                 object.put("authNo",payOrder.getAuthNo());
+            }
+            if (DataUtil.isNotEmpty(payOrder.getBuyerNo())){
+                object.put("buyerNo",payOrder.getBuyerNo());
             }
             SendMessage.sendMessage(JmsMessaging.ORDER_STATE_MESSAGE, object.toJSONString());
             syncQueryState(payOrder.getOutTradeNo(),payOrder.getState());
@@ -219,8 +223,9 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         }
         JSONObject object = new JSONObject();
         object.put("outTradeNo",order.getOutTradeNo());
-        object.put("state",order.getState());
+        object.put("state",PayOrder.State.refund.getCode());
         SendMessage.sendMessage(JmsMessaging.ORDER_STATE_MESSAGE, object.toJSONString());
+        syncQueryState(order.getOutTradeNo(),PayOrder.State.refund.getCode());
         return null;
     }
 
