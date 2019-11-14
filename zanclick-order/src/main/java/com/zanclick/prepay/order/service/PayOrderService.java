@@ -37,7 +37,7 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      */
     PayOrder queryByAuthNo(String authNo);
     /**
-     * 根据 outOrderNo查找
+     * 查询并处理当前订单状态
      *
      * @param outTradeNo
      * @param outOrderNo
@@ -47,7 +47,7 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
 
 
     /**
-     * 处理支付订单的问题
+     * 处理订单状态问题
      *
      * @param order
      * @return
@@ -55,37 +55,45 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
     void handlePayOrder(PayOrder order);
 
     /**
-     * 处理成功支付订单
-     *
-     * @param outTradeNo
-     * @param authNo
-     * @return
-     */
-    void handleSuccess(String outTradeNo,String authNo);
-
-    /**
-     * 结算处理
-     * @param outTradeNo
-     *
-     * */
-    void settle(String outTradeNo);
-
-    /**
-     * 向能力平台推送消息
+     * 处理订单状态问题
      *
      * @param order
      * @return
      */
-    void sendMessage(PayOrder order);
+    void handleDealState(PayOrder order);
 
 
     /**
-     * 向能力平台推送消息
+     * 同步查询一分钟(数据库里的状态与传入的状态不一样的时候停止)
      *
      * @param outTradeNo
-     * @param type 0 需要结清 1不需要结清
+     * @param dealState 原来的处理状态
      * @return
      */
-    void refund(String outTradeNo,Integer type);
+    String syncQueryDealState(String outTradeNo,Integer dealState);
 
+    /**
+     * 同步查询一分钟(数据库里的状态与传入的状态一样的时候停止)
+     *
+     * @param outTradeNo
+     * @param state 原来的处理状态
+     * @return
+     */
+    String syncQueryState(String outTradeNo,Integer state);
+
+    /**
+     * 退款方法
+     *
+     * @param outOrderNo
+     * @param outTradeNo
+     * @return
+     */
+    String refund(String outTradeNo,String outOrderNo);
+    /**
+     * 退款方法
+     *
+     * @param order
+     * @return
+     */
+    String refund(PayOrder order);
 }
