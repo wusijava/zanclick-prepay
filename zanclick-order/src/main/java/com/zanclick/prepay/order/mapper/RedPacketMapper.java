@@ -6,7 +6,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @author admin
- * @date 2019-11-13 19:59:21
+ * @date 2019-11-14 12:01:55
  **/
 @Mapper
 public interface RedPacketMapper extends BaseMapper<RedPacket,Long> {

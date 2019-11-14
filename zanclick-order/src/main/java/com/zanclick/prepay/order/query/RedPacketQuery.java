@@ -15,8 +15,8 @@ public class RedPacketQuery extends RedPacket {
     private Integer limit;
 
     private Integer offset;
-
     private String startTime;
 
     private String endTime;
+
 }

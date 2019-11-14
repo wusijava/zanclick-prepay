@@ -12,6 +12,8 @@
             <result column="reason" property="reason" jdbcType="VARCHAR"/>
             <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
             <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
+            <result column="begin_time" property="beginTime" jdbcType="TIMESTAMP"/>
+            <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <sql id="table">red_packet</sql>
@@ -25,7 +27,9 @@
             `state`,
             `reason`,
             `way_id`,
-            `seller_no`
+            `seller_no`,
+            `begin_time`,
+            `end_time`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -60,8 +64,19 @@
                     <if test="sellerNo != null and sellerNo != ''">
                         AND `seller_no`=#{sellerNo}
                     </if>
+
+                <if test="startTime != null">
+                    and DATE_FORMAT(create_time,'%Y-%m-%d') >= #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
+                </if>
             </trim>
+
+
         </where>
+        order by create_time DESC
+
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
@@ -101,7 +116,9 @@
             `state`,
             `reason`,
             `way_id`,
-            `seller_no`
+            `seller_no`,
+            `begin_time`,
+            `end_time`
         )
         VALUES(
             #{id},
@@ -113,7 +130,9 @@
             #{state},
             #{reason},
             #{wayId},
-            #{sellerNo}
+            #{sellerNo},
+            #{beginTime},
+            #{endTime}
         )
     </insert>
 
@@ -130,7 +149,9 @@
             `state`,
             `reason`,
             `way_id`,
-            `seller_no`
+            `seller_no`,
+            `begin_time`,
+            `end_time`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -144,7 +165,9 @@
             #{cm.state},
             #{cm.reason},
             #{cm.wayId},
-            #{cm.sellerNo}
+            #{cm.sellerNo},
+            #{cm.beginTime},
+            #{cm.endTime}
             )
         </foreach>
     </insert>
@@ -187,6 +210,12 @@
             </if>
             <if test="sellerNo != null and sellerNo != ''">
                  `seller_no`=#{sellerNo},
+            </if>
+            <if test="beginTime != null">
+                 `begin_time`=#{beginTime},
+            </if>
+            <if test="endTime != null">
+                 `end_time`=#{endTime},
             </if>
         </set>
         WHERE id=#{id}

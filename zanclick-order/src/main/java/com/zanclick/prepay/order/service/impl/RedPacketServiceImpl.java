@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author admin
- * @date 2019-11-13 19:59:21
+ * @date 2019-11-14 12:01:55
  **/
 @Service
 public class RedPacketServiceImpl extends BaseMybatisServiceImpl<RedPacket,Long> implements RedPacketService {

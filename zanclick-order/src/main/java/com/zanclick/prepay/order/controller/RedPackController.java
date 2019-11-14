@@ -32,20 +32,20 @@ import java.util.List;
 @RequestMapping(value = "/api/web/pay/redpacket")
 public class RedPackController extends BaseController {
     @Autowired
-    private RedPacketService redPacketService;
+   private RedPacketService RedPacketService;
 
     @ApiOperation(value="红包列表")
     @RequestMapping("/list")
     public Response<Page<RedPacketList>> getPacketList(RedPacketQuery query){
-
+        System.out.println(query.getOrderNo());
         if (DataUtil.isEmpty(query.getPage())) {
             query.setPage(0);
         }
         if (DataUtil.isEmpty(query.getLimit())) {
-            query.setLimit(3);
+            query.setLimit(10);
         }
         Pageable pageable = PageRequest.of(query.getPage(), query.getLimit());
-        Page<RedPacket> page = redPacketService.queryPage(query, pageable);
+        Page<RedPacket> page = RedPacketService.queryPage(query, pageable);
         List<RedPacketList> voList = new ArrayList<>();
         for (RedPacket redPacket : page.getContent()) {
             voList.add(getListVo(redPacket));
