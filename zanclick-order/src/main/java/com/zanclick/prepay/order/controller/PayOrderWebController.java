@@ -3,8 +3,9 @@ package com.zanclick.prepay.order.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
-import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.common.base.controller.BaseController;
+import com.zanclick.prepay.common.config.JmsMessaging;
+import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
@@ -72,13 +73,20 @@ public class PayOrderWebController extends BaseController {
     @PostMapping(value = "/settle")
     @ResponseBody
     public Response settle(String outTradeNo) {
-        try {
-            payOrderService.settle(outTradeNo);
-            return Response.ok("处理成功");
-        } catch (Exception e) {
-            log.error("结算处理失败:{}", e.getMessage());
+        if (DataUtil.isEmpty(outTradeNo)){
+            return Response.fail("缺少外部订单号");
         }
-        return Response.fail("处理失败");
+        PayOrder order = payOrderService.queryByOutTradeNo(outTradeNo);
+        if (order == null){
+            return Response.fail("订单编号异常");
+        }
+        if (order.isSettled() || order.isSettleWait()) {
+            log.error("订单状态异常:{},{}", outTradeNo, order.getDealStateDesc());
+            return Response.fail("处理成功");
+        }
+        SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, outTradeNo);
+        payOrderService.syncQueryDealState(outTradeNo,order.getDealState());
+        return Response.ok("处理成功");
     }
 
     @ApiOperation(value = "导出交易信息")

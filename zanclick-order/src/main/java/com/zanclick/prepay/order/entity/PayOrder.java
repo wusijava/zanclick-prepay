@@ -252,9 +252,32 @@ public class PayOrder implements Identifiable<Long> {
         }
     }
 
+    public Boolean isRepaymentSuccess() {
+        return DealState.repayment_success.getCode().equals(state);
+    }
+
+    public Boolean isTodaySign() {
+        return DealState.today_sign.getCode().equals(state);
+    }
+
+    public Boolean isSettleWait() {
+        return DealState.settle_wait.getCode().equals(state);
+    }
+
+    public Boolean isNoticeFail() {
+        return DealState.notice_fail.getCode().equals(state);
+    }
+    public Boolean isSettled() {
+        return DealState.settled.getCode().equals(state);
+    }
     public Boolean isPayed() {
         return State.payed.getCode().equals(state);
     }
+
+    public Boolean isRefund() {
+        return State.refund.getCode().equals(state);
+    }
+
 
     public Boolean isClosed() {
         return State.closed.getCode().equals(state);

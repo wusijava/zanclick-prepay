@@ -21,4 +21,7 @@ public class QueryResult extends AuthorizeResponseParam {
      */
     private String requestNo;
 
+
+    private String authNo;
+
 }

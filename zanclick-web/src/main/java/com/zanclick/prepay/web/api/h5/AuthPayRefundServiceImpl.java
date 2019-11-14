@@ -1,13 +1,9 @@
 package com.zanclick.prepay.web.api.h5;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.authorize.vo.Refund;
-import com.zanclick.prepay.authorize.vo.RefundResult;
-import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
-import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.service.PayOrderService;
 import com.zanclick.prepay.web.api.AbstractCommonService;
@@ -26,8 +22,6 @@ import org.springframework.stereotype.Service;
 @Service("comZanclickRefundAuthPay")
 public class AuthPayRefundServiceImpl extends AbstractCommonService implements ApiRequestResolver {
     @Autowired
-    private AuthorizePayService authorizePayService;
-    @Autowired
     private PayOrderService payOrderService;
 
     @Override
@@ -39,7 +33,12 @@ public class AuthPayRefundServiceImpl extends AbstractCommonService implements A
             verifyCipherJson(appId, cipherJson);
             ApiPayRefund query = parser(request, ApiPayRefund.class);
             PayOrder order = queryByOutTradeNoOrOutOrderNo(query.getOrderNo(),query.getOutOrderNo());
-            refundOrder(order);
+            String reason = payOrderService.refund(order);
+            if (reason != null){
+                param.setMessage(reason);
+                param.setFail();
+                return param.toString();
+            }
             param.setData(getRefundResult(order));
             return param.toString();
         } catch (BizException be) {
@@ -64,32 +63,6 @@ public class AuthPayRefundServiceImpl extends AbstractCommonService implements A
         object.put("orderStatus", "PAY_REFUND");
         return object;
     }
-
-    /**
-     * 退款订单相关
-     * @param order
-     * */
-    private void refundOrder(PayOrder order){
-        if (!order.isPayed()){
-            log.error("交易状态异常:{}",order.getOutTradeNo());
-            throw new BizException("交易状态异常");
-        }
-        Refund dto = new Refund();
-        dto.setOutTradeNo(order.getOutTradeNo());
-        dto.setOutRequestNo(StringUtils.getTradeNo());
-        dto.setAmount(order.getAmount());
-        dto.setType(0);
-        dto.setReason("交易退款");
-        RefundResult result = authorizePayService.refund(dto);
-        if (result.isSuccess()) {
-            order.setState(PayOrder.State.refund.getCode());
-            payOrderService.handlePayOrder(order);
-            return;
-        }
-        log.error("交易退款失败:{},{}",order.getOutTradeNo(),result.getMessage());
-        throw new BizException("result.getMessage()");
-    }
-
 
     /**
      * 根据订单号查询

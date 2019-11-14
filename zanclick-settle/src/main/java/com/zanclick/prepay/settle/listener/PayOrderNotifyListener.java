@@ -70,8 +70,8 @@ public class PayOrderNotifyListener {
             log.error("通知结果：{}", result);
             if (result == null) {
                 order.setDealState(PayOrder.DealState.notice_fail.getCode());
-                order.setReason("未知福哦呜");
-                payOrderService.updateById(order);
+                order.setReason("未知错误");
+                payOrderService.handleDealState(order);
             }
             try {
                 RespInfo info = JSONObject.parseObject(result, RespInfo.class);
@@ -79,21 +79,21 @@ public class PayOrderNotifyListener {
                     log.error("能力系统异常:{},{}", order.getRequestNo(), info.getRespdesc());
                     order.setDealState(PayOrder.DealState.notice_fail.getCode());
                     order.setReason(info.getRespdesc());
-                    payOrderService.updateById(order);
+                    payOrderService.handleDealState(order);
                     return;
                 }
                 if (!info.getResult().isSuccess()) {
                     log.error("能力业务异常:{},{}", order.getRequestNo(), info.getResult().getRetmsg());
                     order.setDealState(PayOrder.DealState.notice_fail.getCode());
                     order.setReason(info.getResult().getRetmsg());
-                    payOrderService.updateById(order);
+                    payOrderService.handleDealState(order);
                     return;
                 }
             } catch (Exception e) {
                 log.error("通知结果转换出错:{},{},{}", order.getRequestNo(), result, e);
                 order.setDealState(PayOrder.DealState.notice_fail.getCode());
                 order.setReason("通知结果转换出错");
-                payOrderService.updateById(order);
+                payOrderService.handleDealState(order);
                 return;
             }
         }
@@ -111,7 +111,7 @@ public class PayOrderNotifyListener {
             if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
                 order.setDealState(PayOrder.DealState.today_sign.getCode());
                 order.setReason("当天签约，无法打款");
-                payOrderService.updateById(order);
+                payOrderService.handleDealState(order);
                 return;
             }
         }
@@ -126,7 +126,7 @@ public class PayOrderNotifyListener {
             order.setDealState(PayOrder.DealState.settle_fail.getCode());
             order.setReason(settleResult.getMessage());
         }
-        payOrderService.updateById(order);
+        payOrderService.handleDealState(order);
     }
 
     /**

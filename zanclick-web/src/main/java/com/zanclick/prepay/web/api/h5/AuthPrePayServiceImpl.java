@@ -81,7 +81,7 @@ public class AuthPrePayServiceImpl extends AbstractCommonService implements ApiR
             if (result.isSuccess()) {
                 payOrder.setRequestNo(result.getRequestNo());
                 payOrder.setQrCodeUrl(result.getQrCodeUrl());
-                payOrderService.handlePayOrder(payOrder);
+                payOrderService.updateById(payOrder);
             }else {
                 log.error("冻结订单创建失败:{},{}",pay.getOutOrderNo(),result.getMessage());
                 throw new BizException(result.getMessage());
