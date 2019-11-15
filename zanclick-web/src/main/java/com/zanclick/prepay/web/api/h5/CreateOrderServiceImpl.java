@@ -10,9 +10,7 @@ import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.order.entity.PayOrder;
-import com.zanclick.prepay.order.entity.SettleRate;
 import com.zanclick.prepay.order.service.PayOrderService;
-import com.zanclick.prepay.order.service.SettleRateService;
 import com.zanclick.prepay.setmeal.entity.SetMeal;
 import com.zanclick.prepay.setmeal.service.SetMealService;
 import com.zanclick.prepay.web.api.AbstractCommonService;
@@ -39,8 +37,6 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
     private SetMealService setMealService;
     @Autowired
     private PayOrderService payOrderService;
-    @Autowired
-    private SettleRateService settleRateService;
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
 
@@ -112,6 +108,7 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder = new PayOrder();
         payOrder.setPackageNo(pay.getPackageNo());
         payOrder.setAmount(meal.getTotalAmount());
+        payOrder.setSettleAmount(meal.getSettleAmount());
         payOrder.setAppId(appId);
         payOrder.setStoreName(merchant.getStoreName());
         payOrder.setDealState(PayOrder.DealState.notice_wait.getCode());
@@ -140,9 +137,6 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
             payOrder.setRedPackState(PayOrder.RedPackState.receive.getCode());
             payOrder.setSellerNo("11111111111");
         }
-        SettleRate rate = settleRateService.queryByAppId(payOrder.getAppId(),payOrder.getNum());
-        String settleAmount = MoneyUtil.divide(payOrder.getAmount(),rate.getRate());
-        payOrder.setSettleAmount(settleAmount);
         String eachAmount = MoneyUtil.divide(payOrder.getAmount(),payOrder.getNum().toString());
         String amount = MoneyUtil.multiply(eachAmount,String.valueOf(payOrder.getNum()-1));
         String firstAmount = MoneyUtil.subtract(payOrder.getAmount(),amount);

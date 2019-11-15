@@ -97,7 +97,7 @@ public class PayOrderRedPacketListener {
         transfer.setPayee_account(packet.getReceiveNo());
         transfer.setPayee_type("ALIPAY_LOGONID");
         transfer.setPayer_show_name("点赞科技有限公司");
-        transfer.setRemark(packet.getTitle()+"_"+packet.getOutOrderNo()+"红包");
+        transfer.setRemark(packet.getOutOrderNo()+"_红包");
         AlipayFundTransToaccountTransferResponse response = AuthorizePayUtil.transfer(client,transfer);
         if (response.isSuccess()){
             packet.setState(RedPacket.State.success.getCode());

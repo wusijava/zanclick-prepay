@@ -7,6 +7,7 @@
             <result column="trade_mark" property="tradeMark" jdbcType="VARCHAR"/>
             <result column="app_id" property="appId" jdbcType="VARCHAR"/>
             <result column="total_amount" property="totalAmount" jdbcType="VARCHAR"/>
+            <result column="settle_amount" property="settleAmount" jdbcType="VARCHAR"/>
             <result column="num" property="num" jdbcType="INTEGER"/>
             <result column="amount" property="amount" jdbcType="VARCHAR"/>
             <result column="red_pack_amount" property="redPackAmount" jdbcType="VARCHAR"/>
@@ -22,6 +23,7 @@
             `trade_mark`,
             `app_id`,
             `total_amount`,
+            `settle_amount`,
             `num`,
             `amount`,
             `red_pack_amount`,
@@ -46,6 +48,9 @@
                     </if>
                     <if test="totalAmount != null and totalAmount != ''">
                         AND `total_amount`=#{totalAmount}
+                    </if>
+                    <if test="settleAmount != null and settleAmount != ''">
+                        AND `settle_amount`=#{settleAmount}
                     </if>
                     <if test="num != null">
                         AND `num`=#{num}
@@ -102,6 +107,7 @@
             `trade_mark`,
             `app_id`,
             `total_amount`,
+            `settle_amount`,
             `num`,
             `amount`,
             `red_pack_amount`,
@@ -115,6 +121,7 @@
             #{tradeMark},
             #{appId},
             #{totalAmount},
+            #{settleAmount},
             #{num},
             #{amount},
             #{redPackAmount},
@@ -133,6 +140,7 @@
             `trade_mark`,
             `app_id`,
             `total_amount`,
+            `settle_amount`,
             `num`,
             `amount`,
             `red_pack_amount`,
@@ -148,6 +156,7 @@
             #{cm.tradeMark},
             #{cm.appId},
             #{cm.totalAmount},
+            #{cm.settleAmount},
             #{cm.num},
             #{cm.amount},
             #{cm.redPackAmount},
@@ -189,6 +198,9 @@
             </if>
             <if test="totalAmount != null and totalAmount != ''">
                  `total_amount`=#{totalAmount},
+            </if>
+            <if test="settleAmount != null and settleAmount != ''">
+                 `settle_amount`=#{settleAmount},
             </if>
             <if test="num != null">
                  `num`=#{num},

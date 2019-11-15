@@ -13,6 +13,7 @@ import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -152,6 +153,7 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         merchant.setSellerNo(dto.getSellerNo());
         merchant.setState(dto.getStateDesc());
         merchant.setReason(dto.getReason());
+        merchant.setCreateTime(DateUtil.formatDate(dto.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
         return merchant;
     }
 

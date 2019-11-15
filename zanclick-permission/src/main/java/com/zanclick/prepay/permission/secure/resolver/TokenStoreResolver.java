@@ -15,7 +15,7 @@ public interface TokenStoreResolver {
 
     Long delaysAllowed = 100L;
 
-    Long times = 1000 * 60 *60 *3L;
+    Long times = 1000 * 60 *60 *4L;
 
     /**
      * token存储

@@ -44,7 +44,7 @@ public class PayOrderNotifyListener {
 
     @JmsListener(destination = JmsMessaging.ORDER_NOTIFY_MESSAGE)
     public void getMessage(String message) {
-        PayOrder order = payOrderService.queryByOutTradeNo(getOutTradeNo(message));
+        PayOrder order = payOrderService.queryByOutTradeNo(message);
         if (order == null){
             log.error("数据有问题:{}", order.getRequestNo());
             return;
@@ -106,27 +106,31 @@ public class PayOrderNotifyListener {
      * @param order
      */
     private void settle(PayOrder order) {
-        if (order.getDealState().equals(PayOrder.DealState.notice_wait.getCode()) || order.getDealState().equals(PayOrder.DealState.notice_fail.getCode())) {
-            AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(order.getMerchantNo());
-            if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
-                order.setDealState(PayOrder.DealState.today_sign.getCode());
-                order.setReason("当天签约，无法打款");
-                payOrderService.handleDealState(order);
-                return;
+        try {
+            if (order.getDealState().equals(PayOrder.DealState.notice_wait.getCode()) || order.getDealState().equals(PayOrder.DealState.notice_fail.getCode())) {
+                AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(order.getMerchantNo());
+                if (DateUtil.isSameDay(merchant.getCreateTime(), new Date())) {
+                    order.setDealState(PayOrder.DealState.today_sign.getCode());
+                    order.setReason("当天签约，无法打款");
+                    payOrderService.handleDealState(order);
+                    return;
+                }
             }
+            SettleDTO dto = new SettleDTO();
+            dto.setAmount(order.getSettleAmount());
+            dto.setOutTradeNo(order.getOutTradeNo());
+            SettleResult settleResult = authorizePayService.settle(dto);
+            if (settleResult.isSuccess()) {
+                order.setDealState(PayOrder.DealState.settle_wait.getCode());
+                order.setReason("等待结算");
+            } else {
+                order.setDealState(PayOrder.DealState.settle_fail.getCode());
+                order.setReason(settleResult.getMessage());
+            }
+            payOrderService.handleDealState(order);
+        }catch (Exception e){
+            log.error("结算失败:{},{}",order.getOutTradeNo(),e);
         }
-        SettleDTO dto = new SettleDTO();
-        dto.setAmount(order.getSettleAmount());
-        dto.setOutTradeNo(order.getOutTradeNo());
-        SettleResult settleResult = authorizePayService.settle(dto);
-        if (settleResult.isSuccess()) {
-            order.setDealState(PayOrder.DealState.settle_wait.getCode());
-            order.setReason("等待结算");
-        } else {
-            order.setDealState(PayOrder.DealState.settle_fail.getCode());
-            order.setReason(settleResult.getMessage());
-        }
-        payOrderService.handleDealState(order);
     }
 
     /**
@@ -161,22 +165,6 @@ public class PayOrderNotifyListener {
             return "TRADE_REFUND";
         }
         return "TRADE_CLOSED";
-    }
-
-
-    /**
-     * 版本迭代，为了防止有存量数据
-     *
-     * @param message
-     */
-    private String getOutTradeNo(String message) {
-        try {
-            PayOrder order = JSONObject.parseObject(message, PayOrder.class);
-            return order.getOutTradeNo();
-        } catch (Exception e) {
-            log.error("转换出错:{}", message);
-            return message;
-        }
     }
 }
 

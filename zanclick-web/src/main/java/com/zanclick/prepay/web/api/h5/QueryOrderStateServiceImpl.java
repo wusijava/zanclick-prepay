@@ -47,7 +47,7 @@ public class QueryOrderStateServiceImpl extends AbstractCommonService implements
             }
             QueryOrderStateResult result = queryOrder(query);
             StringBuffer sb = new StringBuffer();
-            sb.append(h5Server+"/h5/red/packet/receive");
+            sb.append(h5Server+"/red/packet/receive");
             sb.append("?appId=" + appId);
             sb.append("&outOrderNo=" + query.getOutOrderNo());
             result.setUrl(sb.toString());

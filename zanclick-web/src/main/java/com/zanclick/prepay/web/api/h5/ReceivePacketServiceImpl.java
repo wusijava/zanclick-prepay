@@ -69,11 +69,11 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
         PayOrder order = payOrderService.queryRedPacketOrder(query.getOutOrderNo());
         if (!order.getWayId().equals(query.getWayId())) {
             log.error("无法领取其他门店的红包:{}", query.getWayId());
-            throw new BizException("无法领取其他门店的红包");
+            throw new BizException("渠道编码不正确");
         }
         if (DataUtil.isEmpty(query.getReceiveNo())) {
             log.error("请填写领取账号:{}", query.getReceiveNo());
-            throw new BizException("请填写领取账号");
+            throw new BizException("请填写领取支付宝账号");
         }
         AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(order.getMerchantNo());
         if (!merchant.isSuccess()) {
@@ -82,7 +82,7 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
         }
         if (AuthorizeMerchant.RedPackState.closed.getCode().equals(merchant.getRedPackState())) {
             log.error("本商户已关闭领取红包权限:{}", merchant.getWayId());
-            throw new BizException("本商户已关闭领取红包权限");
+            throw new BizException("当前商户暂无法领取红包");
         }
         if (DataUtil.isNotEmpty(merchant.getRedPackSellerNo()) && !query.getReceiveNo().trim().equals(merchant.getRedPackSellerNo())) {
             log.error("本商户已指定红包领取账号，请使用指定账号领取:{}", merchant.getWayId());

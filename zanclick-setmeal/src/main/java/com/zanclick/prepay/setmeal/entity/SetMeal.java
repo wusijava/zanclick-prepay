@@ -34,6 +34,8 @@ public class SetMeal implements Identifiable<Long> {
      */
     private String totalAmount;
 
+    private String settleAmount;
+
     /**
      * 分期期数
      **/
