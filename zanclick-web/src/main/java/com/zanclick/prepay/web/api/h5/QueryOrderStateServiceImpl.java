@@ -50,7 +50,12 @@ public class QueryOrderStateServiceImpl extends AbstractCommonService implements
             sb.append(h5Server+"/red/packet/receive");
             sb.append("?appId=" + appId);
             sb.append("&outOrderNo=" + query.getOutOrderNo());
+
+            StringBuffer sb1 = new StringBuffer();
+            sb1.append(h5Server+"/h5/auth/success");
+            sb1.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
             result.setUrl(sb.toString());
+            result.setSuccessUrl(sb1.toString());
             param.setData(result);
             return param.toString();
         } catch (BizException be) {
