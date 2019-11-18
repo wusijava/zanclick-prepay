@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
 import java.util.Date;
 
 /**
@@ -57,12 +56,7 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
                 param.setMessage(check);
                 return param.toString();
             }
-            JSONObject object = createPayOrder(dto, appId);
-            StringBuffer sb = new StringBuffer();
-            sb.append(h5Server+"/order/orderConfirmation");
-            sb.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
-            object.put("url",sb.toString());
-            param.setData(object);
+            param.setData(createPayOrder(dto, appId));
             return param.toString();
         } catch (BizException be) {
             param.setMessage(be.getMessage());
@@ -154,6 +148,7 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         object.put("orderNo",payOrder.getOutTradeNo());
         object.put("totalMoney",payOrder.getAmount());
         object.put("eachMoney",payOrder.getEachMoney());
+        object.put("url",h5Server+"/order/orderConfirmation");
         return object;
     }
 }

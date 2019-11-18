@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.net.URLEncoder;
-
 /**
  * 查询并修改当前订单状态
  *
@@ -45,18 +43,7 @@ public class QueryOrderStateServiceImpl extends AbstractCommonService implements
                 param.setFail();
                 return param.toString();
             }
-            QueryOrderStateResult result = queryOrder(query);
-            StringBuffer sb = new StringBuffer();
-            sb.append(h5Server+"/red/packet/receive");
-            sb.append("?appId=" + appId);
-            sb.append("&outOrderNo=" + query.getOutOrderNo());
-
-            StringBuffer sb1 = new StringBuffer();
-            sb1.append(h5Server+"/h5/auth/success");
-            sb1.append("?appId=" + appId).append("&cipherJson=" + URLEncoder.encode(cipherJson, "utf-8"));
-            result.setUrl(sb.toString());
-            result.setSuccessUrl(sb1.toString());
-            param.setData(result);
+            param.setData(queryOrder(query,appId));
             return param.toString();
         } catch (BizException be) {
             log.error("查询订单:{}", be);
@@ -73,9 +60,10 @@ public class QueryOrderStateServiceImpl extends AbstractCommonService implements
      * 查询交易详情
      *
      * @param queryOrder
+     * @param appId
      * @return
      */
-    private QueryOrderStateResult queryOrder(QueryOrder queryOrder) {
+    private QueryOrderStateResult queryOrder(QueryOrder queryOrder,String appId) {
         QueryOrderStateResult result = new QueryOrderStateResult();
         PayOrder order = payOrderService.queryAndHandlePayOrder(queryOrder.getOrderNo(),queryOrder.getOutOrderNo());
         result.setOrderNo(order.getOutTradeNo());
@@ -83,6 +71,11 @@ public class QueryOrderStateServiceImpl extends AbstractCommonService implements
         result.setOutOrderNo(order.getOutOrderNo());
         result.setTitle(order.getTitle());
         result.setTotalMoney(order.getAmount());
+        StringBuffer sb = new StringBuffer();
+        sb.append(h5Server+"/red/packet/receive");
+        sb.append("?appId=" + appId);
+        sb.append("&outOrderNo=" + order.getOutOrderNo());
+        result.setUrl(sb.toString());
         return result;
     }
 
