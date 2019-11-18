@@ -152,6 +152,11 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     @Override
     public void handleDealState(PayOrder order) {
         this.updateById(order);
+        if (PayOrder.DealState.repayment_success.getCode().equals(order.getDealState())){
+            PayRefundOrder refundOrder = payRefundOrderService.queryByOutTradeNo(order.getOutTradeNo());
+            refundOrder.setRepaymentState(PayRefundOrder.RepaymentState.success.getCode());
+            payRefundOrderService.updateById(refundOrder);
+        }
     }
 
     @Override
@@ -301,7 +306,8 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
      */
     private Integer getRepaymentState(Integer state) {
         if (PayOrder.DealState.settled.getCode().equals(state)) {
-            return PayRefundOrder.RepaymentState.no_paid.getCode();
+            //TODO 这里改成默认已回款
+            return PayRefundOrder.RepaymentState.paid.getCode();
         } else {
             return PayRefundOrder.RepaymentState.no_need_paid.getCode();
         }
@@ -314,7 +320,8 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
      */
     private Integer getRedPacketState(Integer state) {
         if (PayOrder.RedPackState.un_receive.getCode().equals(state)) {
-            return PayRefundOrder.RedPacketState.un_receive.getCode();
+            //TODO 这里改成默认已回款
+            return PayRefundOrder.RedPacketState.refund.getCode();
         } else {
             return PayRefundOrder.RedPacketState.receive.getCode();
         }
