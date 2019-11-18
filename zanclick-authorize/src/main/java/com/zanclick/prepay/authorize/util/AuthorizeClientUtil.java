@@ -265,7 +265,6 @@ public class AuthorizeClientUtil {
         try {
             _log.error("单笔转账:{}", JSONObject.toJSONString(request));
             response = client.execute(request, null, appAuthToken);
-            _log.error("单笔转账:{}", JSONObject.toJSONString(request));
         }catch (Exception e){
             _log.error("单笔转账：{}", e);
         }
