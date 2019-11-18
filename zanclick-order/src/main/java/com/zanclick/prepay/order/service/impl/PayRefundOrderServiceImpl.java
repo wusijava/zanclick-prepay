@@ -27,7 +27,6 @@ public class PayRefundOrderServiceImpl extends BaseMybatisServiceImpl<PayRefundO
     @Autowired
     private MyBankSupplyChainService myBankSupplyChainService;
 
-
     @Override
     protected BaseMapper<PayRefundOrder, Long> getBaseMapper() {
         return payRefundOrderMapper;
@@ -48,11 +47,31 @@ public class PayRefundOrderServiceImpl extends BaseMybatisServiceImpl<PayRefundO
             log.error("订单数据异常，无法结清,{}",outTradeNo);
             throw new BizException("订单数据异常");
         }
-        if (refundOrder.getRepaymentState().equals(PayRefundOrder.RepaymentState.no_paid.getCode())){
+        if (PayRefundOrder.RepaymentState.no_paid.getCode().equals(refundOrder.getRepaymentState())
+                || PayRefundOrder.RepaymentState.no_need_paid.getCode().equals(refundOrder.getRepaymentState())
+                || PayRefundOrder.RepaymentState.success.getCode().equals(refundOrder.getRepaymentState())){
             log.error("未回款，无法结清,{}",outTradeNo);
-            throw new BizException("未回款，无法结清");
+            throw new BizException("无法结清");
         }
         myBankSupplyChainService.tradeRepay(refundOrder.getAuthNo());
+        syncQueryState(outTradeNo,refundOrder.getRepaymentState());
+    }
+
+    @Override
+    public String syncQueryState(String outTradeNo, Integer state) {
+        int times = 30;
+        for (int i = 0; i <= times; i++) {
+            PayRefundOrder order = this.queryByOutTradeNo(outTradeNo);
+            if (!state.equals(order.getRepaymentState())) {
+                return null;
+            }
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        return "结清超时，请稍后再试";
     }
 
     @Override

@@ -2,7 +2,6 @@ package com.zanclick.prepay.settle.listener;
 
 import com.alipay.api.AlipayClient;
 import com.alipay.api.response.AlipayFundTransToaccountTransferResponse;
-import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.util.AuthorizePayUtil;
 import com.zanclick.prepay.authorize.vo.Transfer;
