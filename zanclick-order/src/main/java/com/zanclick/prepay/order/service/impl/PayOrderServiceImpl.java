@@ -321,9 +321,9 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     private Integer getRedPacketState(Integer state) {
         if (PayOrder.RedPackState.un_receive.getCode().equals(state)) {
             //TODO 这里改成默认已回款
-            return PayRefundOrder.RedPacketState.refund.getCode();
+            return PayRefundOrder.RedPacketState.un_receive.getCode();
         } else {
-            return PayRefundOrder.RedPacketState.receive.getCode();
+            return PayRefundOrder.RedPacketState.refund.getCode();
         }
     }
 }
