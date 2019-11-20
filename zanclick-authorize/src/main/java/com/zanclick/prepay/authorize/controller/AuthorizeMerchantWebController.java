@@ -112,7 +112,13 @@ public class AuthorizeMerchantWebController extends BaseController {
         List<AuthorizeMerchant> merchantList = authorizeMerchantService.queryList(query);
         List<RegisterMerchant> registerMerchantList = new ArrayList<>();
         for (AuthorizeMerchant merchant : merchantList) {
-            registerMerchantList.add(authorizeMerchantService.getRegisterMerchant(merchant));
+            RegisterMerchant registerMerchant = authorizeMerchantService.getRegisterMerchant(merchant);
+            String reason = registerMerchant.check();
+            if (reason != null){
+                log.error("导入商户数据有误:{},{}",registerMerchant.getWayId(),reason);
+                continue;
+            }
+            registerMerchantList.add(registerMerchant);
         }
         ExcelDto dto = new ExcelDto();
         dto.setHeaders(RegisterMerchant.headers);

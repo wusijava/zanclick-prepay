@@ -2,6 +2,7 @@ package com.zanclick.prepay.authorize.vo;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.entity.Param;
+import com.zanclick.prepay.common.utils.StringUtils;
 import lombok.Data;
 
 /**
@@ -116,8 +117,14 @@ public class RegisterMerchant extends Param {
         if (checkNull(contactPhone)) {
             return "缺少联系人电话";
         }
+        if (!StringUtils.isPhone(contactPhone)){
+            return "联系人电话格式不正确";
+        }
         if (checkNull(sellerNo)) {
             return "缺少收款支付宝账号";
+        }
+        if (!StringUtils.isPhone(sellerNo) && !StringUtils.isEmail(sellerNo)){
+            return "收款支付宝账号格式不正确";
         }
         if (checkNull(appId)) {
             return "缺少appId";

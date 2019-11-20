@@ -30,4 +30,6 @@ public class LoginUser implements Serializable {
     private String salt;
 
     private String mobile;
+
+    private String storeMarkCode;
 }

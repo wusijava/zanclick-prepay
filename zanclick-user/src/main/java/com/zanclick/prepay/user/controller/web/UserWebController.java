@@ -4,6 +4,7 @@ import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.entity.RequestContext;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.user.entity.User;
 import com.zanclick.prepay.user.query.UserQuery;
 import com.zanclick.prepay.user.service.UserService;
@@ -71,5 +72,34 @@ public class UserWebController extends BaseController {
         info.setUid(user.getUid());
         return Response.ok(info);
     }
+
+
+    @ApiOperation(value = "修改登录密码")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "oldPassword", value = "旧密码", required = true, dataType = "Integer", paramType = "form"),
+            @ApiImplicitParam(name = "newPassword", value = "新密码", required = true, dataType = "Integer", paramType = "form"),
+
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
+    @RequestMapping(value = "/changePassword", method = RequestMethod.POST)
+    @ResponseBody
+    public Response changePassword(String oldPassword, String newPassword) {
+        if (DataUtil.isEmpty(oldPassword)) {
+            return Response.fail("缺少原密码");
+        }
+        if (DataUtil.isEmpty(newPassword)) {
+            return Response.fail("缺少新密码");
+        }
+        if (StringUtils.isChinese(newPassword)) {
+            return Response.fail("密码不能含有中文字符");
+        }
+        RequestContext.RequestUser user = RequestContext.getCurrentUser();
+        String result = userService.changePassword(Long.valueOf(user.getId()), user.getSalt(), user.getPassword(), oldPassword, newPassword);
+        if (result != null) {
+            return Response.fail(result);
+        }
+        return Response.ok("修改成功，请重新登录");
+    }
+
 
 }

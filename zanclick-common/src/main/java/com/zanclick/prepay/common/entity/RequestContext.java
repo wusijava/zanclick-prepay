@@ -45,5 +45,7 @@ public class RequestContext {
         private String mobile;
 
         private String salt;
+
+        private String storeMarkCode;
     }
 }
