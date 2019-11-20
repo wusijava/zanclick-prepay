@@ -1,17 +1,17 @@
 package com.zanclick.prepay.order.controller;
 
 import com.zanclick.prepay.common.base.controller.BaseController;
-import com.zanclick.prepay.common.config.JmsMessaging;
-import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
-import com.zanclick.prepay.order.entity.PayOrder;
+import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.order.entity.PayRefundOrder;
 import com.zanclick.prepay.order.query.PayRefundOrderQuery;
 import com.zanclick.prepay.order.service.PayRefundOrderService;
 import com.zanclick.prepay.order.vo.PayRefundOrderWebList;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +45,9 @@ public class PayRefundOrderWebController extends BaseController {
     private String excelDownloadUrl;
 
     @ApiOperation(value = "交易列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
     @PostMapping(value = "/list")
     @ResponseBody
     public Response<Page<PayRefundOrderWebList>> list(PayRefundOrderQuery query) {
@@ -67,6 +69,9 @@ public class PayRefundOrderWebController extends BaseController {
 
 
     @ApiOperation(value = "改动红包回款状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
     @PostMapping(value = "/changeRedPacketState")
     @ResponseBody
     public Response<String> changeRedPacketState(Long id) {
@@ -78,23 +83,28 @@ public class PayRefundOrderWebController extends BaseController {
 
 
     @ApiOperation(value = "结算打款")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
     @PostMapping(value = "/settle")
     @ResponseBody
     public Response settle(String outTradeNo) {
         try {
             payRefundOrderService.settle(outTradeNo);
-        }catch (BizException e){
-            log.error("结清失败:{}",e);
+        } catch (BizException e) {
+            log.error("结清失败:{}", e);
             return Response.fail(e.getMessage());
-        }catch (Exception e){
-            log.error("结清失败:{}",e);
+        } catch (Exception e) {
+            log.error("结清失败:{}", e);
             return Response.fail("结清失败");
         }
-
         return Response.ok("处理成功");
     }
 
     @ApiOperation(value = "改动垫资回款状态")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
     @PostMapping(value = "/changeRepaymentState")
     @ResponseBody
     public Response<String> changeRepaymentState(Long id) {
@@ -107,11 +117,9 @@ public class PayRefundOrderWebController extends BaseController {
     /**
      * 获取显示Modal
      *
-     * @param record
+     * @param order
      * @return
      */
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     private PayRefundOrderWebList getListVo(PayRefundOrder order) {
         PayRefundOrderWebList webList = new PayRefundOrderWebList();
         webList.setAmount(order.getAmount());
@@ -127,11 +135,8 @@ public class PayRefundOrderWebController extends BaseController {
         webList.setStateDesc(order.getStateDesc());
         webList.setRepaymentStateDesc(order.getRepaymentStateDesc());
         webList.setRedPacketStateDesc(order.getRedPacketDesc());
-        webList.setCreateTime(sdf.format(order.getCreateTime()));
-        webList.setFinishTime(order.getFinishTime() == null ? "" : sdf.format(order.getFinishTime()));
+        webList.setCreateTime(DateUtil.formatDate(order.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        webList.setFinishTime(order.getFinishTime() == null ? "" : DateUtil.formatDate(order.getFinishTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
         return webList;
     }
-
-
-
 }

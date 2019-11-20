@@ -132,6 +132,8 @@ public class PayOrder implements Identifiable<Long> {
 
     private String storeMarkCode;
 
+    private String uid;
+
     public enum RedPackState {
         receive(1, "已领取"),
         un_receive(0, "未领取");

@@ -3,6 +3,7 @@ package com.zanclick.prepay.order.controller;
 import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.order.entity.RedPacket;
 import com.zanclick.prepay.order.query.RedPacketQuery;
 import com.zanclick.prepay.order.service.RedPacketService;
@@ -20,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,8 +58,6 @@ public class RedPackWebController extends BaseController {
         return Response.ok(voPage);
     }
 
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     private RedPacketList getListVo(RedPacket redPacket) {
         RedPacketList vo = new RedPacketList();
         vo.setOutTradeNo(redPacket.getOutTradeNo());
@@ -68,7 +66,7 @@ public class RedPackWebController extends BaseController {
         vo.setWayId(redPacket.getWayId());
         vo.setReceiveNo(redPacket.getReceiveNo());
         vo.setState(redPacket.getState());
-        vo.setCreateTime(redPacket.getCreateTime() == null ? "" : sdf.format(redPacket.getCreateTime()));
+        vo.setCreateTime(redPacket.getCreateTime() == null ? "" : DateUtil.formatDate(redPacket.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
         vo.setStateDesc(redPacket.getStateDesc());
         vo.setReason(redPacket.getReason());
         return vo;

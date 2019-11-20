@@ -7,6 +7,7 @@ import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.query.PayOrderQuery;
@@ -14,6 +15,8 @@ import com.zanclick.prepay.order.service.PayOrderService;
 import com.zanclick.prepay.order.vo.PayOrderExcelList;
 import com.zanclick.prepay.order.vo.PayOrderWebList;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +27,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -46,6 +48,9 @@ public class PayOrderWebController extends BaseController {
     private String excelDownloadUrl;
 
     @ApiOperation(value = "交易列表")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
     @PostMapping(value = "/list")
     @ResponseBody
     public Response<Page<PayOrderWebList>> list(PayOrderQuery query) {
@@ -66,14 +71,17 @@ public class PayOrderWebController extends BaseController {
     }
 
     @ApiOperation(value = "结算打款")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
     @PostMapping(value = "/settle")
     @ResponseBody
     public Response settle(String outTradeNo) {
-        if (DataUtil.isEmpty(outTradeNo)){
+        if (DataUtil.isEmpty(outTradeNo)) {
             return Response.fail("缺少外部订单号");
         }
         PayOrder order = payOrderService.queryByOutTradeNo(outTradeNo);
-        if (order == null){
+        if (order == null) {
             return Response.fail("订单编号异常");
         }
         if (order.isSettled() || order.isSettleWait()) {
@@ -81,7 +89,7 @@ public class PayOrderWebController extends BaseController {
             return Response.fail("处理成功");
         }
         SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, outTradeNo);
-        payOrderService.syncQueryDealState(outTradeNo,order.getDealState());
+        payOrderService.syncQueryDealState(outTradeNo, order.getDealState());
         return Response.ok("处理成功");
     }
 
@@ -89,17 +97,20 @@ public class PayOrderWebController extends BaseController {
     @PostMapping(value = "/refund")
     @ResponseBody
     public Response refund(String outTradeNo) {
-        if (DataUtil.isEmpty(outTradeNo)){
+        if (DataUtil.isEmpty(outTradeNo)) {
             return Response.fail("缺少外部订单号");
         }
-        String reason = payOrderService.refund(outTradeNo,null);
-        if (reason == null){
+        String reason = payOrderService.refund(outTradeNo, null);
+        if (reason == null) {
             return Response.ok("退款成功");
         }
         return Response.fail(reason);
     }
 
     @ApiOperation(value = "导出交易信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
     @RequestMapping(value = "batchExport", method = RequestMethod.POST)
     @ResponseBody
     public Response<String> batchExport(PayOrderQuery query) {
@@ -128,26 +139,19 @@ public class PayOrderWebController extends BaseController {
     }
 
 
-    private List<JSONObject> parser(List<PayOrderExcelList> merchantList) {
-        return JSONObject.parseArray(JSONObject.toJSONString(merchantList), JSONObject.class);
-    }
-
-
     /**
      * 获取显示Modal
      *
-     * @param record
+     * @param order
      * @return
      */
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
     private PayOrderWebList getListVo(PayOrder order) {
         PayOrderWebList vo = new PayOrderWebList();
         vo.setId(order.getId());
         vo.setMerchantNo(order.getMerchantNo());
         vo.setWayId(order.getWayId());
-        vo.setCreateTime(sdf.format(order.getCreateTime()));
-        vo.setFinishTime(order.getFinishTime() == null ? "" : sdf.format(order.getFinishTime()));
+        vo.setCreateTime(DateUtil.formatDate(order.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        vo.setFinishTime(order.getFinishTime() == null ? "" : DateUtil.formatDate(order.getFinishTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
         vo.setAmount(order.getAmount());
         vo.setSettleAmount(order.getSettleAmount());
         vo.setNum(order.getNum());
@@ -185,12 +189,16 @@ public class PayOrderWebController extends BaseController {
         vo.setSellerNo(order.getSellerNo());
         vo.setName(order.getName());
         vo.setStateStr(order.getStateDesc());
-        vo.setCreateTime(sdf.format(order.getCreateTime()));
-        vo.setFinishTime(order.getFinishTime() == null ? "" : sdf.format(order.getFinishTime()));
+        vo.setCreateTime(DateUtil.formatDate(order.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        vo.setFinishTime(order.getFinishTime() == null ? "" : DateUtil.formatDate(order.getFinishTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
         vo.setProvince(order.getProvinceName());
         vo.setCity(order.getCityName());
         vo.setCounty(order.getDistrictName());
         return vo;
     }
 
+
+    private List<JSONObject> parser(List<PayOrderExcelList> merchantList) {
+        return JSONObject.parseArray(JSONObject.toJSONString(merchantList), JSONObject.class);
+    }
 }
