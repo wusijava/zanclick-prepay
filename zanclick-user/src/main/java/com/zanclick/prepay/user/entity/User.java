@@ -33,6 +33,8 @@ public class User implements Identifiable<Long> {
 
     private String salt;
 
+    private String storeMarkCode;
+
     public enum State {
         /**
          * 开启
@@ -65,11 +67,11 @@ public class User implements Identifiable<Long> {
          */
         ADMIN(0),
         /**
-         * 用户
+         * 门店角色
          */
         USER(1),
         /**
-         * 用户
+         * 商户角色
          */
         MANAGE(2);
 

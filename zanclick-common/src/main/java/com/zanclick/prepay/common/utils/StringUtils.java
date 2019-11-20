@@ -9,10 +9,7 @@ import org.springframework.util.Assert;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -169,6 +166,22 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         return retStr;
     }
 
+
+    public static String createRandomStr() {
+        String retStr = "";
+        String strTable = "1234567890";
+        String str = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        Random random = new Random();
+        for (int i = 0;i<=5;i++){
+            if (i<=2){
+                retStr += str.charAt(random.nextInt(str.length()));
+            }else {
+                retStr += strTable.charAt(random.nextInt(strTable.length()));
+            }
+        }
+        return retStr;
+    }
+
     public static String trim(String str) {
         return str == null ? null : str.trim();
     }
@@ -298,5 +311,9 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
                 }
             }
         }
+    }
+
+    public static void main(String[] args) {
+        System.err.println(createRandomStr());
     }
 }

@@ -128,8 +128,8 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
             payOrder.setRedPackState(PayOrder.RedPackState.un_receive.getCode());
         }else {
             payOrder.setRedPackAmount("0.00");
-            payOrder.setRedPackState(PayOrder.RedPackState.receive.getCode());
-            payOrder.setSellerNo("11111111111");
+            payOrder.setRedPackState(PayOrder.RedPackState.un_receive.getCode());
+            payOrder.setRedPackSellerNo("11111111111");
         }
         String eachAmount = MoneyUtil.divide(payOrder.getAmount(),payOrder.getNum().toString());
         String amount = MoneyUtil.multiply(eachAmount,String.valueOf(payOrder.getNum()-1));
