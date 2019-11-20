@@ -37,6 +37,7 @@
         <result column="reason" property="reason" jdbcType="VARCHAR"/>
         <result column="buyer_no" property="buyerNo" jdbcType="VARCHAR"/>
         <result column="store_mark_code" property="storeMarkCode" jdbcType="VARCHAR"/>
+        <result column="uid" property="uid" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">pay_order</sql>
@@ -75,7 +76,8 @@
             `district_name`,
             `reason`,
             `buyer_no`,
-            `store_mark_code`
+            `store_mark_code`,
+            `uid`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -185,6 +187,9 @@
                 <if test="storeMarkCode != null and storeMarkCode != ''">
                     AND `store_mark_code`=#{storeMarkCode}
                 </if>
+                <if test="uid != null and uid != ''">
+                    AND `uid`=#{uid}
+                </if>
                 <if test="startTime != null">
                     and DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
                 </if>
@@ -258,7 +263,8 @@
         `district_name`,
         `reason`,
         `buyer_no`,
-        `store_mark_code`
+        `store_mark_code`,
+        `uid`
         )
         VALUES(
         #{id},
@@ -295,7 +301,8 @@
         #{districtName},
         #{reason},
         #{buyerNo},
-        #{storeMarkCode}
+        #{storeMarkCode},
+        #{uid}
         )
     </insert>
 
@@ -337,7 +344,8 @@
         `district_name`,
         `reason`,
         `buyer_no`,
-        `store_mark_code`
+        `store_mark_code`,
+        `uid`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -376,7 +384,8 @@
             #{cm.districtName},
             #{cm.reason},
             #{cm.buyerNo},
-            #{cm.storeMarkCode}
+            #{cm.storeMarkCode},
+            #{cm.uid}
             )
         </foreach>
     </insert>
@@ -526,6 +535,9 @@
             </if>
             <if test="storeMarkCode != null and storeMarkCode != ''">
                 `store_mark_code`=#{storeMarkCode},
+            </if>
+            <if test="uid != null and uid != ''">
+                `uid`=#{uid},
             </if>
         </set>
         WHERE id=#{id}

@@ -30,6 +30,7 @@
         <result column="red_pack_seller_no" property="redPackSellerNo" jdbcType="VARCHAR"/>
         <result column="reason" property="reason" jdbcType="VARCHAR"/>
         <result column="store_mark_code" property="storeMarkCode" jdbcType="VARCHAR"/>
+        <result column="uid" property="uid" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">authorize_merchant</sql>
@@ -61,7 +62,8 @@
             `red_pack_state`,
             `red_pack_seller_no`,
             `reason`,
-            `store_mark_code`
+            `store_mark_code`,
+            `uid`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -147,14 +149,17 @@
                 <if test="reason != null and reason != ''">
                     AND `reason`=#{reason}
                 </if>
+                <if test="storeMarkCode != null and storeMarkCode != ''">
+                    AND `store_mark_code`=#{storeMarkCode}
+                </if>
+                <if test="uid != null and uid != ''">
+                    AND `uid`=#{uid}
+                </if>
                 <if test="startTime != null">
                     and DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
                 </if>
                 <if test="endTime != null">
                     and DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
-                </if>
-                <if test="storeMarkCode != null and storeMarkCode != ''">
-                    AND `store_mark_code`=#{storeMarkCode}
                 </if>
             </trim>
         </where>
@@ -216,7 +221,8 @@
         `red_pack_state`,
         `red_pack_seller_no`,
         `reason`,
-        `store_mark_code`
+        `store_mark_code`,
+        `uid`
         )
         VALUES(
         #{id},
@@ -246,7 +252,8 @@
         #{redPackState},
         #{redPackSellerNo},
         #{reason},
-        #{storeMarkCode}
+        #{storeMarkCode},
+        #{uid}
         )
     </insert>
 
@@ -281,7 +288,8 @@
         `red_pack_state`,
         `red_pack_seller_no`,
         `reason`,
-        `store_mark_code`
+        `store_mark_code`,
+        `uid`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -313,7 +321,8 @@
             #{cm.redPackState},
             #{cm.redPackSellerNo},
             #{cm.reason},
-            #{cm.storeMarkCode}
+            #{cm.storeMarkCode},
+            #{cm.uid}
             )
         </foreach>
     </insert>
@@ -426,6 +435,9 @@
             </if>
             <if test="storeMarkCode != null and storeMarkCode != ''">
                 `store_mark_code`=#{storeMarkCode},
+            </if>
+            <if test="uid != null and uid != ''">
+                `uid`=#{uid},
             </if>
         </set>
         WHERE id=#{id}
