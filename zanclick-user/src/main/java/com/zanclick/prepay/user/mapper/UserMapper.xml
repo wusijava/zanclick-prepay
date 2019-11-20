@@ -12,6 +12,7 @@
         <result column="state" property="state" jdbcType="INTEGER"/>
         <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="salt" property="salt" jdbcType="VARCHAR"/>
+        <result column="store_mark_code" property="storeMarkCode" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">user</sql>
@@ -25,7 +26,8 @@
             `create_time`,
             `state`,
             `type`,
-            `salt`
+            `salt`,
+            `store_mark_code`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -37,7 +39,7 @@
                     AND `uid`=#{uid}
                 </if>
                 <if test="username != null and username != ''">
-                    AND `username`LIKE concat ('%',#{username},'%')
+                    AND `username`=#{username}
                 </if>
                 <if test="password != null and password != ''">
                     AND `password`=#{password}
@@ -60,8 +62,12 @@
                 <if test="salt != null and salt != ''">
                     AND `salt`=#{salt}
                 </if>
+                <if test="storeMarkCode != null and storeMarkCode != ''">
+                    AND `store_mark_code`=#{storeMarkCode}
+                </if>
             </trim>
         </where>
+        ORDER BY id DESC
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
@@ -101,7 +107,8 @@
         `create_time`,
         `state`,
         `type`,
-        `salt`
+        `salt`,
+        `store_mark_code`
         )
         VALUES(
         #{id},
@@ -113,7 +120,8 @@
         #{createTime},
         #{state},
         #{type},
-        #{salt}
+        #{salt},
+        #{storeMarkCode}
         )
     </insert>
 
@@ -130,7 +138,8 @@
         `create_time`,
         `state`,
         `type`,
-        `salt`
+        `salt`,
+        `store_mark_code`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -144,7 +153,8 @@
             #{cm.createTime},
             #{cm.state},
             #{cm.type},
-            #{cm.salt}
+            #{cm.salt},
+            #{cm.storeMarkCode}
             )
         </foreach>
     </insert>
@@ -203,6 +213,9 @@
             </if>
             <if test="salt != null and salt != ''">
                 `salt`=#{salt},
+            </if>
+            <if test="storeMarkCode != null and storeMarkCode != ''">
+                `store_mark_code`=#{storeMarkCode},
             </if>
         </set>
         WHERE id=#{id}

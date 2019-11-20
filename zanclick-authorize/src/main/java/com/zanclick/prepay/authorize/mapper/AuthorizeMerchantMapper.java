@@ -26,16 +26,5 @@ public interface AuthorizeMerchantMapper extends BaseMapper<AuthorizeMerchant, L
      * @return
      */
     AuthorizeMerchant selectByAliPayLoginNo(String sellerNo);
-    /**
-     * 导入商户信息列表
-     *
-     * @param
-     * @return
-     */
-
-
-
-
-
 
 }

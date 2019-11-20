@@ -36,6 +36,7 @@
         <result column="district_name" property="districtName" jdbcType="VARCHAR"/>
         <result column="reason" property="reason" jdbcType="VARCHAR"/>
         <result column="buyer_no" property="buyerNo" jdbcType="VARCHAR"/>
+        <result column="store_mark_code" property="storeMarkCode" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">pay_order</sql>
@@ -73,7 +74,8 @@
             `city_name`,
             `district_name`,
             `reason`,
-            `buyer_no`
+            `buyer_no`,
+            `store_mark_code`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -180,6 +182,9 @@
                 <if test="buyerNo != null and buyerNo != ''">
                     AND `buyer_no`=#{buyerNo}
                 </if>
+                <if test="storeMarkCode != null and storeMarkCode != ''">
+                    AND `store_mark_code`=#{storeMarkCode}
+                </if>
                 <if test="startTime != null">
                     and DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
                 </if>
@@ -252,7 +257,8 @@
         `city_name`,
         `district_name`,
         `reason`,
-        `buyer_no`
+        `buyer_no`,
+        `store_mark_code`
         )
         VALUES(
         #{id},
@@ -288,7 +294,8 @@
         #{cityName},
         #{districtName},
         #{reason},
-        #{buyerNo}
+        #{buyerNo},
+        #{storeMarkCode}
         )
     </insert>
 
@@ -329,7 +336,8 @@
         `city_name`,
         `district_name`,
         `reason`,
-        `buyer_no`
+        `buyer_no`,
+        `store_mark_code`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -367,7 +375,8 @@
             #{cm.cityName},
             #{cm.districtName},
             #{cm.reason},
-            #{cm.buyerNo}
+            #{cm.buyerNo},
+            #{cm.storeMarkCode}
             )
         </foreach>
     </insert>
@@ -514,6 +523,9 @@
             </if>
             <if test="buyerNo != null and buyerNo != ''">
                 `buyer_no`=#{buyerNo},
+            </if>
+            <if test="storeMarkCode != null and storeMarkCode != ''">
+                `store_mark_code`=#{storeMarkCode},
             </if>
         </set>
         WHERE id=#{id}

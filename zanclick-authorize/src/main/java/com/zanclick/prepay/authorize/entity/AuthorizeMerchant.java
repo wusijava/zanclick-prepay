@@ -120,6 +120,8 @@ public class AuthorizeMerchant implements Identifiable<Long> {
 
     private String reason;
 
+    private String storeMarkCode;
+
     /**
      * 是否开启自由领取红包
      * */

@@ -29,6 +29,7 @@
         <result column="red_pack_state" property="redPackState" jdbcType="INTEGER"/>
         <result column="red_pack_seller_no" property="redPackSellerNo" jdbcType="VARCHAR"/>
         <result column="reason" property="reason" jdbcType="VARCHAR"/>
+        <result column="store_mark_code" property="storeMarkCode" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">authorize_merchant</sql>
@@ -59,7 +60,8 @@
             `finish_time`,
             `red_pack_state`,
             `red_pack_seller_no`,
-            `reason`
+            `reason`,
+            `store_mark_code`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -151,6 +153,9 @@
                 <if test="endTime != null">
                     and DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
                 </if>
+                <if test="storeMarkCode != null and storeMarkCode != ''">
+                    AND `store_mark_code`=#{storeMarkCode}
+                </if>
             </trim>
         </where>
         ORDER BY id DESC
@@ -210,7 +215,8 @@
         `finish_time`,
         `red_pack_state`,
         `red_pack_seller_no`,
-        `reason`
+        `reason`,
+        `store_mark_code`
         )
         VALUES(
         #{id},
@@ -239,7 +245,8 @@
         #{finishTime},
         #{redPackState},
         #{redPackSellerNo},
-        #{reason}
+        #{reason},
+        #{storeMarkCode}
         )
     </insert>
 
@@ -273,7 +280,8 @@
         `finish_time`,
         `red_pack_state`,
         `red_pack_seller_no`,
-        `reason`
+        `reason`,
+        `store_mark_code`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -304,7 +312,8 @@
             #{cm.finishTime},
             #{cm.redPackState},
             #{cm.redPackSellerNo},
-            #{cm.reason}
+            #{cm.reason},
+            #{cm.storeMarkCode}
             )
         </foreach>
     </insert>
@@ -414,6 +423,9 @@
             </if>
             <if test="reason != null and reason != ''">
                 `reason`=#{reason},
+            </if>
+            <if test="storeMarkCode != null and storeMarkCode != ''">
+                `store_mark_code`=#{storeMarkCode},
             </if>
         </set>
         WHERE id=#{id}
