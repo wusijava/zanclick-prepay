@@ -100,7 +100,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
     }
 
     @Override
-    public SettleResult settle(SettleDTO dto) {
+    public SettleResult settle(Settle dto) {
         SettleResult result = new SettleResult();
         String check = dto.check();
         if (check != null) {
@@ -216,7 +216,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
     }
 
     @Override
-    public QueryResult query(QueryDTO dto) {
+    public QueryResult query(Query dto) {
         QueryResult result = new QueryResult();
         String check = dto.check();
         if (check != null) {
@@ -268,7 +268,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
     }
 
     @Override
-    public QueryResult cancel(QueryDTO dto) {
+    public QueryResult cancel(Query dto) {
         QueryResult result = new QueryResult();
         String check = dto.check();
         if (check != null) {
@@ -302,7 +302,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
     }
 
     @Override
-    public PayRefundResult payRefund(PayRefundDTO dto) {
+    public PayRefundResult payRefund(PayRefund dto) {
         PayRefundResult result = new PayRefundResult();
         String check = dto.check();
         if (check != null) {
@@ -524,7 +524,7 @@ public class AuthorizePayServiceImpl implements AuthorizePayService {
      * @param order
      * @return
      */
-    private SupplyChainTrade createSupplyChainTrade(SettleDTO dto, AuthorizeOrder order) {
+    private SupplyChainTrade createSupplyChainTrade(Settle dto, AuthorizeOrder order) {
         SupplyChainTrade trade = new SupplyChainTrade();
         trade.setAmount(dto.getAmount());
         trade.setAuthNo(order.getAuthNo());

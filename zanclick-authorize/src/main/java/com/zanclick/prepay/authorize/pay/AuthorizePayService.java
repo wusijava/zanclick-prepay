@@ -26,7 +26,7 @@ public interface AuthorizePayService {
      * @param dto
      * @return
      */
-    SettleResult settle(SettleDTO dto);
+    SettleResult settle(Settle dto);
 
     /**
      * 退款操作（解冻/转支付）
@@ -42,7 +42,7 @@ public interface AuthorizePayService {
      * @param dto
      * @return
      */
-    QueryResult query(QueryDTO dto);
+    QueryResult query(Query dto);
 
     /**
      * 支付查询
@@ -50,7 +50,7 @@ public interface AuthorizePayService {
      * @param dto
      * @return
      */
-    QueryResult cancel(QueryDTO dto);
+    QueryResult cancel(Query dto);
 
 
     /**
@@ -59,5 +59,5 @@ public interface AuthorizePayService {
      * @param dto
      * @return
      */
-    PayRefundResult payRefund(PayRefundDTO dto);
+    PayRefundResult payRefund(PayRefund dto);
 }

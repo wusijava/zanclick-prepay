@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2019-7-8 15:49:20
  */
 @Data
-public class QueryDTO extends RequestParam {
+public class Query extends RequestParam {
 
     /**
      * 订单号（第三方提供）

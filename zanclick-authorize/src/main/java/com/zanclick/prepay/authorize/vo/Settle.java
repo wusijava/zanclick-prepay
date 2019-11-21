@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2019-7-11 11:24:45
  */
 @Data
-public class SettleDTO extends RequestParam {
+public class Settle extends RequestParam {
     /**
      * 订单号
      */

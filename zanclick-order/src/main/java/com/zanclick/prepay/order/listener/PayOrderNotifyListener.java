@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
-import com.zanclick.prepay.authorize.vo.SettleDTO;
+import com.zanclick.prepay.authorize.vo.Settle;
 import com.zanclick.prepay.authorize.vo.SettleResult;
 import com.zanclick.prepay.common.api.AsiaInfoHeader;
 import com.zanclick.prepay.common.api.AsiaInfoUtil;
@@ -116,7 +116,7 @@ public class PayOrderNotifyListener {
                     return;
                 }
             }
-            SettleDTO dto = new SettleDTO();
+            Settle dto = new Settle();
             dto.setAmount(order.getSettleAmount());
             dto.setOutTradeNo(order.getOutTradeNo());
             SettleResult settleResult = authorizePayService.settle(dto);

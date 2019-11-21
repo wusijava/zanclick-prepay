@@ -9,6 +9,7 @@ import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.authorize.vo.web.AuthorizeWebListInfo;
 import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.entity.ExcelDto;
+import com.zanclick.prepay.common.entity.RequestContext;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
@@ -61,6 +62,12 @@ public class AuthorizeMerchantWebController extends BaseController {
         if (DataUtil.isEmpty(query.getLimit())) {
             query.setLimit(10);
         }
+        RequestContext.RequestUser user = RequestContext.getCurrentUser();
+        if (user.getType().equals(1)) {
+            query.setUid(user.getStoreMarkCode());
+        } else if (user.getType().equals(2)) {
+            query.setStoreMarkCode(user.getStoreMarkCode());
+        }
         Pageable pageable = PageRequest.of(query.getPage(), query.getLimit());
         Page<AuthorizeMerchant> page = authorizeMerchantService.queryPage(query, pageable);
         List<AuthorizeWebListInfo> voList = new ArrayList<>();
@@ -109,13 +116,19 @@ public class AuthorizeMerchantWebController extends BaseController {
     @RequestMapping(value = "batchExport", method = RequestMethod.POST)
     @ResponseBody
     public Response<String> batchExport(AuthorizeMerchantQuery query) {
+        RequestContext.RequestUser user = RequestContext.getCurrentUser();
+        if (user.getType().equals(1)) {
+            query.setUid(user.getStoreMarkCode());
+        } else if (user.getType().equals(2)) {
+            query.setStoreMarkCode(user.getStoreMarkCode());
+        }
         List<AuthorizeMerchant> merchantList = authorizeMerchantService.queryList(query);
         List<RegisterMerchant> registerMerchantList = new ArrayList<>();
         for (AuthorizeMerchant merchant : merchantList) {
             RegisterMerchant registerMerchant = authorizeMerchantService.getRegisterMerchant(merchant);
             String reason = registerMerchant.check();
-            if (reason != null){
-                log.error("导入商户数据有误:{},{}",registerMerchant.getWayId(),reason);
+            if (reason != null) {
+                log.error("导入商户数据有误:{},{}", registerMerchant.getWayId(), reason);
                 continue;
             }
             registerMerchantList.add(registerMerchant);

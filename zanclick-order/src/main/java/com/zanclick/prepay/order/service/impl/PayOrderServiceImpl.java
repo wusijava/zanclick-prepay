@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.authorize.util.MoneyUtil;
-import com.zanclick.prepay.authorize.vo.QueryDTO;
+import com.zanclick.prepay.authorize.vo.Query;
 import com.zanclick.prepay.authorize.vo.QueryResult;
 import com.zanclick.prepay.authorize.vo.Refund;
 import com.zanclick.prepay.authorize.vo.RefundResult;
@@ -101,7 +101,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         }
         JSONObject object = null;
         if (payOrder.isWait() && payOrder.getRequestNo() != null && payOrder.getQrCodeUrl() != null) {
-            QueryDTO dto = new QueryDTO();
+            Query dto = new Query();
             dto.setOutTradeNo(payOrder.getOutTradeNo());
             QueryResult queryResult = authorizePayService.query(dto);
             if (queryResult.isSuccess()) {

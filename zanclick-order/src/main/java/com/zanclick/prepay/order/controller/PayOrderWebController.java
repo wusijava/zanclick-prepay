@@ -5,6 +5,7 @@ import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.config.JmsMessaging;
 import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.entity.ExcelDto;
+import com.zanclick.prepay.common.entity.RequestContext;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
@@ -59,6 +60,12 @@ public class PayOrderWebController extends BaseController {
         }
         if (DataUtil.isEmpty(query.getLimit())) {
             query.setLimit(10);
+        }
+        RequestContext.RequestUser user = RequestContext.getCurrentUser();
+        if (user.getType().equals(1)){
+            query.setUid(user.getStoreMarkCode());
+        }else if (user.getType().equals(2)){
+            query.setStoreMarkCode(user.getStoreMarkCode());
         }
         Pageable pageable = PageRequest.of(query.getPage(), query.getLimit());
         Page<PayOrder> page = payOrderService.queryPage(query, pageable);
@@ -117,6 +124,12 @@ public class PayOrderWebController extends BaseController {
         List<PayOrder> orderList = payOrderService.queryList(query);
         if (DataUtil.isEmpty(orderList)) {
             return Response.fail("没有数据");
+        }
+        RequestContext.RequestUser user = RequestContext.getCurrentUser();
+        if (user.getType().equals(1)){
+            query.setUid(user.getStoreMarkCode());
+        }else if (user.getType().equals(2)){
+            query.setStoreMarkCode(user.getStoreMarkCode());
         }
         List<PayOrderExcelList> orderExcelList = new ArrayList<>();
         for (PayOrder order : orderList) {

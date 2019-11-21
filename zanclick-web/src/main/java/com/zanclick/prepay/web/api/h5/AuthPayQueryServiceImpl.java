@@ -1,7 +1,7 @@
 package com.zanclick.prepay.web.api.h5;
 
 import com.alibaba.fastjson.JSONObject;
-import com.zanclick.prepay.authorize.vo.QueryDTO;
+import com.zanclick.prepay.authorize.vo.Query;
 import com.zanclick.prepay.authorize.vo.QueryResult;
 import com.zanclick.prepay.authorize.pay.AuthorizePayService;
 import com.zanclick.prepay.common.entity.ResponseParam;
@@ -38,7 +38,7 @@ public class AuthPayQueryServiceImpl extends AbstractCommonService implements Ap
         try {
             verifyCipherJson(appId,cipherJson);
             ApiPayQuery query = parser(request,ApiPayQuery.class);
-            QueryDTO dto = new QueryDTO();
+            Query dto = new Query();
             dto.setOutTradeNo(query.getOrderNo());
             PayOrder order = payOrderService.queryByOutTradeNo(query.getOrderNo());
             if (DataUtil.isEmpty(order)){

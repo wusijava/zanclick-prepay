@@ -10,7 +10,7 @@ import lombok.Data;
  * @date 2019-7-10 16:25:22
  */
 @Data
-public class PayRefundDTO extends RequestParam {
+public class PayRefund extends RequestParam {
 
     /**
      * 转支付时生成的订单号

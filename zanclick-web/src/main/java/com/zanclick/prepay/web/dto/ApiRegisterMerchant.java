@@ -86,6 +86,8 @@ public class ApiRegisterMerchant extends Param {
     private String storeCounty;
     private String storeCountyCode;
 
+    private String appId;
+
     public String check() {
         if (checkNull(wayId)) {
             return "缺少渠道标识";
