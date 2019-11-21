@@ -93,6 +93,7 @@ public class PayRefundOrder implements Identifiable<Long> {
     public enum RepaymentState {
         no_need_paid(0, "无需结清"),
         paid(3, "成功回款"),
+        wait_success(2, "等待结清"),
         success(1, "结清贷款"),
         no_paid(2, "等待回款");
 
@@ -176,6 +177,8 @@ public class PayRefundOrder implements Identifiable<Long> {
             return RepaymentState.paid.getDesc();
         } else if (RepaymentState.no_need_paid.getCode().equals(repaymentState)) {
             return RepaymentState.no_need_paid.getDesc();
+        } else if (RepaymentState.wait_success.getCode().equals(repaymentState)) {
+            return RepaymentState.wait_success.getDesc();
         } else if (RepaymentState.success.getCode().equals(repaymentState)) {
             return RepaymentState.success.getDesc();
         } else{

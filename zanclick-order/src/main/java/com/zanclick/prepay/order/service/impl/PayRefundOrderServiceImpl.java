@@ -53,25 +53,9 @@ public class PayRefundOrderServiceImpl extends BaseMybatisServiceImpl<PayRefundO
             log.error("未回款，无法结清,{}",outTradeNo);
             throw new BizException("无法结清");
         }
+        refundOrder.setRepaymentState(PayRefundOrder.RepaymentState.wait_success.getCode());
+        this.updateById(refundOrder);
         myBankSupplyChainService.tradeRepay(refundOrder.getAuthNo());
-        syncQueryState(outTradeNo,refundOrder.getRepaymentState());
-    }
-
-    @Override
-    public String syncQueryState(String outTradeNo, Integer state) {
-        int times = 30;
-        for (int i = 0; i <= times; i++) {
-            PayRefundOrder order = this.queryByOutTradeNo(outTradeNo);
-            if (!state.equals(order.getRepaymentState())) {
-                return null;
-            }
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-        return "结清超时，请稍后再试";
     }
 
     @Override

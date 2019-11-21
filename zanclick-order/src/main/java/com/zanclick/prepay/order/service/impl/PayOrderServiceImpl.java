@@ -206,6 +206,11 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     }
 
     @Override
+    public String cancel(PayOrder order) {
+        return null;
+    }
+
+    @Override
     public String refund(PayOrder order) {
         if (order == null || !order.isPayed()) {
             log.error("订单状态异常,无法退款:{},{}", order.getOutTradeNo());

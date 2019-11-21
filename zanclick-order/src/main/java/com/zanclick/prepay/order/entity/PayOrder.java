@@ -167,6 +167,8 @@ public class PayOrder implements Identifiable<Long> {
         notice_wait(4, "等待通知"),
         notice_fail(0, "通知失败"),
         settle_wait(2, "等待打款"),
+        settle_wait_cancel(7, "等待取消"),
+        settle_cancel(8, "取消打款"),
         settle_fail(1, "打款失败"),
         settled(5, "打款成功"),
         repayment_success(6, "还款成功"),
@@ -247,6 +249,10 @@ public class PayOrder implements Identifiable<Long> {
             return DealState.notice_wait.getDesc();
         } else if (DealState.settle_wait.getCode().equals(dealState)){
             return DealState.settle_wait.getDesc();
+        }else if (DealState.settle_wait_cancel.getCode().equals(dealState)){
+            return DealState.settle_wait_cancel.getDesc();
+        }else if (DealState.settle_cancel.getCode().equals(dealState)){
+            return DealState.settle_cancel.getDesc();
         }else if (DealState.settle_fail.getCode().equals(dealState)){
             return DealState.settle_fail.getDesc();
         }else if (DealState.today_sign.getCode().equals(dealState)){

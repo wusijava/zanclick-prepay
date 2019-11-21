@@ -97,10 +97,10 @@ public class AuthorizeMerchantWebController extends BaseController {
         try {
             authorizeMerchantService.updateMerchant(setMerchantDetail(merchant));
         } catch (BizException e) {
-            log.error("修改商户信息异常:{},{}", merchant.getId(), e.getMessage());
+            log.error("修改商户信息异常:{},{}", merchant.getWayId(), e.getMessage());
             return Response.ok(e.getMessage());
         } catch (Exception e) {
-            log.error("修改商户信息系统异常:{},{}", merchant.getId(), e);
+            log.error("修改商户信息系统异常:{},{}", merchant.getWayId(), e);
             return Response.ok("修改失败");
         }
         return Response.ok("修改成功");

@@ -93,10 +93,36 @@ public class PayOrderWebController extends BaseController {
         }
         if (order.isSettled() || order.isSettleWait()) {
             log.error("订单状态异常:{},{}", outTradeNo, order.getDealStateDesc());
-            return Response.fail("处理成功");
+            return Response.fail("处理失败");
         }
         SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, outTradeNo);
         payOrderService.syncQueryDealState(outTradeNo, order.getDealState());
+        return Response.ok("处理成功");
+    }
+
+    @ApiOperation(value = "取单打款")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
+    @PostMapping(value = "/cancel")
+    @ResponseBody
+    public Response cancel(String outTradeNo) {
+        if (DataUtil.isEmpty(outTradeNo)) {
+            return Response.fail("缺少外部订单号");
+        }
+        PayOrder order = payOrderService.queryByOutTradeNo(outTradeNo);
+        if (order == null) {
+            return Response.fail("订单编号异常");
+        }
+        if (!order.isPayed() && !order.isRefund()) {
+            log.error("订单状态不正确无法取消打款:{}", outTradeNo);
+            return Response.fail("订单状态不正确无法取消打款");
+        }
+        if (!order.isSettleWait()){
+            log.error("订单状态不正确无法取消打款:{}", outTradeNo);
+            return Response.fail("订单状态不正确无法取消打款");
+        }
+        //TODO 这里取消打款功能暂时不在本期做
         return Response.ok("处理成功");
     }
 

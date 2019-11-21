@@ -98,6 +98,16 @@ public interface PayOrderService extends BaseService<PayOrder, Long> {
      * @return
      */
     String refund(String outTradeNo,String outOrderNo);
+
+
+    /**
+     * 取消打款
+     *
+     * @param order
+     * @return
+     */
+    String cancel(PayOrder order);
+
     /**
      * 退款方法
      *

@@ -30,7 +30,7 @@ public class IdentityVerifyServiceImpl extends AbstractCommonService implements 
             log.error("查询异常:{}",be);
         }catch (Exception e) {
             param.setMessage("系统异常，请稍后再试");
-            log.error("系统异常:{}",3);
+            log.error("系统异常:{}",e);
         }
         return param.toString();
     }

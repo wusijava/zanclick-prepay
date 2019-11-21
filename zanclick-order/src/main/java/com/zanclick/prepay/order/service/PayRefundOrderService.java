@@ -29,16 +29,6 @@ public interface PayRefundOrderService extends BaseService<PayRefundOrder,Long> 
 
 
     /**
-     * 同步查询一分钟(数据库里的状态与传入的状态一样的时候停止)
-     *
-     * @param outTradeNo
-     * @param state 原来的处理状态
-     * @return
-     */
-    String syncQueryState(String outTradeNo,Integer state);
-
-
-    /**
      * 根据 outOrderNo查找
      *
      * @param outOrderNo
