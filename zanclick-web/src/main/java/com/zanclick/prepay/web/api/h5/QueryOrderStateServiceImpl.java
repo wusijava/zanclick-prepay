@@ -1,5 +1,6 @@
 package com.zanclick.prepay.web.api.h5;
 
+import com.zanclick.prepay.authorize.util.MoneyUtil;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
@@ -71,6 +72,11 @@ public class QueryOrderStateServiceImpl extends AbstractCommonService implements
         result.setOutOrderNo(order.getOutOrderNo());
         result.setTitle(order.getTitle());
         result.setTotalMoney(order.getAmount());
+        if (MoneyUtil.largeMoney(order.getRedPackAmount(),"0.00")){
+            result.setReceiveRedPacket(1);
+        }else {
+            result.setReceiveRedPacket(0);
+        }
         StringBuffer sb = new StringBuffer();
         sb.append(h5Server+"/red/packet/receive");
         sb.append("?appId=" + appId);

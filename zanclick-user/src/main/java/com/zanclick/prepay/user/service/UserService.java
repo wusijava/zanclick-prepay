@@ -2,6 +2,7 @@ package com.zanclick.prepay.user.service;
 
 import com.zanclick.prepay.common.base.service.BaseService;
 import com.zanclick.prepay.user.entity.User;
+import com.zanclick.prepay.user.query.UserQuery;
 
 /**
  * @author Administrator
@@ -47,5 +48,17 @@ public interface UserService extends BaseService<User, Long> {
      * @@return
      */
     String changePassword(Long userId, String salt, String newPassword);
+
+
+    /**
+     * 创建用户
+     *
+     * @param aliPayLoginNo
+     * @param merchantName
+     * @param storeName
+     * @param wayId
+     * @param mobile
+     */
+    UserQuery createUser(String aliPayLoginNo, String merchantName, String storeName, String wayId, String mobile);
 
 }

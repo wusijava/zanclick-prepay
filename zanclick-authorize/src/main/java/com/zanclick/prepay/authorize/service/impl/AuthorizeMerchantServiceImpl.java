@@ -18,7 +18,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -44,12 +43,19 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
     }
 
     @Override
-    public void createMerchant(RegisterMerchant register) {
+    public AuthorizeMerchant createMerchant(RegisterMerchant register) {
         if (queryRepeatMerchant(register.getMerchantNo())) {
-            throw new BizException("重复提交");
+            log.error("商户创建渠道编码重复:{}",register.getWayId());
+            throw new BizException("渠道编码重复");
+        }
+        String reason = register.check();
+        if (reason != null){
+            log.error("商户创建失败:{}",register.getWayId(),reason);
+            throw new BizException(reason);
         }
         AuthorizeMerchant merchant = createAuthorizeMerchant(register);
         createMerchant(merchant);
+        return merchant;
     }
 
     @Override
@@ -71,12 +77,13 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
      * @param merchant
      */
     private void createMerchant(AuthorizeMerchant merchant) {
-        AuthorizeMerchant oldMerchant = authorizeMerchantMapper.selectByAliPayLoginNo(merchant.getSellerNo());
+        AuthorizeMerchant oldMerchant = this.queryByAliPayLoginNo(merchant.getSellerNo());
         if (oldMerchant != null && oldMerchant.getState() != null) {
             if (oldMerchant.getState().equals(AuthorizeMerchant.State.success.getCode())) {
                 if (oldMerchant.getStoreNo() != null && oldMerchant.getStoreNo().equals(merchant.getStoreNo())) {
                     throw new BizException("门店编号重复");
                 }
+                log.error("商户创建成功:{}",merchant.getWayId());
                 merchant.setSupplierNo(oldMerchant.getSupplierNo());
                 merchant.setState(AuthorizeMerchant.State.success.getCode());
                 merchant.setFinishTime(new Date());
@@ -86,6 +93,7 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         }
         createSupplier(merchant);
         if (merchant.isFail()) {
+            log.error("商户创建失败:{},{}",merchant.getWayId(),merchant.getReason());
             throw new BizException(merchant.getReason());
         }
     }
@@ -100,35 +108,6 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         return authorizeMerchantMapper.selectByAliPayLoginNo(sellerNo);
     }
 
-
-    @Override
-    public void createMerchantList(List<RegisterMerchant> list) {
-        for (RegisterMerchant merchant : list) {
-            if (queryRepeatMerchant(merchant.getMerchantNo())) {
-                continue;
-            }
-            createAuthorizeMerchant(merchant);
-        }
-    }
-
-    @Override
-    public List<RegisterMerchant> createAllSupplier() {
-        List<RegisterMerchant> registerMerchantList = new ArrayList<>();
-        AuthorizeMerchant query = new AuthorizeMerchant();
-        query.setState(0);
-        List<AuthorizeMerchant> merchantList = this.queryList(query);
-        for (AuthorizeMerchant merchant:merchantList){
-            try {
-                createMerchant(merchant);
-            }catch (Exception e){
-                log.error("创建商户出错:{},{}",merchant.getMerchantNo(),e.getMessage());
-            }
-            if (!merchant.isSuccess()){
-                registerMerchantList.add(getRegisterMerchant(merchant));
-            }
-        }
-        return registerMerchantList;
-    }
 
     @Override
     public RegisterMerchant getRegisterMerchant(AuthorizeMerchant dto) {
@@ -162,7 +141,8 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
      *
      * @@param merchantNo
      */
-    private Boolean queryRepeatMerchant(String merchantNo) {
+    @Override
+    public Boolean queryRepeatMerchant(String merchantNo) {
         AuthorizeMerchant queryMerchant = new AuthorizeMerchant();
         queryMerchant.setMerchantNo(merchantNo);
         List<AuthorizeMerchant> merchantList = this.queryList(queryMerchant);

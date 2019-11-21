@@ -15,18 +15,8 @@ public class UserQuery extends User {
 
     private Integer limit;
 
-    /**
-     * 短信验证码
-     */
-    private String smsCode;
 
-    /**
-     * 新手机号
-     */
-    private String newMobile;
+    private String pwd;
 
-    /**
-     * 新手机验证码
-     */
-    private String newSmsCode;
+
 }

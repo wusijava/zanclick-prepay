@@ -21,7 +21,7 @@ public interface AuthorizeMerchantService extends BaseService<AuthorizeMerchant,
      * @param dto
      * @return
      */
-    void createMerchant(RegisterMerchant dto);
+    AuthorizeMerchant createMerchant(RegisterMerchant dto);
 
 
     /**
@@ -52,23 +52,17 @@ public interface AuthorizeMerchantService extends BaseService<AuthorizeMerchant,
     /**
      * 导入商户信息列表
      *
-     * @param list
-     * @return
-     */
-    void createMerchantList(List<RegisterMerchant> list);
-
-    /**
-     * 导入商户信息列表
-     *
-     * @return
-     */
-    List<RegisterMerchant> createAllSupplier();
-
-    /**
-     * 导入商户信息列表
-     *
      * @param merchant
      * @return
      */
     RegisterMerchant getRegisterMerchant(AuthorizeMerchant merchant);
+
+
+    /**
+     * 查询重复的商户
+     *
+     * @param merchantNo
+     * @return
+     */
+    Boolean queryRepeatMerchant(String merchantNo);
 }

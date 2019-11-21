@@ -6,19 +6,14 @@ import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
-import com.zanclick.prepay.common.utils.PassWordUtil;
-import com.zanclick.prepay.common.utils.StringUtils;
-import com.zanclick.prepay.user.entity.StoreMark;
-import com.zanclick.prepay.user.entity.User;
-import com.zanclick.prepay.user.service.StoreMarkService;
+import com.zanclick.prepay.user.query.UserQuery;
 import com.zanclick.prepay.user.service.UserService;
 import com.zanclick.prepay.web.api.AbstractCommonService;
 import com.zanclick.prepay.web.dto.ApiRegisterMerchant;
+import com.zanclick.prepay.web.dto.ApiRegisterMerchantResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.Date;
 
 /**
  * 商户信息签约
@@ -34,8 +29,7 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
     private AuthorizeMerchantService authorizeMerchantService;
     @Autowired
     private UserService userService;
-    @Autowired
-    private StoreMarkService storeMarkService;
+
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
@@ -53,7 +47,14 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
             verifyAppId(appId);
             apiMerchant.setAppId(appId);
             RegisterMerchant merchant = createRegisterMerchant(apiMerchant);
-            authorizeMerchantService.createMerchant(merchant);
+            AuthorizeMerchant authorizeMerchant = authorizeMerchantService.createMerchant(merchant);
+            UserQuery user = userService.createUser(merchant.getSellerNo(), merchant.getStoreSubjectName(), merchant.getStoreName(), merchant.getWayId(), merchant.getContactPhone());
+            authorizeMerchant.setStoreMarkCode(user.getStoreMarkCode());
+            authorizeMerchant.setUid(user.getUid());
+            authorizeMerchantService.updateById(authorizeMerchant);
+            ApiRegisterMerchantResult result = new ApiRegisterMerchantResult();
+            result.setMerchantNo(authorizeMerchant.getMerchantNo());
+            result.setPassword(user.getPwd());
             param.setData(merchant.getMerchantNo());
             return param.toString();
         } catch (BizException be) {
@@ -65,30 +66,6 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
         }
         param.setFail();
         return param.toString();
-    }
-
-
-    /**
-     * 创建用户
-     *
-     * @param merchant
-     */
-    private User createUser(AuthorizeMerchant merchant) {
-        StoreMark mark = storeMarkService.createStoreMark(merchant.getSellerNo(),merchant.getStoreSubjectName());
-        User user = new User();
-        String salt = PassWordUtil.generateSalt();
-        user.setCreateTime(new Date());
-        user.setMobile(merchant.getContactPhone());
-        user.setUsername(merchant.getWayId());
-        user.setType(User.Type.USER.getCode());
-        user.setUid(StringUtils.getMerchantNo());
-        user.setSalt(salt);
-        user.setState(User.State.OPEN.getCode());
-        user.setPassword(null);
-        user.setStoreMarkCode(mark.getCode());
-        user.setNickName(merchant.getStoreName());
-        userService.insert(user);
-        return user;
     }
 
 
@@ -114,11 +91,6 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
         merchant.setOperatorName("中国移动");
         merchant.setName(apiMerchant.getName());
         merchant.setSellerNo(apiMerchant.getSellerNo());
-        String reason = merchant.check();
-        if (reason != null) {
-            log.error("商户创建异常:{},{}", apiMerchant.getWayId(), reason);
-            throw new BizException(reason);
-        }
         return merchant;
     }
 }

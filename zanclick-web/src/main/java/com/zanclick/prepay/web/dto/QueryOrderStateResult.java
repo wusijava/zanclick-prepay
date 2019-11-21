@@ -21,4 +21,9 @@ public class QueryOrderStateResult {
     private String totalMoney;
 
     private String url;
+
+    /**
+     * 0 可以领取 1不可以领取
+     * */
+    private Integer receiveRedPacket;
 }

@@ -13,15 +13,10 @@ import com.zanclick.prepay.common.entity.RequestContext;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
-import com.zanclick.prepay.common.utils.PoiUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Cell;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -29,7 +24,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -143,28 +137,6 @@ public class AuthorizeMerchantWebController extends BaseController {
         return Response.ok(url);
     }
 
-    @ApiOperation(value = "导入商户信息")
-    @RequestMapping(value = "batchImport", method = RequestMethod.POST)
-    @ResponseBody
-    public Response<String> batchImport(MultipartFile file) {
-        try {
-            authorizeMerchantService.createMerchantList(getMerchantList(file));
-            List<RegisterMerchant> registerMerchantList = authorizeMerchantService.createAllSupplier();
-            ExcelDto dto = new ExcelDto();
-            dto.setHeaders(RegisterMerchant.headers);
-            dto.setKeys(RegisterMerchant.keys);
-            dto.setObjectList(parser(registerMerchantList));
-            String key = UUID.randomUUID().toString().replaceAll("-", "");
-            RedisUtil.set(key, dto, 1000 * 60 * 30L);
-            String url = excelDownloadUrl + key;
-            return Response.ok(url);
-        } catch (Exception e) {
-            log.error("导入商户出错:{}", e);
-            return Response.fail("导入商户失败");
-        }
-    }
-
-
     /**
      * 获取显示Modal
      *
@@ -198,90 +170,6 @@ public class AuthorizeMerchantWebController extends BaseController {
 
     private List<JSONObject> parser(List<RegisterMerchant> merchantList) {
         return JSONObject.parseArray(JSONObject.toJSONString(merchantList), JSONObject.class);
-    }
-
-    /**
-     * 获取导入的数据
-     *
-     * @param file
-     */
-    private List<RegisterMerchant> getMerchantList(MultipartFile file) {
-        List<RegisterMerchant> list = new ArrayList<>();
-        HSSFWorkbook workbook = PoiUtil.getWorkBook(file);
-        if (workbook == null) {
-            throw new RuntimeException("导入excel出错");
-        }
-        HSSFSheet sheet = workbook.getSheet("Sheet1");
-        if (sheet == null) {
-            throw new RuntimeException("导入excel出错");
-        }
-        Integer rowNum = sheet.getLastRowNum();
-        RegisterMerchant qualification = null;
-        for (int i = 1; i <= rowNum; i++) {
-            qualification = new RegisterMerchant();
-            qualification.setAppId("201910091625131208151");
-            qualification.setOperatorName("中国移动");
-            HSSFRow row = workbook.getSheet("Sheet1").getRow(i);
-            format(row);
-            qualification.setWayId(getData(row, 1));
-            qualification.setStoreProvince(getData(row, 2));
-            qualification.setStoreCity(getData(row, 3));
-            qualification.setStoreCounty(getData(row, 4));
-            qualification.setStoreNo(getData(row, 5));
-            qualification.setStoreName(getData(row, 6));
-            qualification.setStoreSubjectCertNo(getData(row, 7));
-            qualification.setStoreSubjectName(getData(row, 8));
-            qualification.setContactName(getData(row, 9));
-            qualification.setContactPhone(getData(row, 10));
-            qualification.setName(getData(row, 11));
-            qualification.setSellerNo(getData(row, 12));
-            qualification.setMerchantNo("DZ" + qualification.getWayId());
-            list.add(qualification);
-        }
-        return list;
-    }
-
-    /**
-     * 格式化excel数据
-     *
-     * @param row
-     */
-    private void format(HSSFRow row) {
-        row.getCell(1).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(2).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(3).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(4).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(5).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(6).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(7).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(8).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(9).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(10).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(11).setCellType(Cell.CELL_TYPE_STRING);
-        row.getCell(12).setCellType(Cell.CELL_TYPE_STRING);
-    }
-
-    /**
-     * 获取数据
-     *
-     * @param row
-     * @param cellNum
-     */
-    private String getData(HSSFRow row, Integer cellNum) {
-        return format(row.getCell(cellNum).getStringCellValue());
-
-    }
-
-    /**
-     * 格式化数据
-     *
-     * @param s
-     */
-    private String format(String s) {
-        if (DataUtil.isEmpty(s)) {
-            return "";
-        }
-        return s.trim().replaceAll("\r", "").replaceAll("\n", "");
     }
 
 
