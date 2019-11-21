@@ -1,4 +1,4 @@
-package com.zanclick.prepay.authorize.controller;
+package com.zanclick.prepay.authorize.controller.web;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
