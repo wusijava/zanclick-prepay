@@ -1,6 +1,6 @@
 package com.zanclick.prepay.permission.secure.resolver;
 
-import com.zanclick.prepay.permission.vo.HomeMenuList;
+import com.zanclick.prepay.app.entity.ApiSwitch;
 import com.zanclick.prepay.permission.vo.LoginUser;
 import com.zanclick.prepay.permission.vo.UsernamePasswordToken;
 import lombok.Data;
@@ -14,12 +14,13 @@ import java.util.List;
 public abstract class UserPermissionResolver {
 
     /**
-     * 获取权限列表
+     * 获取权限
      *
+     * @param path
      * @param type
      * @return
      */
-    public abstract List<HomeMenuList> getUserPermissions(Integer type);
+    public abstract ApiSwitch findPermission(String path,Integer type);
 
     /**
      * 获取登录用户
