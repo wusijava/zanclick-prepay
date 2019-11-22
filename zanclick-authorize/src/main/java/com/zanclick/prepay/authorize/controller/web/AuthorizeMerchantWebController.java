@@ -2,8 +2,10 @@ package com.zanclick.prepay.authorize.controller.web;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
+import com.zanclick.prepay.authorize.entity.RedPackBlacklist;
 import com.zanclick.prepay.authorize.query.AuthorizeMerchantQuery;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
+import com.zanclick.prepay.authorize.service.RedPackBlacklistService;
 import com.zanclick.prepay.authorize.vo.MerchantDetail;
 import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.authorize.vo.web.AuthorizeWebListInfo;
@@ -42,6 +44,9 @@ public class AuthorizeMerchantWebController extends BaseController {
 
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
+
+    @Autowired
+    private RedPackBlacklistService redPackBlacklistService;
 
     @Value("${excelDownloadUrl}")
     private String excelDownloadUrl;
@@ -220,4 +225,50 @@ public class AuthorizeMerchantWebController extends BaseController {
         detail.setName(merchant.getName());
         return detail;
     }
+
+    @ApiOperation(value = "商户领红包的权限开关")
+    @RequestMapping(value = "/isReceive", method = RequestMethod.POST)
+    @ResponseBody
+    public void isReceive(Long id) {
+        try{
+            if(DataUtil.isEmpty(id)){
+                return;
+            }
+            AuthorizeMerchant merchant = authorizeMerchantService.queryById(id);
+            if(DataUtil.isEmpty(merchant)){
+                return;
+            }
+            if(merchant.getState()!=1){
+                return;
+            }
+            //取出商户收款账号
+            String sellerNo = merchant.getSellerNo();
+            //通过收款账号查询红包收款黑名单(若能查到,则商户默认不能领取红包)
+            RedPackBlacklist blacklist = redPackBlacklistService.querySellerNo(sellerNo);
+            if(DataUtil.isEmpty(blacklist)){
+                //没有查到,说明商户可以领红包,
+                if(merchant.getRedPackState() != 1){
+                    //若收红包的状态不是可领取,则修改收款账号为可领取 1
+                    AuthorizeMerchant update = new AuthorizeMerchant();
+                    update.setId(merchant.getId());
+                    update.setRedPackState(1);
+                    authorizeMerchantService.updateById(update);
+                }
+            }else{
+                //能查到,说明商户不能领取红包
+                if(merchant.getRedPackState() == 1){
+                    //若收红包的状态是可领取,则修改为不可领取 0
+                    AuthorizeMerchant update = new AuthorizeMerchant();
+                    update.setId(merchant.getId());
+                    update.setRedPackState(0);
+                    authorizeMerchantService.updateById(update);
+                }
+            }
+
+        }catch (Exception e){
+            log.error("查询异常:{},{},{}", id, e);
+        }
+
+    }
+
 }
