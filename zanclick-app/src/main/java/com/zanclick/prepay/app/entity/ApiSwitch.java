@@ -4,7 +4,7 @@ import com.zanclick.prepay.common.entity.Identifiable;
 import lombok.Data;
 
 /**
- * 接口开关
+ * 接口开关(主要用来关闭接口)
  *
  * @author duchong
  * @date 2019-7-8 14:19:20

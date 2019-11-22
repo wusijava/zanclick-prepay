@@ -20,7 +20,7 @@ public abstract class UserPermissionResolver {
      * @param type
      * @return
      */
-    public abstract ApiSwitch findPermission(String path,Integer type);
+    public abstract Boolean hasPermission(String path,Integer type);
 
     /**
      * 获取登录用户

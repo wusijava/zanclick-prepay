@@ -27,8 +27,8 @@ public class MyUserPermissionResolver extends UserPermissionResolver {
     private ApiSwitchService apiSwitchService;
 
     @Override
-    public ApiSwitch findPermission(String path,Integer type) {
-        return apiSwitchService.selectByMap(path,type);
+    public Boolean hasPermission(String path,Integer type) {
+        return apiSwitchService.hasPermission(path,type);
     }
 
     @Override
