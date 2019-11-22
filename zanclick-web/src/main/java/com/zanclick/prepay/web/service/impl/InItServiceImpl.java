@@ -4,6 +4,7 @@ import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.query.AuthorizeMerchantQuery;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.vo.RegisterMerchant;
+import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.query.PayOrderQuery;
@@ -42,6 +43,9 @@ public class InItServiceImpl implements InItService {
         query.setState(AuthorizeMerchant.State.success.getCode());
         List<AuthorizeMerchant> merchantList = authorizeMerchantService.queryList(query);
         for (AuthorizeMerchant merchant : merchantList) {
+            if (DataUtil.isNotEmpty(merchant.getUid())){
+                continue;
+            }
             try {
                 initMerchant(merchant);
             } catch (Exception e) {
