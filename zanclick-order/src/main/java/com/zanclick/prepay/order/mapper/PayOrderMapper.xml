@@ -95,7 +95,7 @@
                     AND `store_name`=#{storeName}
                 </if>
                 <if test="wayId != null and wayId != ''">
-                    AND `way_id` LIKE concat ('%',#{wayId},'%')
+                    AND `way_id` = #{wayId}
                 </if>
                 <if test="packageNo != null and packageNo != ''">
                     AND `package_no`=#{packageNo}

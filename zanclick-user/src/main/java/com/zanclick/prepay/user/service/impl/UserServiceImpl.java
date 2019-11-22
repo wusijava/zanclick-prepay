@@ -88,6 +88,7 @@ public class UserServiceImpl extends BaseMybatisServiceImpl<User, Long> implemen
         }
         StoreMark mark = storeMarkService.createStoreMark(aliPayLoginNo,merchantName);
         UserQuery query = new UserQuery();
+        String pwd = StringUtils.createRandom(false,8);
         String salt = PassWordUtil.generateSalt();
         query.setCreateTime(new Date());
         query.setMobile(mobile);
@@ -96,11 +97,11 @@ public class UserServiceImpl extends BaseMybatisServiceImpl<User, Long> implemen
         query.setUid(StringUtils.getMerchantNo());
         query.setSalt(salt);
         query.setState(User.State.OPEN.getCode());
-        query.setPwd(StringUtils.createRandom(false,8));
-        query.setPassword(PassWordUtil.generatePasswordSha1WithSalt(query.getPwd(),salt));
+        query.setPassword(PassWordUtil.generatePasswordSha1WithSalt(pwd,salt));
         query.setStoreMarkCode(mark.getCode());
         query.setNickName(storeName);
-        getBaseMapper().insert(user);
+        this.insert(query);
+        query.setPwd(pwd);
         return query;
     }
 }

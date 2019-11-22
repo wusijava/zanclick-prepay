@@ -47,7 +47,10 @@ public class InItServiceImpl implements InItService {
                 continue;
             }
             try {
-                initMerchant(merchant);
+                RegisterMerchant registerMerchant = initMerchant(merchant);
+                if (registerMerchant != null){
+                    registerMerchantList.add(registerMerchant);
+                }
             } catch (Exception e) {
                 log.error("商户初始化错误:{}", merchant.getWayId(), e);
             }
@@ -59,6 +62,11 @@ public class InItServiceImpl implements InItService {
     @Transactional(rollbackFor = Exception.class)
     public RegisterMerchant initMerchant(AuthorizeMerchant merchant) {
         UserQuery user = userService.createUser(merchant.getSellerNo(), merchant.getStoreSubjectName(), merchant.getStoreName(), merchant.getWayId(), merchant.getContactPhone());
+        if (user == null){
+            log.error("重复数据:{}",merchant.getWayId());
+            return null;
+        }
+        log.error("开始处理:{}",merchant.getWayId());
         merchant.setUid(user.getUid());
         merchant.setStoreMarkCode(user.getStoreMarkCode());
         authorizeMerchantService.updateById(merchant);

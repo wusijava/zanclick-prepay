@@ -55,7 +55,7 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
             ApiRegisterMerchantResult result = new ApiRegisterMerchantResult();
             result.setMerchantNo(authorizeMerchant.getMerchantNo());
             result.setPassword(user.getPwd());
-            param.setData(merchant.getMerchantNo());
+            param.setData(result);
             return param.toString();
         } catch (BizException be) {
             log.error("商户创建业务异常:{}", be);
