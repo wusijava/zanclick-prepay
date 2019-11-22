@@ -1,16 +1,21 @@
 package com.zanclick.prepay.web.controller;
 
+import com.alibaba.fastjson.JSONObject;
+import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.utils.PoiUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
+import com.zanclick.prepay.web.service.InItService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * 内部接口
@@ -23,6 +28,9 @@ import javax.servlet.http.HttpServletResponse;
 @RestController(value = "open_controller")
 @RequestMapping(value = "/api/open/")
 public class OpenController extends BaseController {
+
+    @Autowired
+    private InItService inItService;
 
     @ApiOperation(value = "通用excel下载接口")
     @GetMapping(value = "/downloadExcel/{key}")
@@ -38,4 +46,15 @@ public class OpenController extends BaseController {
         RedisUtil.del(key);
     }
 
+    @ApiOperation(value = "初始化数据")
+    @GetMapping(value = "/initData")
+    @ResponseBody
+    public void initData(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        List<RegisterMerchant> registerMerchantList = inItService.initData();
+        PoiUtil.batchExport(RegisterMerchant.headers, RegisterMerchant.keys,parser(registerMerchantList), request, response);
+    }
+
+    private List<JSONObject> parser(List<RegisterMerchant> merchantList) {
+        return JSONObject.parseArray(JSONObject.toJSONString(merchantList), JSONObject.class);
+    }
 }

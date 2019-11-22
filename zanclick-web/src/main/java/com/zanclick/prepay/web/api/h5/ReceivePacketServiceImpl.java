@@ -13,7 +13,6 @@ import com.zanclick.prepay.order.entity.RedPacket;
 import com.zanclick.prepay.order.service.PayOrderService;
 import com.zanclick.prepay.order.service.RedPacketService;
 import com.zanclick.prepay.web.api.AbstractCommonService;
-import com.zanclick.prepay.web.dto.QueryRedPacket;
 import com.zanclick.prepay.web.dto.ReceiveRedPacket;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;

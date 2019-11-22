@@ -122,6 +122,8 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder.setSellerNo(merchant.getSellerNo());
         payOrder.setProvinceName(merchant.getStoreProvince());
         payOrder.setCityName(merchant.getStoreCity());
+        payOrder.setUid(merchant.getUid());
+        payOrder.setStoreMarkCode(merchant.getStoreMarkCode());
         payOrder.setDistrictName(merchant.getStoreCounty());
         if (SetMeal.RedPackState.open.getCode().equals(meal.getRedPackState())){
             payOrder.setRedPackAmount(meal.getRedPackAmount());

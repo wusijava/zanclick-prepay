@@ -60,31 +60,6 @@ public abstract class AbstractCommonService {
         }
     }
 
-
-    /**
-     * 获取状态描述
-     *
-     * @param state
-     * @return
-     */
-    public String getStateDesc(Integer state) {
-        if (state.equals(-1) || state.equals(-2)) {
-            return "已关闭";
-        } else if (state.equals(1)) {
-            return "已支付";
-        } else if (state.equals(2)) {
-            return "支付中";
-        } else if (state.equals(3)) {
-            return "结算中";
-        } else if (state.equals(4)) {
-            return "已结算";
-        } else if (state.equals(5)) {
-            return "已退款";
-        } else {
-            return "待支付";
-        }
-    }
-
     public <T> T parser(String content, Class<T> tClass) {
         return JSONObject.parseObject(content, tClass);
     }

@@ -10,6 +10,7 @@ import com.zanclick.prepay.user.mapper.UserMapper;
 import com.zanclick.prepay.user.query.UserQuery;
 import com.zanclick.prepay.user.service.StoreMarkService;
 import com.zanclick.prepay.user.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +20,7 @@ import java.util.Date;
  * @author Administrator
  * @date 2019-08-03 10:42:46
  **/
+@Slf4j
 @Service
 public class UserServiceImpl extends BaseMybatisServiceImpl<User, Long> implements UserService {
 
@@ -79,21 +81,26 @@ public class UserServiceImpl extends BaseMybatisServiceImpl<User, Long> implemen
      */
     @Override
     public UserQuery createUser(String aliPayLoginNo, String merchantName,String storeName,String wayId,String mobile) {
+        User user = userMapper.findByUsername(wayId);
+        if (user != null){
+            log.error("用户登录名重复:{}",wayId);
+            return (UserQuery) user;
+        }
         StoreMark mark = storeMarkService.createStoreMark(aliPayLoginNo,merchantName);
-        UserQuery user = new UserQuery();
+        UserQuery query = new UserQuery();
         String salt = PassWordUtil.generateSalt();
-        user.setCreateTime(new Date());
-        user.setMobile(mobile);
-        user.setUsername(wayId);
-        user.setType(User.Type.USER.getCode());
-        user.setUid(StringUtils.getMerchantNo());
-        user.setSalt(salt);
-        user.setState(User.State.OPEN.getCode());
-        user.setPwd(StringUtils.createRandom(false,8));
-        user.setPassword(PassWordUtil.generatePasswordSha1WithSalt(user.getPwd(),salt));
-        user.setStoreMarkCode(mark.getCode());
-        user.setNickName(storeName);
+        query.setCreateTime(new Date());
+        query.setMobile(mobile);
+        query.setUsername(wayId);
+        query.setType(User.Type.USER.getCode());
+        query.setUid(StringUtils.getMerchantNo());
+        query.setSalt(salt);
+        query.setState(User.State.OPEN.getCode());
+        query.setPwd(StringUtils.createRandom(false,8));
+        query.setPassword(PassWordUtil.generatePasswordSha1WithSalt(query.getPwd(),salt));
+        query.setStoreMarkCode(mark.getCode());
+        query.setNickName(storeName);
         getBaseMapper().insert(user);
-        return user;
+        return query;
     }
 }
