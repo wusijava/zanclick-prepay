@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zanclick.prepay.app.mapper.ApiSwitchMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.app.entity.ApiSwitch">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="path" property="path" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="app_id" property="appId" jdbcType="VARCHAR"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="table">api_switch</sql>
+    <sql id="Base_Column_List">
+            `id`,
+            `path`,
+            `name`,
+            `app_id`,
+            `state`,
+            `type`
+    </sql>
+    <sql id="Base_Where_Clause">
+        <where>
+            <trim prefixOverrides="and">
+                <if test="id != null">
+                    AND `id`=#{id}
+                </if>
+                <if test="path != null and path != ''">
+                    AND `path`=#{path}
+                </if>
+                <if test="name != null and name != ''">
+                    AND `name`=#{name}
+                </if>
+                <if test="appId != null and appId != ''">
+                    AND `app_id`=#{appId}
+                </if>
+                <if test="state != null">
+                    AND `state`=#{state}
+                </if>
+                <if test="type != null">
+                    AND `type`=#{type}
+                </if>
+            </trim>
+        </where>
+        <if test="offset == null and limit != null">
+            limit #{limit}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </sql>
+
+    <!-- 查询总数 -->
+    <select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT count(id)
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <!-- 查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.app.entity.ApiSwitch" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        (
+        `id`,
+        `path`,
+        `name`,
+        `app_id`,
+        `state`,
+        `type`
+        )
+        VALUES(
+        #{id},
+        #{path},
+        #{name},
+        #{appId},
+        #{state},
+        #{type}
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="table"/>
+        (
+        `id`,
+        `path`,
+        `name`,
+        `app_id`,
+        `state`,
+        `type`
+        )
+        VALUES
+        <foreach collection="list" item="cm" index="index" separator=",">
+            (
+            #{cm.id},
+            #{cm.path},
+            #{cm.name},
+            #{cm.appId},
+            #{cm.state},
+            #{cm.type}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
+
+    <select id="selectByPath" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE path = #{path} ORDER BY id DESC LIMIT 1;
+    </select>
+
+    <select id="selectByMap" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE path = #{path} AND `type` = #{type} ORDER BY id DESC LIMIT 1;
+    </select>
+
+
+    <update id="updateById" parameterType="com.zanclick.prepay.app.entity.ApiSwitch">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="path != null and path != ''">
+                `path`=#{path},
+            </if>
+            <if test="name != null and name != ''">
+                `name`=#{name},
+            </if>
+            <if test="appId != null and appId != ''">
+                `app_id`=#{appId},
+            </if>
+            <if test="state != null">
+                `state`=#{state},
+            </if>
+            <if test="type != null">
+                `type`=#{type},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+</mapper>

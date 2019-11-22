@@ -1,18 +1,16 @@
 package com.zanclick.prepay.permission.secure.resolver.impl;
 
+import com.zanclick.prepay.app.entity.ApiSwitch;
+import com.zanclick.prepay.app.service.ApiSwitchService;
+import com.zanclick.prepay.common.utils.PassWordUtil;
 import com.zanclick.prepay.permission.secure.resolver.UserPermissionResolver;
-import com.zanclick.prepay.permission.service.RoleService;
-import com.zanclick.prepay.permission.vo.HomeMenuList;
 import com.zanclick.prepay.permission.vo.LoginUser;
 import com.zanclick.prepay.permission.vo.UsernamePasswordToken;
-import com.zanclick.prepay.common.utils.PassWordUtil;
 import com.zanclick.prepay.user.entity.User;
 import com.zanclick.prepay.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.List;
 
 /**
  * @author tuchuan
@@ -26,11 +24,11 @@ public class MyUserPermissionResolver extends UserPermissionResolver {
     @Autowired
     private UserService userService;
     @Autowired
-    private RoleService roleService;
+    private ApiSwitchService apiSwitchService;
 
     @Override
-    public List<HomeMenuList> getUserPermissions(Integer type) {
-        return roleService.findPermissionByType(type);
+    public ApiSwitch findPermission(String path,Integer type) {
+        return apiSwitchService.selectByMap(path,type);
     }
 
     @Override
