@@ -8,6 +8,7 @@ import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.PoiUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.user.query.UserQuery;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -112,6 +114,7 @@ public class ExcelImportController {
             qualification.setName(getData(row, 11));
             qualification.setSellerNo(getData(row, 12));
             qualification.setMerchantNo("DZ" + qualification.getWayId());
+            qualification.setCreateTime(DateUtil.formatDate(new Date(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
             try {
                 AuthorizeMerchant merchant = authorizeMerchantService.createMerchant(qualification);
                 UserQuery user = userService.createUser(merchant.getSellerNo(),merchant.getStoreSubjectName(),merchant.getStoreName(),merchant.getWayId(),merchant.getContactPhone());
@@ -119,6 +122,7 @@ public class ExcelImportController {
                 merchant.setUid(user.getUid());
                 authorizeMerchantService.updateById(merchant);
                 qualification.setPassword(user.getPwd());
+                qualification.setState(merchant.getStateDesc());
             }catch (BizException e){
                 log.error("创建商户失败:{},{},{}",qualification.getWayId(),qualification.getStoreName(),e);
                 qualification.setState("签约失败");
