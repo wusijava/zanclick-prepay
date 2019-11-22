@@ -58,7 +58,7 @@ public class AuthorizeMerchantWebController extends BaseController {
         }
         RequestContext.RequestUser user = RequestContext.getCurrentUser();
         if (user.getType().equals(1)) {
-            query.setUid(user.getStoreMarkCode());
+            query.setUid(user.getUid());
         } else if (user.getType().equals(2)) {
             query.setStoreMarkCode(user.getStoreMarkCode());
         }
@@ -112,7 +112,7 @@ public class AuthorizeMerchantWebController extends BaseController {
     public Response<String> batchExport(AuthorizeMerchantQuery query) {
         RequestContext.RequestUser user = RequestContext.getCurrentUser();
         if (user.getType().equals(1)) {
-            query.setUid(user.getStoreMarkCode());
+            query.setUid(user.getUid());
         } else if (user.getType().equals(2)) {
             query.setStoreMarkCode(user.getStoreMarkCode());
         }

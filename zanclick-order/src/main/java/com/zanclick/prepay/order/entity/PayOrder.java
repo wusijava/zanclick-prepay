@@ -4,6 +4,7 @@ import com.zanclick.prepay.common.entity.Identifiable;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * 资金授权商户
@@ -307,5 +308,9 @@ public class PayOrder implements Identifiable<Long> {
 
     public Boolean isWait() {
         return State.wait.getCode().equals(state);
+    }
+
+    public static void main(String[] args) {
+        System.err.println(UUID.randomUUID().toString().replaceAll("-",""));
     }
 }

@@ -194,9 +194,12 @@ public class SupplyChainUtils {
         request.setBizModel(model);
         AlipayClient alipayClient = getAlipayClient(configuration);
         try {
+            log.error("商户创建:{}",JSONObject.toJSONString(request));
             response = alipayClient.execute(request);
+            log.error("商户创建结果:{}",JSONObject.toJSONString(response));
             return response;
         }catch (Exception e){
+            log.error("商户创出错:{},{}",create.getRcvLoginId(),e);
             e.printStackTrace();
         }
         return null;
