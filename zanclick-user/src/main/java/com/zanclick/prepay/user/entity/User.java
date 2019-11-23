@@ -35,6 +35,8 @@ public class User implements Identifiable<Long> {
 
     private String storeMarkCode;
 
+    private String pwd;
+
     public enum State {
         /**
          * 开启

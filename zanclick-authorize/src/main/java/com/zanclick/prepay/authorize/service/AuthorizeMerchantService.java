@@ -50,15 +50,6 @@ public interface AuthorizeMerchantService extends BaseService<AuthorizeMerchant,
 
 
     /**
-     * 导入商户信息列表
-     *
-     * @param merchant
-     * @return
-     */
-    RegisterMerchant getRegisterMerchant(AuthorizeMerchant merchant);
-
-
-    /**
      * 查询重复的商户
      *
      * @param merchantNo

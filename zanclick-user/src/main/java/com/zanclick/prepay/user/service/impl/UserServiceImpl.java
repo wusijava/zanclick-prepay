@@ -55,6 +55,7 @@ public class UserServiceImpl extends BaseMybatisServiceImpl<User, Long> implemen
         UserQuery query = new UserQuery();
         query.setId(userId);
         query.setPassword(newPass);
+        query.setPwd(newPassword);
         this.updateById(query);
         return null;
     }
@@ -80,14 +81,14 @@ public class UserServiceImpl extends BaseMybatisServiceImpl<User, Long> implemen
      * @param mobile
      */
     @Override
-    public UserQuery createUser(String aliPayLoginNo, String merchantName,String storeName,String wayId,String mobile) {
+    public User createUser(String aliPayLoginNo, String merchantName,String storeName,String wayId,String mobile) {
         User user = userMapper.findByUsername(wayId);
         if (user != null){
             log.error("用户登录名重复:{}",wayId);
-            return (UserQuery) user;
+            return user;
         }
         StoreMark mark = storeMarkService.createStoreMark(aliPayLoginNo,merchantName);
-        UserQuery query = new UserQuery();
+        User query = new User();
         String pwd = StringUtils.createRandom(false,8);
         String salt = PassWordUtil.generateSalt();
         query.setCreateTime(new Date());
@@ -100,8 +101,8 @@ public class UserServiceImpl extends BaseMybatisServiceImpl<User, Long> implemen
         query.setPassword(PassWordUtil.generatePasswordSha1WithSalt(pwd,salt));
         query.setStoreMarkCode(mark.getCode());
         query.setNickName(storeName);
-        this.insert(query);
         query.setPwd(pwd);
+        this.insert(query);
         return query;
     }
 }

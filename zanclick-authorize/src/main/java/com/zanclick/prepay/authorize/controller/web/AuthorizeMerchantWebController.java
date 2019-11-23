@@ -1,21 +1,17 @@
 package com.zanclick.prepay.authorize.controller.web;
 
-import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.entity.RedPackBlacklist;
 import com.zanclick.prepay.authorize.query.AuthorizeMerchantQuery;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.service.RedPackBlacklistService;
 import com.zanclick.prepay.authorize.vo.MerchantDetail;
-import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.authorize.vo.web.AuthorizeWebListInfo;
 import com.zanclick.prepay.common.base.controller.BaseController;
-import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.RequestContext;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
-import com.zanclick.prepay.common.utils.RedisUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +26,6 @@ import org.springframework.web.bind.annotation.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * @author duchong
@@ -111,36 +106,6 @@ public class AuthorizeMerchantWebController extends BaseController {
         return Response.ok("修改成功");
     }
 
-    @ApiOperation(value = "导出商户信息")
-    @RequestMapping(value = "batchExport", method = RequestMethod.POST)
-    @ResponseBody
-    public Response<String> batchExport(AuthorizeMerchantQuery query) {
-        RequestContext.RequestUser user = RequestContext.getCurrentUser();
-        if (user.getType().equals(1)) {
-            query.setUid(user.getUid());
-        } else if (user.getType().equals(2)) {
-            query.setStoreMarkCode(user.getStoreMarkCode());
-        }
-        List<AuthorizeMerchant> merchantList = authorizeMerchantService.queryList(query);
-        List<RegisterMerchant> registerMerchantList = new ArrayList<>();
-        for (AuthorizeMerchant merchant : merchantList) {
-            RegisterMerchant registerMerchant = authorizeMerchantService.getRegisterMerchant(merchant);
-            String reason = registerMerchant.check();
-            if (reason != null) {
-                log.error("导入商户数据有误:{},{}", registerMerchant.getWayId(), reason);
-                continue;
-            }
-            registerMerchantList.add(registerMerchant);
-        }
-        ExcelDto dto = new ExcelDto();
-        dto.setHeaders(RegisterMerchant.headers);
-        dto.setKeys(RegisterMerchant.keys);
-        dto.setObjectList(parser(registerMerchantList));
-        String key = UUID.randomUUID().toString().replaceAll("-", "");
-        RedisUtil.set(key, dto, 1000 * 60 * 30L);
-        String url = excelDownloadUrl + key;
-        return Response.ok(url);
-    }
 
     /**
      * 获取显示Modal
@@ -171,10 +136,6 @@ public class AuthorizeMerchantWebController extends BaseController {
         vo.setState(merchant.getState());
         vo.setStateStr(merchant.getStateDesc());
         return vo;
-    }
-
-    private List<JSONObject> parser(List<RegisterMerchant> merchantList) {
-        return JSONObject.parseArray(JSONObject.toJSONString(merchantList), JSONObject.class);
     }
 
 
