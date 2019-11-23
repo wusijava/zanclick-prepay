@@ -54,7 +54,7 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
             authorizeMerchant.setUid(user.getUid());
             authorizeMerchantService.updateById(authorizeMerchant);
             ApiRegisterMerchantResult result = new ApiRegisterMerchantResult();
-            result.setMerchantNo(authorizeMerchant.getMerchantNo());
+            result.setMerchantNo(authorizeMerchant.getWayId());
             result.setPassword(user.getPwd());
             param.setData(result);
             return param.toString();

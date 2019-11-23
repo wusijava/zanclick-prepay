@@ -157,9 +157,9 @@ public class AuthorizeMerchant implements Identifiable<Long> {
     }
 
     public enum State {
-        failed(-1, "创建失败"),
-        waiting(0, "等待提交"),
-        success(1, "签约成功");
+        failed(-1, "注册失败"),
+        waiting(0, "等待注册"),
+        success(1, "注册成功");
 
         private Integer code;
         private String desc;
@@ -188,11 +188,11 @@ public class AuthorizeMerchant implements Identifiable<Long> {
 
     public String getStateDesc() {
         if (AuthorizeMerchant.State.success.getCode().equals(state)) {
-            return "签约成功";
+            return "注册成功";
         } else if (AuthorizeMerchant.State.failed.getCode().equals(state)) {
-            return "签约失败";
+            return "注册失败";
         } else {
-            return "等待签约";
+            return "等待注册";
         }
     }
 
