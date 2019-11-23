@@ -39,7 +39,8 @@ public class MerchantVerifyServiceImpl extends AbstractCommonService implements 
                 param.setMessage(check);
                 return param.toString();
             }
-            AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(apiVerifyMerchant.getMerchantNo());
+            String merchantNo = "DZ" + apiVerifyMerchant.getWayid();
+            AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(merchantNo);
             if (merchant == null) {
                 param.setFail();
                 param.setMessage("商户未签约");
