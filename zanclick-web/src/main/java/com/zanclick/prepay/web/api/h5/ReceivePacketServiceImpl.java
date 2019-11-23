@@ -111,6 +111,7 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
             packet.setState(0);
             packet.setTitle(order.getTitle());
             packet.setReceiveNo(receive.getReceiveNo());
+            packet.setName(receive.getName());
             redPacketService.insert(packet);
             SendMessage.sendMessage(JmsMessaging.ORDER_RED_PACKET_MESSAGE,order.getOutTradeNo());
             RedPacket redPacket = redPacketService.syncQueryState(order.getOutTradeNo(),packet.getState());

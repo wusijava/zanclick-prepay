@@ -17,6 +17,8 @@ public class ReceiveRedPacket extends Param {
 
     private String receiveNo;
 
+    private String name;
+
     public String check() {
         if (checkNull(outOrderNo)) {
             return "缺少交易订单号";

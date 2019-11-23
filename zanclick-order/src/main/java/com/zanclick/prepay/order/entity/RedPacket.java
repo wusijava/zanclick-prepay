@@ -36,7 +36,7 @@ public class RedPacket implements Identifiable<Long> {
 
     private String merchantNo;
 
-
+    private String name;
 
     public enum State {
         failed(-1, "领取失败"),

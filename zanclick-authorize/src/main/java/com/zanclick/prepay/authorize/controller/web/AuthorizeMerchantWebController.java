@@ -90,12 +90,15 @@ public class AuthorizeMerchantWebController extends BaseController {
         if (DataUtil.isEmpty(merchant) || DataUtil.isEmpty(merchant.getId()) || DataUtil.isEmpty(merchant.getWayId())) {
             return Response.fail("修改商户信息异常");
         }
-        AuthorizeMerchant oldMerchant = authorizeMerchantService.queryMerchant(merchant.getMerchantNo());
-        if (DataUtil.isNotEmpty(oldMerchant) && !oldMerchant.getId().equals(merchant.getId()) && !oldMerchant.isFail()) {
+        AuthorizeMerchant authorizeMerchant = setMerchantDetail(merchant);
+        AuthorizeMerchant oldMerchant = authorizeMerchantService.queryMerchant(authorizeMerchant.getMerchantNo());
+        if (DataUtil.isNotEmpty(oldMerchant)
+                && !oldMerchant.getId().equals(authorizeMerchant.getId())
+                && !oldMerchant.isFail()) {
             return Response.fail("渠道编码重复");
         }
         try {
-            authorizeMerchantService.updateMerchant(setMerchantDetail(merchant));
+            authorizeMerchantService.updateMerchant(authorizeMerchant);
         } catch (BizException e) {
             log.error("修改商户信息异常:{},{}", merchant.getWayId(), e.getMessage());
             return Response.ok(e.getMessage());
