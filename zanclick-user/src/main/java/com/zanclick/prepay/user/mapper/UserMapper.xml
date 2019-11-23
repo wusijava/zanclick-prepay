@@ -13,6 +13,7 @@
         <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="salt" property="salt" jdbcType="VARCHAR"/>
         <result column="store_mark_code" property="storeMarkCode" jdbcType="VARCHAR"/>
+        <result column="pwd" property="pwd" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">user</sql>
@@ -27,7 +28,8 @@
             `state`,
             `type`,
             `salt`,
-            `store_mark_code`
+            `store_mark_code`,
+            `pwd`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -64,6 +66,9 @@
                 </if>
                 <if test="storeMarkCode != null and storeMarkCode != ''">
                     AND `store_mark_code`=#{storeMarkCode}
+                </if>
+                <if test="pwd != null and pwd != ''">
+                    AND `pwd`=#{pwd}
                 </if>
             </trim>
         </where>
@@ -108,7 +113,8 @@
         `state`,
         `type`,
         `salt`,
-        `store_mark_code`
+        `store_mark_code`,
+        `pwd`
         )
         VALUES(
         #{id},
@@ -121,7 +127,8 @@
         #{state},
         #{type},
         #{salt},
-        #{storeMarkCode}
+        #{storeMarkCode},
+        #{pwd}
         )
     </insert>
 
@@ -139,7 +146,8 @@
         `state`,
         `type`,
         `salt`,
-        `store_mark_code`
+        `store_mark_code`,
+        `pwd`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -154,7 +162,8 @@
             #{cm.state},
             #{cm.type},
             #{cm.salt},
-            #{cm.storeMarkCode}
+            #{cm.storeMarkCode},
+            #{cm.pwd}
             )
         </foreach>
     </insert>
@@ -216,6 +225,9 @@
             </if>
             <if test="storeMarkCode != null and storeMarkCode != ''">
                 `store_mark_code`=#{storeMarkCode},
+            </if>
+            <if test="pwd != null and pwd != ''">
+                `pwd`=#{pwd},
             </if>
         </set>
         WHERE id=#{id}

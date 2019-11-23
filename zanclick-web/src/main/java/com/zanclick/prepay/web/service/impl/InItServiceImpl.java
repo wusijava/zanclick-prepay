@@ -56,6 +56,7 @@ public class InItServiceImpl implements InItService {
                 log.error("商户初始化错误:{}", merchant.getWayId(), e);
             }
         }
+        System.err.println("--------------初始化结束----------------");
         return registerMerchantList;
     }
 
