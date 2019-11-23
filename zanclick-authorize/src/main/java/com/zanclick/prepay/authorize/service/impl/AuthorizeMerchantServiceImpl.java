@@ -13,7 +13,6 @@ import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.common.base.service.impl.BaseMybatisServiceImpl;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
-import com.zanclick.prepay.common.utils.DateUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,34 +105,6 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
     @Override
     public AuthorizeMerchant queryByAliPayLoginNo(String sellerNo) {
         return authorizeMerchantMapper.selectByAliPayLoginNo(sellerNo);
-    }
-
-
-    @Override
-    public RegisterMerchant getRegisterMerchant(AuthorizeMerchant dto) {
-        RegisterMerchant merchant = new RegisterMerchant();
-        merchant.setAppId(dto.getAppId());
-        merchant.setWayId(dto.getWayId());
-        merchant.setMerchantNo(dto.getMerchantNo());
-        merchant.setContactName(dto.getContactName());
-        merchant.setContactPhone(dto.getContactPhone());
-        merchant.setName(dto.getName());
-        merchant.setOperatorName(dto.getOperatorName());
-        merchant.setStoreSubjectName(dto.getStoreSubjectName());
-        merchant.setStoreSubjectCertNo(dto.getStoreSubjectCertNo());
-        merchant.setStoreNo(dto.getStoreNo());
-        merchant.setStoreName(dto.getStoreName());
-        merchant.setStoreProvince(dto.getStoreProvince());
-        merchant.setStoreCity(dto.getStoreCity());
-        merchant.setStoreCounty(dto.getStoreCounty());
-        merchant.setStoreProvinceCode(dto.getStoreProvinceCode());
-        merchant.setStoreCityCode(dto.getStoreCityCode());
-        merchant.setStoreCountyCode(dto.getStoreCountyCode());
-        merchant.setSellerNo(dto.getSellerNo());
-        merchant.setState(dto.getStateDesc());
-        merchant.setReason(dto.getReason());
-        merchant.setCreateTime(DateUtil.formatDate(dto.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
-        return merchant;
     }
 
     /**

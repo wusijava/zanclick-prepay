@@ -16,7 +16,4 @@ public class UserQuery extends User {
     private Integer limit;
 
 
-    private String pwd;
-
-
 }

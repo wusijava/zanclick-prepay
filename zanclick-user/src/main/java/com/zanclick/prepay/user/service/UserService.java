@@ -59,6 +59,6 @@ public interface UserService extends BaseService<User, Long> {
      * @param wayId
      * @param mobile
      */
-    UserQuery createUser(String aliPayLoginNo, String merchantName, String storeName, String wayId, String mobile);
+    User createUser(String aliPayLoginNo, String merchantName, String storeName, String wayId, String mobile);
 
 }
