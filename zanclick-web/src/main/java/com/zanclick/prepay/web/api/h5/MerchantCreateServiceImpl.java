@@ -6,6 +6,7 @@ import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
+import com.zanclick.prepay.user.entity.User;
 import com.zanclick.prepay.user.query.UserQuery;
 import com.zanclick.prepay.user.service.UserService;
 import com.zanclick.prepay.web.api.AbstractCommonService;
@@ -48,7 +49,7 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
             apiMerchant.setAppId(appId);
             RegisterMerchant merchant = createRegisterMerchant(apiMerchant);
             AuthorizeMerchant authorizeMerchant = authorizeMerchantService.createMerchant(merchant);
-            UserQuery user = userService.createUser(merchant.getSellerNo(), merchant.getStoreSubjectName(), merchant.getStoreName(), merchant.getWayId(), merchant.getContactPhone());
+            User user = userService.createUser(merchant.getSellerNo(), merchant.getStoreSubjectName(), merchant.getStoreName(), merchant.getWayId(), merchant.getContactPhone());
             authorizeMerchant.setStoreMarkCode(user.getStoreMarkCode());
             authorizeMerchant.setUid(user.getUid());
             authorizeMerchantService.updateById(authorizeMerchant);

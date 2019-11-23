@@ -9,6 +9,7 @@ import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.query.PayOrderQuery;
 import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.user.entity.User;
 import com.zanclick.prepay.user.query.UserQuery;
 import com.zanclick.prepay.user.service.UserService;
 import com.zanclick.prepay.web.service.InItService;
@@ -61,7 +62,7 @@ public class InItServiceImpl implements InItService {
 
     @Transactional(rollbackFor = Exception.class)
     public RegisterMerchant initMerchant(AuthorizeMerchant merchant) {
-        UserQuery user = userService.createUser(merchant.getSellerNo(), merchant.getStoreSubjectName(), merchant.getStoreName(), merchant.getWayId(), merchant.getContactPhone());
+        User user = userService.createUser(merchant.getSellerNo(), merchant.getStoreSubjectName(), merchant.getStoreName(), merchant.getWayId(), merchant.getContactPhone());
         if (user == null){
             log.error("重复数据:{}",merchant.getWayId());
             return null;
