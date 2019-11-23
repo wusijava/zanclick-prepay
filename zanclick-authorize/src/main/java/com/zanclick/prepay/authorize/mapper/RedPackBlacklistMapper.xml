@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zanclick.prepay.authorize.mapper.RedPackBlacklistMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.RedPackBlacklist">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="table">red_packet_blacklist</sql>
+    <sql id="Base_Column_List">
+        `id`,
+        `seller_no`,
+        `name`,
+        `create_time`
+    </sql>
+    <sql id="Base_Where_Clause">
+        <where>
+            <trim prefixOverrides="and">
+                <if test="id != null">
+                    AND `id`=#{id}
+                </if>
+                <if test="sellerNo != null and sellerNo != ''">
+                    AND `seller_no`=#{sellerNo}
+                </if>
+                <if test="name != null and name != ''">
+                    AND `name`=#{name}
+                </if>
+                <if test="createTime != null">
+                    AND `create_time`=#{createTime}
+                </if>
+            </trim>
+        </where>
+        ORDER BY id DESC
+        <if test="offset == null and limit != null">
+            limit #{limit}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </sql>
+
+    <!-- 查询总数 -->
+    <select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT count(id)
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <!-- 查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.RedPackBlacklist" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        (
+        `id`,
+        `seller_no`,
+        `name`,
+        `create_time`
+        )
+        VALUES(
+        #{id},
+        #{sellerNo},
+        #{name},
+        #{createTime}
+        )
+    </insert>
+
+    <!--<insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">-->
+        <!--INSERT INTO-->
+        <!--<include refid="table"/>-->
+        <!--(-->
+        <!--`id`,-->
+        <!--`way_id`,-->
+        <!--`merchant_no`,-->
+        <!--`app_id`,-->
+        <!--`seller_no`,-->
+        <!--`seller_id`,-->
+        <!--`name`,-->
+        <!--`contact_name`,-->
+        <!--`contact_phone`,-->
+        <!--`operator_name`,-->
+        <!--`store_no`,-->
+        <!--`store_name`,-->
+        <!--`store_subject_name`,-->
+        <!--`store_subject_cert_no`,-->
+        <!--`store_province`,-->
+        <!--`store_province_code`,-->
+        <!--`store_city`,-->
+        <!--`store_city_code`,-->
+        <!--`store_county`,-->
+        <!--`store_county_code`,-->
+        <!--`supplier_no`,-->
+        <!--`state`,-->
+        <!--`create_time`,-->
+        <!--`finish_time`,-->
+        <!--`red_pack_state`,-->
+        <!--`red_pack_seller_no`,-->
+        <!--`reason`,-->
+        <!--`store_mark_code`,-->
+        <!--`uid`-->
+        <!--)-->
+        <!--VALUES-->
+        <!--<foreach collection="list" item="cm" index="index" separator=",">-->
+            <!--(-->
+            <!--#{cm.id},-->
+            <!--#{cm.wayId},-->
+            <!--#{cm.merchantNo},-->
+            <!--#{cm.appId},-->
+            <!--#{cm.sellerNo},-->
+            <!--#{cm.sellerId},-->
+            <!--#{cm.name},-->
+            <!--#{cm.contactName},-->
+            <!--#{cm.contactPhone},-->
+            <!--#{cm.operatorName},-->
+            <!--#{cm.storeNo},-->
+            <!--#{cm.storeName},-->
+            <!--#{cm.storeSubjectName},-->
+            <!--#{cm.storeSubjectCertNo},-->
+            <!--#{cm.storeProvince},-->
+            <!--#{cm.storeProvinceCode},-->
+            <!--#{cm.storeCity},-->
+            <!--#{cm.storeCityCode},-->
+            <!--#{cm.storeCounty},-->
+            <!--#{cm.storeCountyCode},-->
+            <!--#{cm.supplierNo},-->
+            <!--#{cm.state},-->
+            <!--#{cm.createTime},-->
+            <!--#{cm.finishTime},-->
+            <!--#{cm.redPackState},-->
+            <!--#{cm.redPackSellerNo},-->
+            <!--#{cm.reason},-->
+            <!--#{cm.storeMarkCode},-->
+            <!--#{cm.uid}-->
+            <!--)-->
+        <!--</foreach>-->
+    <!--</insert>-->
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
+    <select id="selectBySellerNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE seller_no = #{sellerNo} ORDER BY id DESC LIMIT 1
+    </select>
+
+
+
+    <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.RedPackBlacklist">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="sellerNo != null and sellerNo != ''">
+                `seller_no`=#{sellerNo},
+            </if>
+            <if test="name != null and name != ''">
+                `name`=#{name},
+            </if>
+            <if test="createTime != null">
+                `create_time`=#{createTime},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteById" parameterType="java.util.Map">
+        DELETE FROM
+          <include refid="table"/>
+        WHERE id=#{id}
+    </delete>
+</mapper>
