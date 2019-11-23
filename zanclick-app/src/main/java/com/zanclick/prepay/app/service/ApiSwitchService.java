@@ -18,7 +18,7 @@ public interface ApiSwitchService extends BaseService<ApiSwitch,Long> {
      * @param path
      * @return
      */
-    ApiSwitch selectByPath(String path);
+    ApiSwitch queryByPath(String path);
 
 
     /**
@@ -28,5 +28,16 @@ public interface ApiSwitchService extends BaseService<ApiSwitch,Long> {
      * @param type
      * @return
      */
-    ApiSwitch selectByMap(String path,Integer type);
+    ApiSwitch queryByPathAndType(String path,Integer type);
+
+
+
+    /**
+     * 查询能否通过
+     *
+     * @param path
+     * @param type
+     * @return
+     */
+    Boolean hasPermission(String path,Integer type);
 }

@@ -44,6 +44,12 @@ public abstract class AbstractJwtAuthenticationFilter extends OncePerRequestFilt
                 if (isProtectedUrl(request)) {
                     request = JwtUtil.validateTokenAndAddUserIdToHeader(request, getTokenStoreResolver());
                     user = getUserPermissionResolver().getLoginUser(JwtUtil.getCurrentUserId(request));
+                    if (user != null){
+                       Boolean flag = getUserPermissionResolver().hasPermission(request.getServletPath(),user.getType());
+                        if (!flag){
+                            throw new UserPermissionResolver.AuthorizationException("没有该权限");
+                        }
+                    }
                 }
                 if (isLoginUrl(request)) {
                     user = getUserPermissionResolver().doAuthInfo(createUsernamePasswordToken(request));
