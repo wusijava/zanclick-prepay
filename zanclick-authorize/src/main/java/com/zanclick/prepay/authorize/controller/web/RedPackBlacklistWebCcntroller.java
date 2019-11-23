@@ -34,7 +34,7 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
     @Autowired
     private RedPackBlacklistService redPackBlacklistService;
 
-    @ApiOperation(value = "可领红包黑名单列表")
+    @ApiOperation(value = "不可领红包账号列表")
     @PostMapping(value = "/list")
     @ResponseBody
     public Response<Page<BlacklistWebInfo>> list(RedPackBlacklistQuery query) {
@@ -54,12 +54,12 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
             Page<BlacklistWebInfo> voPage = new PageImpl<>(voList, pageable, page.getTotalElements());
             return Response.ok(voPage);
         }catch (Exception e){
-            log.error("获取黑名单列表失败:{}", e);
+            log.error("获取不可领红包账号列表失败:{}", e);
             return Response.fail("查询失败");
         }
     }
 
-    @ApiOperation(value = "添加黑名单")
+    @ApiOperation(value = "添加不可领红包账号")
     @PostMapping(value = "/insertBlacklist")
     @ResponseBody
     public Response<RedPackBlacklist> insertBlacklist(RedPackBlacklist query){
@@ -68,7 +68,7 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
                 return Response.fail("参数有误");
             }
             Date date = new Date();
-            SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String nowDate = dateFormat.format(date);
             query.setCreateTime(nowDate);
             RedPackBlacklist oldBlacklist = redPackBlacklistService.querySellerNo(query.getSellerNo());
@@ -78,32 +78,32 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
             redPackBlacklistService.insert(query);
             return Response.ok("添加成功", query);
         }catch (Exception e){
-            log.error("添加黑名单失败:{}", e);
+            log.error("添加不可领红包账号失败:{}", e);
             return Response.fail("添加失败");
         }
     }
 
-    @ApiOperation(value = "修改黑名单信息")
-    @RequestMapping(value = "/updateBlacklist", method = RequestMethod.POST)
-    @ResponseBody
-    public Response<String> updateBlacklist(RedPackBlacklist updateBlacklist) {
-        if (DataUtil.isEmpty(updateBlacklist) || DataUtil.isEmpty(updateBlacklist.getId()) || DataUtil.isEmpty(updateBlacklist.getSellerNo())) {
-            return Response.fail("修改商户信息异常");
-        }
-        RedPackBlacklist oldBlacklist = redPackBlacklistService.querySellerNo(updateBlacklist.getSellerNo());
-        if (DataUtil.isNotEmpty(oldBlacklist)) {
-            return Response.fail("收款账号重复");
-        }
-        try {
-            redPackBlacklistService.updateById(updateBlacklist);
-        } catch (Exception e) {
-            log.error("修改商户信息系统异常:{},{}", updateBlacklist, e);
-            return Response.ok("修改失败");
-        }
-        return Response.ok("修改成功");
-    }
+//    @ApiOperation(value = "修改黑名单信息")
+//    @RequestMapping(value = "/updateBlacklist", method = RequestMethod.POST)
+//    @ResponseBody
+//    public Response<String> updateBlacklist(RedPackBlacklist updateBlacklist) {
+//        if (DataUtil.isEmpty(updateBlacklist) || DataUtil.isEmpty(updateBlacklist.getId()) || DataUtil.isEmpty(updateBlacklist.getSellerNo())) {
+//            return Response.fail("修改商户信息异常");
+//        }
+//        RedPackBlacklist oldBlacklist = redPackBlacklistService.querySellerNo(updateBlacklist.getSellerNo());
+//        if (DataUtil.isNotEmpty(oldBlacklist)) {
+//            return Response.fail("收款账号重复");
+//        }
+//        try {
+//            redPackBlacklistService.updateById(updateBlacklist);
+//        } catch (Exception e) {
+//            log.error("修改商户信息系统异常:{},{}", updateBlacklist, e);
+//            return Response.ok("修改失败");
+//        }
+//        return Response.ok("修改成功");
+//    }
 
-    @ApiOperation(value = "删除黑名单信息")
+    @ApiOperation(value = "删除不可领红包账号信息")
     @RequestMapping(value = "/deleteBlacklist", method = RequestMethod.POST)
     @ResponseBody
     public Response<String> deleteBlacklist(Long id) {
@@ -114,18 +114,10 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
             redPackBlacklistService.deleteById(id);
             return Response.ok("删除成功",null);
         } catch (Exception e) {
-            log.error("修改黑名单信息异常:{}", id, e);
-            return Response.fail("修改失败");
+            log.error("删除不可领红包账号信息异常:{}", id, e);
+            return Response.fail("删除失败");
         }
     }
-
-
-    /**
-     * 获取显示Mod    *
-     * @param record
-     * @return
-     */
-    static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     private BlacklistWebInfo getListVo(RedPackBlacklist blacklist) {
         BlacklistWebInfo vo = new BlacklistWebInfo();
