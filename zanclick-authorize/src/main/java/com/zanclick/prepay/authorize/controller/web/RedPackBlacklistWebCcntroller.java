@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,10 +64,13 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
     @ResponseBody
     public Response<RedPackBlacklist> insertBlacklist(RedPackBlacklist query){
         try {
-            if (DataUtil.isEmpty(query) || DataUtil.isEmpty(query.getSellerNo()) || DataUtil.isEmpty(query.getName())
-                    || DataUtil.isEmpty(query.getCreateTime())){
+            if (DataUtil.isEmpty(query) || DataUtil.isEmpty(query.getSellerNo()) || DataUtil.isEmpty(query.getName())){
                 return Response.fail("参数有误");
             }
+            Date date = new Date();
+            SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            String nowDate = dateFormat.format(date);
+            query.setCreateTime(nowDate);
             RedPackBlacklist oldBlacklist = redPackBlacklistService.querySellerNo(query.getSellerNo());
             if(DataUtil.isNotEmpty(oldBlacklist)){
                 return Response.fail("收款账号已存在");
@@ -108,7 +112,7 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
                 return Response.fail("参数有误");
             }
             redPackBlacklistService.deleteById(id);
-            return Response.ok("删除成功");
+            return Response.ok("删除成功",null);
         } catch (Exception e) {
             log.error("修改黑名单信息异常:{}", id, e);
             return Response.fail("修改失败");
