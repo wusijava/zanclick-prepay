@@ -1,7 +1,9 @@
 package com.zanclick.prepay.authorize.mapper;
 
-import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
+import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
+
+import java.util.List;
 
 /**
  * 直付通平台费率
@@ -26,5 +28,19 @@ public interface AuthorizeMerchantMapper extends BaseMapper<AuthorizeMerchant, L
      * @return
      */
     AuthorizeMerchant selectByAliPayLoginNo(String sellerNo);
+
+    /**
+     * 根据支付宝收款账号查询List
+     *
+     * @param sellerNo
+     * @return
+     */
+    List<AuthorizeMerchant> selectBySellerNo(String sellerNo);
+
+    /**
+     * 通过收款账号更新可领红包状态
+     * @param merchant
+     */
+    void updateBySellerNo(AuthorizeMerchant merchant);
 
 }

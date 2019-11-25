@@ -1,7 +1,9 @@
 package com.zanclick.prepay.authorize.controller.web;
 
+import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.entity.RedPackBlacklist;
 import com.zanclick.prepay.authorize.query.RedPackBlacklistQuery;
+import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.service.RedPackBlacklistService;
 import com.zanclick.prepay.authorize.vo.web.BlacklistWebInfo;
 import com.zanclick.prepay.common.base.controller.BaseController;
@@ -33,6 +35,9 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
 
     @Autowired
     private RedPackBlacklistService redPackBlacklistService;
+
+    @Autowired
+    private AuthorizeMerchantService authorizeMerchantService;
 
     @ApiOperation(value = "不可领红包账号列表")
     @PostMapping(value = "/list")
@@ -75,6 +80,13 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
             if(DataUtil.isNotEmpty(oldBlacklist)){
                 return Response.fail("收款账号已存在");
             }
+            List<AuthorizeMerchant> merchantList = authorizeMerchantService.queryBySellerNo(query.getSellerNo());
+            if(DataUtil.isNotEmpty(merchantList)){
+                AuthorizeMerchant update = new AuthorizeMerchant();
+                update.setSellerNo(query.getSellerNo());
+                update.setRedPackState(AuthorizeMerchant.RedPackState.closed.getCode());
+                authorizeMerchantService.updateBySellerNo(update);
+            }
             redPackBlacklistService.insert(query);
             return Response.ok("添加成功", query);
         }catch (Exception e){
@@ -111,7 +123,16 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
             if (DataUtil.isEmpty(id)) {
                 return Response.fail("参数有误");
             }
-            redPackBlacklistService.deleteById(id);
+            RedPackBlacklist blacklist = redPackBlacklistService.queryById(id);
+            if(DataUtil.isNotEmpty(blacklist)){
+                String sellerNo = blacklist.getSellerNo();
+                redPackBlacklistService.deleteById(id);
+
+                AuthorizeMerchant update = new AuthorizeMerchant();
+                update.setSellerNo(sellerNo);
+                update.setRedPackState(AuthorizeMerchant.RedPackState.open.getCode());
+                authorizeMerchantService.updateBySellerNo(update);
+            }
             return Response.ok("删除成功",null);
         } catch (Exception e) {
             log.error("删除不可领红包账号信息异常:{}", id, e);

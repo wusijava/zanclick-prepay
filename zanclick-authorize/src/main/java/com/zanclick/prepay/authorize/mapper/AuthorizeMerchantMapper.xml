@@ -351,6 +351,26 @@
         WHERE seller_no = #{sellerNo} ORDER BY id DESC LIMIT 1
     </select>
 
+    <select id="selectBySellerNo" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE seller_no = #{sellerNo} ORDER BY id DESC
+    </select>
+
+    <update id="updateBySellerNo" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeMerchant">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="redPackState != null">
+                `red_pack_state`=#{redPackState},
+            </if>
+        </set>
+        WHERE seller_no=#{sellerNo}
+    </update>
+
+
     <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeMerchant">
         UPDATE
         <include refid="table"/>
