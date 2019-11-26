@@ -52,7 +52,7 @@ public class ExcelImportController {
     @Value("${excelDownloadUrl}")
     private String excelDownloadUrl;
 
-    static Map<String,User> userMap = new HashMap<>();
+    static Map<String,User> userMap = null;
 
     @ApiOperation(value = "导入商户信息")
     @RequestMapping(value = "batchImportMerchant", method = RequestMethod.POST)
@@ -88,10 +88,10 @@ public class ExcelImportController {
         List<RegisterMerchant> registerMerchantList = new ArrayList<>();
         for (AuthorizeMerchant merchant : merchantList) {
             RegisterMerchant registerMerchant = getRegisterMerchant(merchant);
-            String reason = registerMerchant.check();
-            if (reason != null) {
-                continue;
-            }
+//            String reason = registerMerchant.check();
+//            if (reason != null) {
+//                continue;
+//            }
             registerMerchantList.add(registerMerchant);
         }
         userMap = null;
@@ -147,6 +147,7 @@ public class ExcelImportController {
      * */
     private User getUser(String uid){
         if (userMap == null){
+            userMap = new HashMap<>();
             List<User> userList = userService.queryList(new UserQuery());
             for (User user:userList){
                 userMap.put(user.getUid(),user);
