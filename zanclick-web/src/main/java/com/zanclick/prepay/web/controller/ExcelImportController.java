@@ -14,6 +14,7 @@ import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.PoiUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.user.entity.User;
+import com.zanclick.prepay.user.query.UserQuery;
 import com.zanclick.prepay.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -30,10 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author duchong
@@ -54,6 +52,7 @@ public class ExcelImportController {
     @Value("${excelDownloadUrl}")
     private String excelDownloadUrl;
 
+    static Map<String,User> userMap = null;
 
     @ApiOperation(value = "导入商户信息")
     @RequestMapping(value = "batchImportMerchant", method = RequestMethod.POST)
@@ -89,13 +88,13 @@ public class ExcelImportController {
         List<RegisterMerchant> registerMerchantList = new ArrayList<>();
         for (AuthorizeMerchant merchant : merchantList) {
             RegisterMerchant registerMerchant = getRegisterMerchant(merchant);
-            String reason = registerMerchant.check();
-            if (reason != null) {
-                log.error("导入商户数据有误:{},{}", registerMerchant.getWayId(), reason);
-                continue;
-            }
+//            String reason = registerMerchant.check();
+//            if (reason != null) {
+//                continue;
+//            }
             registerMerchantList.add(registerMerchant);
         }
+        userMap = null;
         ExcelDto dto = new ExcelDto();
         dto.setHeaders(RegisterMerchant.headers);
         dto.setKeys(RegisterMerchant.keys);
@@ -131,7 +130,7 @@ public class ExcelImportController {
         merchant.setReason(dto.getReason());
         merchant.setCreateTime(DateUtil.formatDate(dto.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
         if (dto.getUid() != null){
-            User user = userService.findByUid(dto.getUid());
+            User user = getUser(dto.getUid());
             merchant.setPassword(user == null ? null : user.getPwd());
         }
         return merchant;
@@ -140,6 +139,21 @@ public class ExcelImportController {
 
     private List<JSONObject> parser(List<RegisterMerchant> merchantList) {
         return JSONObject.parseArray(JSONObject.toJSONString(merchantList), JSONObject.class);
+    }
+
+    /**
+     * 获取用户数据
+     * @param uid
+     * */
+    private User getUser(String uid){
+        if (userMap == null){
+            userMap = new HashMap<>();
+            List<User> userList = userService.queryList(new UserQuery());
+            for (User user:userList){
+                userMap.put(user.getUid(),user);
+            }
+        }
+        return userMap.get(uid);
     }
 
     /**

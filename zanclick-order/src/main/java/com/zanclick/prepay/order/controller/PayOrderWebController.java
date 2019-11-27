@@ -147,15 +147,15 @@ public class PayOrderWebController extends BaseController {
     @RequestMapping(value = "batchExport", method = RequestMethod.POST)
     @ResponseBody
     public Response<String> batchExport(PayOrderQuery query) {
-        List<PayOrder> orderList = payOrderService.queryList(query);
-        if (DataUtil.isEmpty(orderList)) {
-            return Response.fail("没有数据");
-        }
         RequestContext.RequestUser user = RequestContext.getCurrentUser();
         if (user.getType().equals(1)){
             query.setUid(user.getUid());
         }else if (user.getType().equals(2)){
             query.setStoreMarkCode(user.getStoreMarkCode());
+        }
+        List<PayOrder> orderList = payOrderService.queryList(query);
+        if (DataUtil.isEmpty(orderList)) {
+            return Response.fail("没有数据");
         }
         List<PayOrderExcelList> orderExcelList = new ArrayList<>();
         for (PayOrder order : orderList) {
