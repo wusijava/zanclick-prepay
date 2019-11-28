@@ -142,7 +142,7 @@ public class OpenController extends BaseController {
             return false;
         }
         String userAndPass = new String(new BASE64Decoder().decodeBuffer(authorization.split(" ")[1]));
-        if (!"Zyjk:Zyjk@#2019".equals(userAndPass)) {
+        if (!"heshanghui:heshanghui@#2019".equals(userAndPass)) {
             response.setStatus(401);
             response.setHeader("WWW-authenticate", "Basic realm=\"请输入密码\"");
             response.getWriter().print("对不起你没有权限！！");
