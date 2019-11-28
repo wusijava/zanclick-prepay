@@ -38,6 +38,10 @@ public class PayRefundOrder implements Identifiable<Long> {
 
     private String amount;
 
+    private String sellerNo;
+
+    private String sellerName;
+
     private String redPacketAmount;
 
     private Date createTime;

@@ -36,6 +36,10 @@ public class PayRefundOrderWebList {
      **/
     private String amount;
 
+    private String sellerNo;
+
+    private String sellerName;
+
     private String redPacketAmount;
 
     /**
