@@ -87,10 +87,10 @@ public class OpenController extends BaseController {
         if (endtime != null) {
             nextdate = date + " " + endtime;
         }
-        String cndate = sdfCN.format(d);
-        String cnlastdate = sdfCN.format(lastd);
+        String cndate = sdfCN.format(d) + (type!=null&&type==1?"社会渠道":"");
+        String cnlastdate = sdfCN.format(lastd)+ (type!=null&&type==1?"社会渠道":"");
         String html = "<style>body,td,th {font-family: Verdana, Arial, Helvetica, sans-serif;font-size: 12px;color: #1d1007; line-height:24px}td{text-align:center;}</style>" +
-                "<table  border=\"1\" cellspacing=\"0\" cellpadding=\"0\" text-align=\"center\"><thead><tr><th width=\"110\">运营中心</td><th width=\"70\">地市</th><th width=\"130\">" + cndate + "销量<br/>(截至" + endtime + ")</th><th width=\"80\">增长率</th><th width=\"130\">" + cnlastdate + "销量<br/>(截至" + endtime + ")</th></tr></thead><tbody>TBODY</tbody></table>";
+                "<table  border=\"1\" cellspacing=\"0\" cellpadding=\"0\" text-align=\"center\"><thead><tr><th width=\"110\">运营中心</td><th width=\"70\">地市</th><th width=\"140\">" + cndate + "销量<br/>(截至" + endtime + ")</th><th width=\"80\">增长率</th><th width=\"140\">" + cnlastdate + "销量<br/>(截至" + endtime + ")</th></tr></thead><tbody>TBODY</tbody></table>";
         String sql = "SELECT a.id as id,a.groupid as groupid,a.groupname,a.cityname,ifnull(p.n,0) as n from area_group a LEFT JOIN (select city,sum(p.amount) as m," +
                 "count(p.id) as n from pay_order p  where p.finish_time BETWEEN '" + date + "' and '" + nextdate + "' and p.state=1 " +
                 extend +
