@@ -132,7 +132,7 @@ public class OpenController extends BaseController {
             cityDatas.add(new CityData(groupid, id, groupname, name, date, cndate, num1, lastdate, cnlastdate, num2, rateStr));
 
         }
-        Map<String, List<CityData>> groupedCitys = cityDatas.stream().collect(Collectors.groupingBy(CityData::getGroupName));
+        Map<Integer, List<CityData>> groupedCitys = cityDatas.stream().collect(Collectors.groupingBy(CityData::getGroupid));
         groupedCitys.entrySet().stream().sorted(Map.Entry.comparingByKey()).forEachOrdered(entry -> {
             List<CityData> value = entry.getValue();
             int rowspan = value.size();
