@@ -5,6 +5,7 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
@@ -13,6 +14,7 @@
         `id`,
         `seller_no`,
         `name`,
+        `type`,
         `create_time`
     </sql>
     <sql id="Base_Where_Clause">
@@ -26,6 +28,9 @@
                 </if>
                 <if test="name != null and name != ''">
                     AND `name`=#{name}
+                </if>
+                <if test="type != null">
+                    AND `type`=#{type}
                 </if>
                 <if test="createTime != null">
                     AND `create_time`=#{createTime}
@@ -66,85 +71,39 @@
         `id`,
         `seller_no`,
         `name`,
+        `type`,
         `create_time`
         )
         VALUES(
         #{id},
         #{sellerNo},
         #{name},
+        #{type},
         #{createTime}
         )
     </insert>
 
-    <!--<insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">-->
-        <!--INSERT INTO-->
-        <!--<include refid="table"/>-->
-        <!--(-->
-        <!--`id`,-->
-        <!--`way_id`,-->
-        <!--`merchant_no`,-->
-        <!--`app_id`,-->
-        <!--`seller_no`,-->
-        <!--`seller_id`,-->
-        <!--`name`,-->
-        <!--`contact_name`,-->
-        <!--`contact_phone`,-->
-        <!--`operator_name`,-->
-        <!--`store_no`,-->
-        <!--`store_name`,-->
-        <!--`store_subject_name`,-->
-        <!--`store_subject_cert_no`,-->
-        <!--`store_province`,-->
-        <!--`store_province_code`,-->
-        <!--`store_city`,-->
-        <!--`store_city_code`,-->
-        <!--`store_county`,-->
-        <!--`store_county_code`,-->
-        <!--`supplier_no`,-->
-        <!--`state`,-->
-        <!--`create_time`,-->
-        <!--`finish_time`,-->
-        <!--`red_pack_state`,-->
-        <!--`red_pack_seller_no`,-->
-        <!--`reason`,-->
-        <!--`store_mark_code`,-->
-        <!--`uid`-->
-        <!--)-->
-        <!--VALUES-->
-        <!--<foreach collection="list" item="cm" index="index" separator=",">-->
-            <!--(-->
-            <!--#{cm.id},-->
-            <!--#{cm.wayId},-->
-            <!--#{cm.merchantNo},-->
-            <!--#{cm.appId},-->
-            <!--#{cm.sellerNo},-->
-            <!--#{cm.sellerId},-->
-            <!--#{cm.name},-->
-            <!--#{cm.contactName},-->
-            <!--#{cm.contactPhone},-->
-            <!--#{cm.operatorName},-->
-            <!--#{cm.storeNo},-->
-            <!--#{cm.storeName},-->
-            <!--#{cm.storeSubjectName},-->
-            <!--#{cm.storeSubjectCertNo},-->
-            <!--#{cm.storeProvince},-->
-            <!--#{cm.storeProvinceCode},-->
-            <!--#{cm.storeCity},-->
-            <!--#{cm.storeCityCode},-->
-            <!--#{cm.storeCounty},-->
-            <!--#{cm.storeCountyCode},-->
-            <!--#{cm.supplierNo},-->
-            <!--#{cm.state},-->
-            <!--#{cm.createTime},-->
-            <!--#{cm.finishTime},-->
-            <!--#{cm.redPackState},-->
-            <!--#{cm.redPackSellerNo},-->
-            <!--#{cm.reason},-->
-            <!--#{cm.storeMarkCode},-->
-            <!--#{cm.uid}-->
-            <!--)-->
-        <!--</foreach>-->
-    <!--</insert>-->
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="table"/>
+        (
+        `id`,
+        `seller_no`,
+        `name`,
+        `type`,
+        `create_time`
+        )
+        VALUES
+        <foreach collection="list" item="cm" index="index" separator=",">
+            (
+            #{cm.id},
+            #{cm.sellerNo},
+            #{cm.name},
+            #{cm.type},
+            #{cm.createTime}
+            )
+        </foreach>
+    </insert>
 
     <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
         SELECT
@@ -162,8 +121,6 @@
         WHERE seller_no = #{sellerNo} ORDER BY id DESC LIMIT 1
     </select>
 
-
-
     <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.RedPackBlacklist">
         UPDATE
         <include refid="table"/>
@@ -173,6 +130,9 @@
             </if>
             <if test="name != null and name != ''">
                 `name`=#{name},
+            </if>
+            <if test="type != null">
+                `type`=#{type},
             </if>
             <if test="createTime != null">
                 `create_time`=#{createTime},

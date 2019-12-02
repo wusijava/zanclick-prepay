@@ -209,6 +209,7 @@ public class PayOrderWebController extends BaseController {
         vo.setName(order.getName());
         vo.setRedPacketAmount(order.getRedPackAmount());
         vo.setRedPacketStateDesc(order.getRedPacketStateDesc());
+        vo.setRedPacketTypeDesc(order.getRedPacketTypeDesc());
         vo.setRedPacketSellerNo(order.getRedPackSellerNo());
         return vo;
     }

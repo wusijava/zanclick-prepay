@@ -72,6 +72,9 @@ public class QueryOrderStateServiceImpl extends AbstractCommonService implements
         result.setOutOrderNo(order.getOutOrderNo());
         result.setTitle(order.getTitle());
         result.setTotalMoney(order.getAmount());
+        result.setStoreName(order.getStoreName());
+        result.setNum(order.getNum());
+        result.setEachMoney(order.getEachMoney());
         if (MoneyUtil.largeMoney(order.getRedPackAmount(),"0.00")){
             result.setReceiveRedPacket(1);
         }else {

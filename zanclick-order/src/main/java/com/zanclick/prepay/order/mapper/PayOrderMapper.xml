@@ -27,6 +27,7 @@
         <result column="state" property="state" jdbcType="INTEGER"/>
         <result column="deal_state" property="dealState" jdbcType="INTEGER"/>
         <result column="red_pack_state" property="redPackState" jdbcType="INTEGER"/>
+        <result column="red_pack_type" property="redPackType" jdbcType="INTEGER"/>
         <result column="red_pack_amount" property="redPackAmount" jdbcType="VARCHAR"/>
         <result column="red_pack_seller_no" property="redPackSellerNo" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
@@ -67,6 +68,7 @@
             `state`,
             `deal_state`,
             `red_pack_state`,
+            `red_pack_type`,
             `red_pack_amount`,
             `red_pack_seller_no`,
             `name`,
@@ -156,6 +158,9 @@
                 </if>
                 <if test="redPackState != null">
                     AND `red_pack_state`=#{redPackState}
+                </if>
+                <if test="redPackType != null">
+                    AND `red_pack_type`=#{redPackType}
                 </if>
                 <if test="redPackAmount != null and redPackAmount != ''">
                     AND `red_pack_amount`=#{redPackAmount}
@@ -254,6 +259,7 @@
         `state`,
         `deal_state`,
         `red_pack_state`,
+        `red_pack_type`,
         `red_pack_amount`,
         `red_pack_seller_no`,
         `name`,
@@ -292,6 +298,7 @@
         #{state},
         #{dealState},
         #{redPackState},
+        #{redPackType},
         #{redPackAmount},
         #{redPackSellerNo},
         #{name},
@@ -335,6 +342,7 @@
         `state`,
         `deal_state`,
         `red_pack_state`,
+        `red_pack_type`,
         `red_pack_amount`,
         `red_pack_seller_no`,
         `name`,
@@ -375,6 +383,7 @@
             #{cm.state},
             #{cm.dealState},
             #{cm.redPackState},
+            #{cm.redPackType},
             #{cm.redPackAmount},
             #{cm.redPackSellerNo},
             #{cm.name},
@@ -505,6 +514,9 @@
             </if>
             <if test="redPackState != null">
                 `red_pack_state`=#{redPackState},
+            </if>
+            <if test="redPackType != null">
+                `red_pack_type`=#{redPackType},
             </if>
             <if test="redPackAmount != null and redPackAmount != ''">
                 `red_pack_amount`=#{redPackAmount},
