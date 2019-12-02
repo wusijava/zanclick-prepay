@@ -11,6 +11,8 @@ import lombok.Data;
 @Data
 public class PayOrderExcelList {
 
+    private Integer index;
+
     /**
      * 渠道编码
      */
@@ -85,6 +87,7 @@ public class PayOrderExcelList {
     private String county;
 
     public static String[] headers = {
+            "序号",
             "渠道编码",
             "门店名称",
             "订单号",
@@ -105,6 +108,7 @@ public class PayOrderExcelList {
             "区"
     };
     public static String[] keys = {
+            "index",
             "wayId",
             "storeName",
             "outTradeNo",

@@ -109,7 +109,7 @@ public class OpenController extends BaseController {
         StringBuilder tbody = new StringBuilder();
         Long total1 = 0L;
         Long total2 = 0L;
-        DecimalFormat df = new DecimalFormat("#.00");
+        DecimalFormat df = new DecimalFormat("0.00");
         List<CityData> cityDatas = new ArrayList<>(goal.size());
         for (int i = 0; i < goal.size(); i++) {
             Map<String, Object> m1 = goal.get(i);
