@@ -6,11 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 
 /**
  * @author Administrator
- * @date 2019-09-24 15:36:10
+ * @date 2019-12-03 15:59:44
  **/
 @Mapper
 public interface SetMealMapper extends BaseMapper<SetMeal,Long> {
-
     /**
      * 根据套餐编号查询
      *
@@ -20,4 +19,5 @@ public interface SetMealMapper extends BaseMapper<SetMeal,Long> {
     SetMeal selectByPackageNo(String packageNo);
 
     void unshelveSetMealByAppId(String appId);
+
 }
