@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zanclick.prepay.authorize.mapper.RedPacketConfigurationMapper">
-    <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.RedPacketConfiguration">
+<mapper namespace="com.zanclick.prepay.authorize.mapper.RedPacketConfigurationRecordMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.authorize.entity.RedPacketConfigurationRecord">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="name_code" property="nameCode" jdbcType="VARCHAR"/>
         <result column="level" property="level" jdbcType="BIGINT"/>
         <result column="status" property="status" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <sql id="table">red_packet_configuration</sql>
+    <sql id="table">red_packet_configuration_record</sql>
     <sql id="Base_Column_List">
         `id`,
         `name`,
         `name_code`,
         `level`,
         `status`,
+        `user_id`,
+        `address`,
         `create_time`
     </sql>
     <sql id="Base_Where_Clause">
@@ -36,6 +40,12 @@
                 </if>
                 <if test="status != null">
                     AND `status`=#{status}
+                </if>
+                <if test="userId != null and userId != ''">
+                    AND `user_id`=#{userId}
+                </if>
+                <if test="address != null and address != ''">
+                    AND `address`=#{address}
                 </if>
                 <if test="createTime != null">
                     AND `create_time`=#{createTime}
@@ -68,7 +78,7 @@
         <include refid="Base_Where_Clause"/>
     </select>
 
-    <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.RedPacketConfiguration" useGeneratedKeys="true"
+    <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.RedPacketConfigurationRecord" useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO
         <include refid="table"/>
@@ -78,6 +88,8 @@
         `name_code`,
         `level`,
         `status`,
+        `user_id`,
+        `address`,
         `create_time`
         )
         VALUES(
@@ -86,6 +98,8 @@
         #{nameCode},
         #{level},
         #{status},
+        #{userId},
+        #{address},
         #{createTime}
         )
     </insert>
@@ -97,29 +111,6 @@
         <include refid="table"/>
         WHERE id=#{id}
     </select>
-
-    <update id="updateById" parameterType="com.zanclick.prepay.authorize.entity.RedPacketConfiguration">
-        UPDATE
-        <include refid="table"/>
-        <set>
-            <if test="name != null and name != ''">
-                `name`=#{name},
-            </if>
-            <if test="nameCode != null and nameCode != ''">
-                `name_code`=#{nameCode},
-            </if>
-            <if test="level != null">
-                `level`=#{level},
-            </if>
-            <if test="status != null">
-                `status`=#{status},
-            </if>
-            <if test="createTime != null">
-                `create_time`=#{createTime},
-            </if>
-        </set>
-        WHERE id=#{id}
-    </update>
 
     <delete id="deleteById" parameterType="java.util.Map">
         DELETE FROM

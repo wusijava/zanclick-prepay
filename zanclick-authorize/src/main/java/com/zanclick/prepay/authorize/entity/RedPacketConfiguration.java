@@ -22,6 +22,11 @@ public class RedPacketConfiguration implements Identifiable<Long> {
     private String name;
 
     /**
+     * 名称code
+     **/
+    private String nameCode;
+
+    /**
      * 级别(1.门店  2.市  3.省)
      **/
     private Integer level;
