@@ -57,6 +57,23 @@ public class SetMeal implements Identifiable<Long> {
 
     private Integer state;
 
+    public String getRedPacketStateStr(){
+        if (RedPackState.open.getCode().equals(state)){
+            return RedPackState.open.getDesc();
+        }else {
+            return RedPackState.closed.getDesc();
+        }
+    }
+
+    public String getStateStr(){
+        if (State.open.getCode().equals(state)){
+            return State.open.getDesc();
+        }else {
+            return State.closed.getDesc();
+        }
+    }
+
+
     public enum RedPackState {
         open(1, "开启"),
         closed(0, "关闭的");
@@ -87,8 +104,8 @@ public class SetMeal implements Identifiable<Long> {
     }
 
     public enum State {
-        open(1, "开启"),
-        closed(0, "关闭的");
+        open(1, "已上架"),
+        closed(0, "已下架");
 
         private Integer code;
         private String desc;
