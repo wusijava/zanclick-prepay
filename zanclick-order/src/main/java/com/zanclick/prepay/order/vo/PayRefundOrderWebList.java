@@ -30,6 +30,11 @@ public class PayRefundOrderWebList {
     private String createTime;
 
     private String finishTime;
+    /**
+     * 交易时间
+     */
+    private  String dealTime;
+
 
     /**
      * 外部编号
