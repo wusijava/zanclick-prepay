@@ -4,7 +4,7 @@
     <resultMap id="BaseResultMap" type="com.zanclick.prepay.order.entity.Area">
             <id column="id" property="id" jdbcType="BIGINT"/>
             <result column="name" property="name" jdbcType="VARCHAR"/>
-            <result column="level" property="level" jdbcType="BIGINT"/>
+            <result column="level" property="level" jdbcType="INTEGER"/>
             <result column="code" property="code" jdbcType="VARCHAR"/>
             <result column="parent_code" property="parentCode" jdbcType="VARCHAR"/>
     </resultMap>
@@ -111,28 +111,13 @@
         <include refid="table"/>
         WHERE id=#{id}
     </select>
-    <select id="selectByName"  resultMap="BaseResultMap">
+
+    <select id="selectByLevel" resultMap="BaseResultMap" parameterType="java.lang.Integer">
         select
         <include refid="Base_Column_List"/>
         FROM
         <include refid="table"/>
-        <where>
-            <trim prefixOverrides="and">
-
-                <if test="name != null and name != ''">
-                    AND `name` like #{name}"%"
-                </if>
-                <if test="level != null">
-                    AND `level`=#{level}
-                </if>
-                <if test="code != null and code != ''">
-                    AND `code`=#{code}
-                </if>
-                <if test="parentCode != null and parentCode != ''">
-                    AND `parent_code`=#{parentCode}
-                </if>
-            </trim>
-        </where>
+        where `level` = #{level}
     </select>
 
     <update id="updateById" parameterType="com.zanclick.prepay.order.entity.Area">

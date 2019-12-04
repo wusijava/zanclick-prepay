@@ -8,6 +8,8 @@ import com.zanclick.prepay.order.service.AreaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author admin
  * @date 2019-12-02 16:24:45
@@ -18,15 +20,14 @@ public class AreaServiceImpl extends BaseMybatisServiceImpl<Area,Long> implement
     @Autowired
     private AreaMapper areaMapper;
 
-
     @Override
     protected BaseMapper<Area, Long> getBaseMapper() {
         return areaMapper;
     }
 
-
     @Override
-    public Area selectByName(Area name) {
-        return areaMapper.selectByName(name);
+    public List<Area> selectByLevel(Integer level) {
+        return areaMapper.selectByLevel(level);
     }
+
 }

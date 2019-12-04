@@ -57,15 +57,15 @@ public class ExcelImportController {
     @Value("${excelDownloadUrl}")
     private String excelDownloadUrl;
 
-    static Map<String,User> userMap = null;
+    static Map<String, User> userMap = null;
 
     @ApiOperation(value = "导入商户信息")
     @RequestMapping(value = "batchImportMerchant", method = RequestMethod.POST)
     @ResponseBody
     public Response<String> batchImportMerchant(MultipartFile file) {
         try {
-            List<RegisterMerchant> registerMerchantList =getMerchantList(file);
-            if(registerMerchantList==null){
+            List<RegisterMerchant> registerMerchantList = getMerchantList(file);
+            if (registerMerchantList == null) {
                 return Response.fail("请正确填写省市!");
             }
             ExcelDto dto = new ExcelDto();
@@ -91,7 +91,7 @@ public class ExcelImportController {
             query.setUid(user.getUid());
         } else if (user.getType().equals(2)) {
             query.setStoreMarkCode(user.getStoreMarkCode());
-        }else if (user.getType().equals(3)){
+        } else if (user.getType().equals(3)) {
             query.setStoreCityCode(user.getCityCode());
         }
         List<AuthorizeMerchant> merchantList = authorizeMerchantService.queryList(query);
@@ -135,7 +135,7 @@ public class ExcelImportController {
         merchant.setState(dto.getStateDesc());
         merchant.setReason(dto.getReason());
         merchant.setCreateTime(DateUtil.formatDate(dto.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
-        if (dto.getUid() != null){
+        if (dto.getUid() != null) {
             User user = getUser(dto.getUid());
             merchant.setPassword(user == null ? null : user.getPwd());
         }
@@ -149,14 +149,15 @@ public class ExcelImportController {
 
     /**
      * 获取用户数据
+     *
      * @param uid
-     * */
-    private User getUser(String uid){
-        if (userMap == null){
+     */
+    private User getUser(String uid) {
+        if (userMap == null) {
             userMap = new HashMap<>();
             List<User> userList = userService.queryList(new UserQuery());
-            for (User user:userList){
-                userMap.put(user.getUid(),user);
+            for (User user : userList) {
+                userMap.put(user.getUid(), user);
             }
         }
         return userMap.get(uid);
@@ -178,79 +179,91 @@ public class ExcelImportController {
             throw new RuntimeException("导入excel出错");
         }
         Integer rowNum = sheet.getLastRowNum();
-        RegisterMerchant qualification = null;
-        //省
-      Area area=new Area();
-        //市
-        Area area3=new Area();
+        RegisterMerchant qualification;
+        List<Area> provinceList = areaService.selectByLevel(1);
+        List<Area> cityList = areaService.selectByLevel(2);
+        Boolean isProvince;
+        Boolean isCity;
         for (int i = 1; i <= rowNum; i++) {
             qualification = new RegisterMerchant();
             HSSFRow row = sheet.getRow(i);
             format(row);
-            //判断省
-            String province=getData(row, 2);
-            String city=getData(row, 3);
-            if(province==""||city==""){
-                log.error("省市不能为空!");
-                return null;}
-            area.setName(province);
-            area3.setName(city);
-            //模糊查询省
-            Area area1=areaService.selectByName(area);
-            if(area1!=null&&area1.getLevel().equals("1")){
-                //查到省 再判断市
-                Area area2=areaService.selectByName(area3);
-                if(area2==null){
-                    area2=new Area();
-                    area2.setParentCode("0");
+            isProvince = false;
+            isCity = false;
+            String excelProvince = getData(row, 2);
+            String excelCity = getData(row, 3);
+            String provinceCode = null;
+            String cityCode = null;
+            for (Area province : provinceList) {
+                if (province.getName().indexOf(excelProvince) > -1) {
+                    isProvince = true;
+                    excelProvince = province.getName();
+                    provinceCode = province.getCode();
+                    break;
                 }
-                if(area1.getCode().equals(area2.getParentCode())){
-                    //省市匹配
-                    qualification.setStoreProvince(area1.getName());
-                    qualification.setStoreProvinceCode(area1.getCode());
-                    qualification.setStoreCity(area2.getName());
-                    qualification.setAppId("201910091625131208151");
-                    qualification.setOperatorName("中国移动");
-                    qualification.setStoreCityCode(area2.getCode());
-                    qualification.setWayId(getData(row, 1));
-                    qualification.setStoreCounty(getData(row, 4));
-                    qualification.setStoreNo(getData(row, 5));
-                    qualification.setStoreName(getData(row, 6));
-                    qualification.setStoreSubjectCertNo(getData(row, 7));
-                    qualification.setStoreSubjectName(getData(row, 8));
-                    qualification.setContactName(getData(row, 9));
-                    qualification.setContactPhone(getData(row, 10));
-                    qualification.setName(getData(row, 11));
-                    qualification.setSellerNo(getData(row, 12));
-                    qualification.setMerchantNo("DZ" + qualification.getWayId());
-                    qualification.setCreateTime(DateUtil.formatDate(new Date(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
-                }else{
-                   Response.fail("省市不匹配!");
-                   log.error("省市不匹配!");
-                   return null;
-                }
-            }else{
-                Response.fail("省份填写错误!");
-                log.error("省份填写错误!");
-                return null;
             }
-
-            try {
-                AuthorizeMerchant merchant = authorizeMerchantService.createMerchant(qualification);
-                User user = userService.createUser(merchant.getSellerNo(),merchant.getStoreSubjectName(),merchant.getStoreName(),merchant.getWayId(),merchant.getContactPhone());
-                merchant.setStoreMarkCode(user.getStoreMarkCode());
-                merchant.setUid(user.getUid());
-                authorizeMerchantService.updateById(merchant);
-                qualification.setPassword(user.getPwd());
-                qualification.setState(merchant.getStateDesc());
-            }catch (BizException e){
-                log.error("创建商户失败:{},{},{}",qualification.getWayId(),qualification.getStoreName(),e);
-                qualification.setState("签约失败");
-                qualification.setReason(e.getMessage());
-            }catch (Exception e){
-                log.error("创建商户异常:{},{},{}",qualification.getWayId(),qualification.getStoreName(),e);
-                qualification.setState("签约失败");
-                qualification.setReason("系统异常");
+            for (Area city : cityList) {
+                if (city.getName().indexOf(excelCity) > -1) {
+                    isCity = true;
+                    excelCity = city.getName();
+                    cityCode = city.getCode();
+                    break;
+                }
+            }
+            qualification.setAppId("201910091625131208151");
+            qualification.setOperatorName("中国移动");
+            qualification.setWayId(getData(row, 1));
+            qualification.setStoreProvince(getData(row, 2));
+            qualification.setStoreCity(getData(row, 3));
+            qualification.setStoreCounty(getData(row, 4));
+            qualification.setStoreNo(getData(row, 5));
+            qualification.setStoreName(getData(row, 6));
+            qualification.setStoreSubjectCertNo(getData(row, 7));
+            qualification.setStoreSubjectName(getData(row, 8));
+            qualification.setContactName(getData(row, 9));
+            qualification.setContactPhone(getData(row, 10));
+            qualification.setName(getData(row, 11));
+            qualification.setSellerNo(getData(row, 12));
+            qualification.setMerchantNo("DZ" + qualification.getWayId());
+            qualification.setCreateTime(DateUtil.formatDate(new Date(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+            qualification.setStoreProvince(excelProvince);
+            qualification.setStoreProvinceCode(provinceCode);
+            qualification.setStoreCity(excelCity);
+            qualification.setStoreCityCode(cityCode);
+            if (isProvince && isCity) {
+                try {
+                    AuthorizeMerchant merchant = authorizeMerchantService.createMerchant(qualification);
+                    User user = userService.createUser(
+                            merchant.getSellerNo(),
+                            merchant.getStoreSubjectName(),
+                            merchant.getStoreName(),
+                            merchant.getWayId(),
+                            merchant.getContactPhone()
+                    );
+                    merchant.setStoreMarkCode(user.getStoreMarkCode());
+                    merchant.setUid(user.getUid());
+                    authorizeMerchantService.updateById(merchant);
+                    qualification.setPassword(user.getPwd());
+                    qualification.setState(merchant.getStateDesc());
+                } catch (BizException e) {
+                    log.error("创建商户失败:{},{},{}", qualification.getWayId(), qualification.getStoreName(), e);
+                    qualification.setState("签约失败");
+                    qualification.setReason(e.getMessage());
+                } catch (Exception e) {
+                    log.error("创建商户异常:{},{},{}", qualification.getWayId(), qualification.getStoreName(), e);
+                    qualification.setState("签约失败");
+                    qualification.setReason("系统异常");
+                }
+            } else {
+                if (!isProvince) {
+                    qualification.setState("签约失败");
+                    qualification.setReason("省填写有误");
+                }
+                if (!isCity) {
+                    qualification.setState("签约失败");
+                    qualification.setReason("市填写有误");
+                }
+                log.error("创建商户失败:{},{},{},{}", qualification.getWayId(), qualification.getReason(), qualification.getStoreProvince(), qualification.getStoreCity());
             }
             list.add(qualification);
         }

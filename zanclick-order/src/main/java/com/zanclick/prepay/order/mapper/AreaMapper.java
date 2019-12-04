@@ -4,6 +4,8 @@ import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.order.entity.Area;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * @author admin
  * @date 2019-12-02 16:24:45
@@ -11,5 +13,6 @@ import org.apache.ibatis.annotations.Mapper;
 @Mapper
 public interface AreaMapper extends BaseMapper<Area,Long> {
 
-Area selectByName(Area name);
+    List<Area> selectByLevel(Integer level);
+
 }
