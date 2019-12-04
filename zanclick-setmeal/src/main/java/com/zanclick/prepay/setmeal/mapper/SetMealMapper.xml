@@ -65,7 +65,7 @@
                         AND `red_pack_state`=#{redPackState}
                     </if>
                     <if test="title != null and title != ''">
-                        AND `title`=#{title}
+                        AND `title` LIKE concat ('%',#{title},'%')
                     </if>
                     <if test="state != null">
                         AND `state`=#{state}
