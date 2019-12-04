@@ -5,11 +5,27 @@ import com.zanclick.prepay.order.entity.RedPacket;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
- * @author admin
- * @date 2019-11-14 12:01:55
+ * @author Administrator
+ * @date 2019-12-04 18:07:00
  **/
 @Mapper
-public interface RedPacketMapper extends BaseMapper<RedPacket,Long> {
+public interface RedPacketMapper extends BaseMapper<RedPacket, Long> {
+
+    /**
+     * 根据外部订单查询
+     *
+     * @param outOrderNo
+     * @return
+     */
+    RedPacket selectByOutOrderNo(String outOrderNo);
+
+    /**
+     * 根据订单查询
+     *
+     * @param outTradeNo
+     * @return
+     */
+    RedPacket selectByOutTradeNo(String outTradeNo);
 
 
 }

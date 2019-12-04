@@ -20,6 +20,7 @@ import com.zanclick.prepay.order.entity.PayRefundOrder;
 import com.zanclick.prepay.order.mapper.PayOrderMapper;
 import com.zanclick.prepay.order.service.PayOrderService;
 import com.zanclick.prepay.order.service.PayRefundOrderService;
+import com.zanclick.prepay.order.service.RedPacketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,8 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     private AuthorizePayService authorizePayService;
     @Autowired
     private PayRefundOrderService payRefundOrderService;
+    @Autowired
+    private RedPacketService redPacketService;
 
     @Override
     protected BaseMapper<PayOrder, Long> getBaseMapper() {
@@ -139,6 +142,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
     public void handlePayOrder(PayOrder order) {
         if (order.isPayed()) {
             SendMessage.sendMessage(JmsMessaging.ORDER_NOTIFY_MESSAGE, order.getOutTradeNo());
+            redPacketService.createRedPacket(order);
         }
         if (order.isRefund()){
             PayRefundOrder refundOrder = payRefundOrderService.queryByOutTradeNo(order.getOutTradeNo());

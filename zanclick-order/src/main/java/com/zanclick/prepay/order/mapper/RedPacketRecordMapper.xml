@@ -1,19 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.zanclick.prepay.order.mapper.RedPacketMapper">
-    <resultMap id="BaseResultMap" type="com.zanclick.prepay.order.entity.RedPacket">
+<mapper namespace="com.zanclick.prepay.order.mapper.RedPacketRecordMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.order.entity.RedPacketRecord">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="amount" property="amount" jdbcType="VARCHAR"/>
         <result column="out_order_no" property="outOrderNo" jdbcType="VARCHAR"/>
         <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>
+        <result column="pay_no" property="payNo" jdbcType="VARCHAR"/>
+        <result column="biz_no" property="bizNo" jdbcType="VARCHAR"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-        <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
         <result column="receive_no" property="receiveNo" jdbcType="VARCHAR"/>
         <result column="app_id" property="appId" jdbcType="VARCHAR"/>
         <result column="state" property="state" jdbcType="INTEGER"/>
-        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="reason" property="reason" jdbcType="VARCHAR"/>
         <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
         <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">red_packet</sql>
@@ -22,14 +25,17 @@
             `amount`,
             `out_order_no`,
             `out_trade_no`,
+            `pay_no`,
+            `biz_no`,
+            `title`,
             `create_time`,
-            `finish_time`,
             `receive_no`,
             `app_id`,
             `state`,
-            `type`,
+            `reason`,
             `way_id`,
-            `merchant_no`
+            `merchant_no`,
+            `name`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -46,11 +52,17 @@
                 <if test="outTradeNo != null and outTradeNo != ''">
                     AND `out_trade_no`=#{outTradeNo}
                 </if>
+                <if test="payNo != null and payNo != ''">
+                    AND `pay_no`=#{payNo}
+                </if>
+                <if test="bizNo != null and bizNo != ''">
+                    AND `biz_no`=#{bizNo}
+                </if>
+                <if test="title != null and title != ''">
+                    AND `title`=#{title}
+                </if>
                 <if test="createTime != null">
                     AND `create_time`=#{createTime}
-                </if>
-                <if test="finishTime != null">
-                    AND `finish_time`=#{finishTime}
                 </if>
                 <if test="receiveNo != null and receiveNo != ''">
                     AND `receive_no`=#{receiveNo}
@@ -61,8 +73,8 @@
                 <if test="state != null">
                     AND `state`=#{state}
                 </if>
-                <if test="type != null">
-                    AND `type`=#{type}
+                <if test="reason != null and reason != ''">
+                    AND `reason`=#{reason}
                 </if>
                 <if test="wayId != null and wayId != ''">
                     AND `way_id`=#{wayId}
@@ -70,9 +82,18 @@
                 <if test="merchantNo != null and merchantNo != ''">
                     AND `merchant_no`=#{merchantNo}
                 </if>
+                <if test="name != null and name != ''">
+                    AND `name`=#{name}
+                </if>
+                <if test="startTime != null">
+                    and DATE_FORMAT(create_time,'%Y-%m-%d') >= #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
+                </if>
             </trim>
         </where>
-        ORDER BY id DESC
+        order by id DESC
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
@@ -98,23 +119,7 @@
         <include refid="Base_Where_Clause"/>
     </select>
 
-    <select id="selectByOutOrderNo" resultMap="BaseResultMap" parameterType="java.lang.String">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM
-        <include refid="table"/>
-        WHERE out_order_no = #{outOrderNo} ORDER BY id DESC LIMIT 1
-    </select>
-
-    <select id="selectByOutTradeNo" resultMap="BaseResultMap" parameterType="java.lang.String">
-        SELECT
-        <include refid="Base_Column_List"/>
-        FROM
-        <include refid="table"/>
-        WHERE out_trade_no = #{outTradeNo} ORDER BY id DESC LIMIT 1
-    </select>
-
-    <insert id="insert" parameterType="com.zanclick.prepay.order.entity.RedPacket" useGeneratedKeys="true"
+    <insert id="insert" parameterType="com.zanclick.prepay.order.entity.RedPacketRecord" useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO
         <include refid="table"/>
@@ -123,28 +128,34 @@
         `amount`,
         `out_order_no`,
         `out_trade_no`,
+        `pay_no`,
+        `biz_no`,
+        `title`,
         `create_time`,
-        `finish_time`,
         `receive_no`,
         `app_id`,
         `state`,
-        `type`,
+        `reason`,
         `way_id`,
-        `merchant_no`
+        `merchant_no`,
+        `name`
         )
         VALUES(
         #{id},
         #{amount},
         #{outOrderNo},
         #{outTradeNo},
+        #{payNo},
+        #{bizNo},
+        #{title},
         #{createTime},
-        #{finishTime},
         #{receiveNo},
         #{appId},
         #{state},
-        #{type},
+        #{reason},
         #{wayId},
-        #{merchantNo}
+        #{merchantNo},
+        #{name}
         )
     </insert>
 
@@ -156,14 +167,17 @@
         `amount`,
         `out_order_no`,
         `out_trade_no`,
+        `pay_no`,
+        `biz_no`,
+        `title`,
         `create_time`,
-        `finish_time`,
         `receive_no`,
         `app_id`,
         `state`,
-        `type`,
+        `reason`,
         `way_id`,
-        `merchant_no`
+        `merchant_no`,
+        `name`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -172,14 +186,17 @@
             #{cm.amount},
             #{cm.outOrderNo},
             #{cm.outTradeNo},
+            #{cm.payNo},
+            #{cm.bizNo},
+            #{cm.title},
             #{cm.createTime},
-            #{cm.finishTime},
             #{cm.receiveNo},
             #{cm.appId},
             #{cm.state},
-            #{cm.type},
+            #{cm.reason},
             #{cm.wayId},
-            #{cm.merchantNo}
+            #{cm.merchantNo},
+            #{cm.name}
             )
         </foreach>
     </insert>
@@ -192,7 +209,7 @@
         WHERE id=#{id}
     </select>
 
-    <update id="updateById" parameterType="com.zanclick.prepay.order.entity.RedPacket">
+    <update id="updateById" parameterType="com.zanclick.prepay.order.entity.RedPacketRecord">
         UPDATE
         <include refid="table"/>
         <set>
@@ -205,11 +222,17 @@
             <if test="outTradeNo != null and outTradeNo != ''">
                 `out_trade_no`=#{outTradeNo},
             </if>
+            <if test="payNo != null and payNo != ''">
+                `pay_no`=#{payNo},
+            </if>
+            <if test="bizNo != null and bizNo != ''">
+                `biz_no`=#{bizNo},
+            </if>
+            <if test="title != null and title != ''">
+                `title`=#{title},
+            </if>
             <if test="createTime != null">
                 `create_time`=#{createTime},
-            </if>
-            <if test="finishTime != null">
-                `finish_time`=#{finishTime},
             </if>
             <if test="receiveNo != null and receiveNo != ''">
                 `receive_no`=#{receiveNo},
@@ -220,14 +243,17 @@
             <if test="state != null">
                 `state`=#{state},
             </if>
-            <if test="type != null">
-                `type`=#{type},
+            <if test="reason != null and reason != ''">
+                `reason`=#{reason},
             </if>
             <if test="wayId != null and wayId != ''">
                 `way_id`=#{wayId},
             </if>
             <if test="merchantNo != null and merchantNo != ''">
                 `merchant_no`=#{merchantNo},
+            </if>
+            <if test="name != null and name != ''">
+                `name`=#{name},
             </if>
         </set>
         WHERE id=#{id}

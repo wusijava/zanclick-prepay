@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service("comZanclickQueryPacket")
 public class QueryPacketServiceImpl extends AbstractCommonService implements ApiRequestResolver {
+
     @Autowired
     private PayOrderService payOrderService;
 
@@ -30,7 +31,6 @@ public class QueryPacketServiceImpl extends AbstractCommonService implements Api
         param.setSuccess();
         param.setMessage("查询成功");
         try {
-//            String decrypt = verifyCipherJson(appId, cipherJson);
             QueryRedPacket query = parser(request, QueryRedPacket.class);
             PayOrder order = payOrderService.queryRedPacketOrder(query.getOutOrderNo());
             param.setData(getQueryResult(order));
