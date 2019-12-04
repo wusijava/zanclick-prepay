@@ -4,6 +4,7 @@ import com.sun.org.apache.regexp.internal.RE;
 import com.zanclick.prepay.common.base.controller.BaseController;
 import com.zanclick.prepay.common.entity.RequestContext;
 import com.zanclick.prepay.common.entity.Response;
+import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.IpUtils;
@@ -12,6 +13,7 @@ import com.zanclick.prepay.setmeal.entity.SetMealLog;
 import com.zanclick.prepay.setmeal.query.SetMealQuery;
 import com.zanclick.prepay.setmeal.service.SetMealLogService;
 import com.zanclick.prepay.setmeal.service.SetMealService;
+import com.zanclick.prepay.setmeal.vo.SetMealDetail;
 import com.zanclick.prepay.setmeal.vo.SetMealWebList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -24,10 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
@@ -50,8 +49,7 @@ public class SetMealController extends BaseController {
     @Autowired
     private SetMealLogService setMealLogService;
 
-    @Autowired
-    private  HttpServletRequest request;
+
     @Value("${excelDownloadUrl}")
     private String excelDownloadUrl;
 
@@ -91,24 +89,19 @@ public class SetMealController extends BaseController {
                 return Response.fail("缺少套餐编号");
             }
             //获取当前ip地址
-            String ipAddress = IpUtils.getIpAddress(request);
+            String ipAddress = IpUtils.getIpAddress(getRequest());
             //获取当前用户
             RequestContext.RequestUser user = RequestContext.getCurrentUser();
-            //获取用户操作的套餐
-            String userId = user.getId();
             SetMeal setMeal = setMealService.queryById(updateSetMeal.getId());
+            if(DataUtil.isEmpty(setMeal)){
+                return Response.fail("未找到此套餐");
+            }
             Integer state = setMeal.getState();
             Integer uState = state == 0 ? 1 : 0;
             updateSetMeal.setState(uState);
-            SetMeal setMeal1 = setMealService.updateById(updateSetMeal);
+            setMealService.updateById(updateSetMeal);
             //将记录插入记录表
-            SetMealLog setMealLog = new SetMealLog();
-            setMealLog.setCreateTime( DateUtil.getCurrentDate());
-            setMealLog.setIp(ipAddress);
-            setMealLog.setState(setMeal.getState());
-            setMealLog.setTitle(setMeal.getTitle());
-            setMealLog.setUserId(user.getId());
-            setMealLogService.insert(new SetMealLog());
+            setMealLogService.insert(new SetMealLog(null,user.getId(),ipAddress,setMeal.getTitle(),DateUtil.getCurrentDate(),uState));
             return Response.ok("修改成功");
         }catch (Exception e){
             log.error("上下架出错:{}");
@@ -117,8 +110,29 @@ public class SetMealController extends BaseController {
 
     }
 
+    @ApiOperation(value = "修改套餐信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
+    @RequestMapping(value = "update", method = RequestMethod.POST)
+    @ResponseBody
+    public Response<String> update(SetMealDetail detail) {
+        if (DataUtil.isEmpty(detail) || DataUtil.isEmpty(detail.getId())) {
+            return Response.fail("修改套餐信息异常");
+        }
+        try {
+            SetMeal meal = setMealDetail(detail);
+            setMealService.updateById(meal);
+        } catch (BizException e) {
+            return Response.ok(e.getMessage());
+        } catch (Exception e) {
+            return Response.ok("修改失败");
+        }
+        return Response.ok("修改成功");
+    }
     private SetMealWebList  getListVo(SetMeal setMeal){
         SetMealWebList webList = new SetMealWebList();
+        webList.setId(setMeal.getId());
         webList.setPackageNo(setMeal.getPackageNo());
         webList.setTitle(setMeal.getTitle());
         webList.setTotalAmount(setMeal.getTotalAmount());
@@ -128,5 +142,14 @@ public class SetMealController extends BaseController {
         webList.setState(setMeal.getState());
         webList.setStateStr(setMeal.getStateDesc());
         return  webList;
+    }
+
+    private SetMeal setMealDetail(SetMealDetail detail) {
+        SetMeal meal = new SetMeal();
+        meal.setId(detail.getId());
+        meal.setTitle(detail.getTitle());
+        meal.setSettleAmount(detail.getSettleAmount());
+        meal.setAmount(detail.getEachAmount());
+        return meal;
     }
 }

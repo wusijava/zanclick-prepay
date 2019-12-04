@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class SetMealWebList {
 
+    private Long id;
     /**
      * 套餐编号
      */
