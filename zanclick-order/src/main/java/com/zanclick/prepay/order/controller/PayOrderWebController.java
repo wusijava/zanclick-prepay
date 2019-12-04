@@ -10,6 +10,7 @@ import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
+import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.query.PayOrderQuery;
 import com.zanclick.prepay.order.service.PayOrderService;
@@ -159,6 +160,15 @@ public class PayOrderWebController extends BaseController {
         }
         List<PayOrderExcelList> orderExcelList = new ArrayList<>();
         for (PayOrder order : orderList) {
+            if (!DataUtil.isEmpty(query) && "true".equals(query.getHiddenPhone())) {
+                order.setPhoneNumber(StringUtils.hiddenName(order.getPhoneNumber()));
+            }
+            if (!DataUtil.isEmpty(query) && "true".equals(query.getHiddenSellerNo())) {
+                order.setSellerNo(StringUtils.hiddenName(order.getSellerNo()));
+            }
+            if (!DataUtil.isEmpty(query) && "true".equals(query.getHiddenSellerName())) {
+                order.setName(StringUtils.hiddenName(order.getName()));
+            }
             PayOrderExcelList list = getExcelVo(order);
             if (DataUtil.isNotEmpty(list)) {
                 orderExcelList.add(list);
