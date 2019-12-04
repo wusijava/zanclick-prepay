@@ -25,7 +25,7 @@ public class SetMealDetail {
     @ApiModelProperty("捆绑期数")
     private Integer num;
 
-    @ApiModelProperty("红包状态")
+    @ApiModelProperty("红包状态 0关闭的 1开启的")
     private Integer redPacketState;
 
     @ApiModelProperty("红包状态红包状态描述")
@@ -34,7 +34,7 @@ public class SetMealDetail {
     @ApiModelProperty("红包金额")
     private String redPacketAmount;
 
-    @ApiModelProperty("套餐状态")
+    @ApiModelProperty("套餐状态 0已下架 1已上架")
     private Integer state;
 
     @ApiModelProperty("套餐状态描述")

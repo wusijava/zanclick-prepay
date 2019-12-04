@@ -58,7 +58,7 @@ public class SetMeal implements Identifiable<Long> {
     private Integer state;
 
     public String getRedPacketStateStr(){
-        if (RedPackState.open.getCode().equals(state)){
+        if (RedPackState.open.getCode().equals(redPackState)){
             return RedPackState.open.getDesc();
         }else {
             return RedPackState.closed.getDesc();
