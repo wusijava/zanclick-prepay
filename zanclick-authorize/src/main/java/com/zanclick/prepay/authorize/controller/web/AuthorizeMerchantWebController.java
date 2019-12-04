@@ -135,6 +135,7 @@ public class AuthorizeMerchantWebController extends BaseController {
         vo.setSellerNo(merchant.getSellerNo());
         vo.setState(merchant.getState());
         vo.setStateStr(merchant.getStateDesc());
+        vo.setRedPackState(merchant.getRedStateDesc());
         return vo;
     }
 

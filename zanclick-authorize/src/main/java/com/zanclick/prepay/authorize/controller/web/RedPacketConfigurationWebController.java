@@ -7,6 +7,7 @@ import com.zanclick.prepay.authorize.service.RedPacketConfigurationRecordService
 import com.zanclick.prepay.authorize.service.RedPacketConfigurationService;
 import com.zanclick.prepay.authorize.vo.web.RedPacketConfigurationWebInfo;
 import com.zanclick.prepay.common.base.controller.BaseController;
+import com.zanclick.prepay.common.entity.RequestContext;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.IpUtils;
@@ -72,7 +73,7 @@ public class RedPacketConfigurationWebController extends BaseController {
     public Response<RedPacketConfiguration> insertConfiguration(RedPacketConfiguration query){
         try {
             if (DataUtil.isEmpty(query) || DataUtil.isEmpty(query.getLevel()) || DataUtil.isEmpty(query.getName())
-                    || DataUtil.isEmpty(query.getStatus()) || DataUtil.isEmpty(query.getNameCode())){
+                    || DataUtil.isEmpty(query.getStatus()) || DataUtil.isEmpty(query.getNameCode()) || DataUtil.isEmpty(query.getAmountInfo())){
                 return Response.fail("参数有误");
             }
             Date date = new Date();
@@ -105,8 +106,8 @@ public class RedPacketConfigurationWebController extends BaseController {
             if (DataUtil.isEmpty(configuration)) {
                 return Response.fail("获取红包配置信息失败");
             }
-            RedPacketConfigurationWebInfo configurationWebInfo = getListVo(configuration);
-            return Response.ok(configurationWebInfo);
+//            RedPacketConfigurationWebInfo configurationWebInfo = getListVo(configuration);
+            return Response.ok(configuration);
         } catch (Exception e) {
             log.error("获取红包配置信息失败:{}", e);
             return Response.fail("获取红包配置信息失败");
@@ -120,15 +121,15 @@ public class RedPacketConfigurationWebController extends BaseController {
         try {
             if (DataUtil.isEmpty(updateConfig) || DataUtil.isEmpty(updateConfig.getId()) || DataUtil.isEmpty(updateConfig.getName())
                     || DataUtil.isEmpty(updateConfig.getNameCode()) || DataUtil.isEmpty(updateConfig.getLevel())
-                    || DataUtil.isEmpty(updateConfig.getStatus())) {
+                    || DataUtil.isEmpty(updateConfig.getStatus()) || DataUtil.isEmpty(updateConfig.getAmountInfo())) {
                 return Response.fail("参数有误");
             }
-            RedPacketConfiguration checkName = new RedPacketConfiguration();
-            checkName.setName(updateConfig.getName());
-            List<RedPacketConfiguration> configurationList = redPacketConfigurationService.queryList(checkName);
-            if (DataUtil.isNotEmpty(configurationList)) {
-                return Response.fail("账号重复");
-            }
+//            RedPacketConfiguration checkName = new RedPacketConfiguration();
+//            checkName.setName(updateConfig.getName());
+//            List<RedPacketConfiguration> configurationList = redPacketConfigurationService.queryList(checkName);
+//            if (DataUtil.isNotEmpty(configurationList)) {
+//                return Response.fail("账号重复");
+//            }
 
             redPacketConfigurationService.updateById(updateConfig);
             //修改日志记录
@@ -138,6 +139,8 @@ public class RedPacketConfigurationWebController extends BaseController {
             String nowDate = dateFormat.format(date);
             record.setCreateTime(nowDate);
             record.setAddress(IpUtils.getIpAddress(req));
+            RequestContext.RequestUser user = RequestContext.getCurrentUser();
+            record.setUserId(user.getUid());
             recordService.insert(record);
             return Response.ok("修改成功");
         } catch (Exception e) {
@@ -182,6 +185,7 @@ public class RedPacketConfigurationWebController extends BaseController {
         vo.setNameCode(configuration.getNameCode());
         vo.setLevel(configuration.getLevel());
         vo.setStatus(configuration.getStatus());
+        vo.setAmountInfo(configuration.getAmountInfo());
         return vo;
     }
 

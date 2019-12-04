@@ -203,4 +203,12 @@ public class AuthorizeMerchant implements Identifiable<Long> {
     public Boolean isFail() {
         return state.equals(State.failed.getCode());
     }
+
+    public String getRedStateDesc() {
+        if (RedPackState.open.getCode().equals(redPackState)) {
+            return RedPackState.open.getDesc();
+        } else {
+            return RedPackState.closed.getDesc();
+        }
+    }
 }

@@ -88,6 +88,7 @@
         `name_code`,
         `level`,
         `status`,
+        `amount_info`,
         `user_id`,
         `address`,
         `create_time`
@@ -98,6 +99,7 @@
         #{nameCode},
         #{level},
         #{status},
+        #{amountInfo},
         #{userId},
         #{address},
         #{createTime}

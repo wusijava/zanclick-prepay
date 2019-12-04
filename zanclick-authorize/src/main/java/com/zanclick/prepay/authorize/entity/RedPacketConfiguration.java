@@ -41,6 +41,11 @@ public class RedPacketConfiguration implements Identifiable<Long> {
      */
     private String createTime;
 
+    /**
+     * 红包配置信息
+     */
+    private String amountInfo;
+
     public enum Level{
 
         shopLevel(1,"门店"),

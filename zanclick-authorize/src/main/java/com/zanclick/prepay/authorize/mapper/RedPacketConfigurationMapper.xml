@@ -7,6 +7,7 @@
         <result column="name_code" property="nameCode" jdbcType="VARCHAR"/>
         <result column="level" property="level" jdbcType="BIGINT"/>
         <result column="status" property="status" jdbcType="BIGINT"/>
+        <result column="amount_info" property="amountInfo" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
@@ -17,6 +18,7 @@
         `name_code`,
         `level`,
         `status`,
+        `amount_info`,
         `create_time`
     </sql>
     <sql id="Base_Where_Clause">
@@ -78,6 +80,7 @@
         `name_code`,
         `level`,
         `status`,
+        `amount_info`,
         `create_time`
         )
         VALUES(
@@ -86,6 +89,7 @@
         #{nameCode},
         #{level},
         #{status},
+        #{amountInfo},
         #{createTime}
         )
     </insert>
@@ -113,6 +117,9 @@
             </if>
             <if test="status != null">
                 `status`=#{status},
+            </if>
+            <if test="amountInfo != null and amountInfo != ''">
+                `amount_info`=#{amountInfo},
             </if>
             <if test="createTime != null">
                 `create_time`=#{createTime},
