@@ -13,6 +13,9 @@ import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.PoiUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
+import com.zanclick.prepay.order.entity.Area;
+import com.zanclick.prepay.order.mapper.AreaMapper;
+import com.zanclick.prepay.order.service.AreaService;
 import com.zanclick.prepay.user.entity.User;
 import com.zanclick.prepay.user.query.UserQuery;
 import com.zanclick.prepay.user.service.UserService;
@@ -48,6 +51,8 @@ public class ExcelImportController {
     private AuthorizeMerchantService authorizeMerchantService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private AreaService areaService;
 
     @Value("${excelDownloadUrl}")
     private String excelDownloadUrl;
@@ -59,7 +64,10 @@ public class ExcelImportController {
     @ResponseBody
     public Response<String> batchImportMerchant(MultipartFile file) {
         try {
-            List<RegisterMerchant> registerMerchantList = getMerchantList(file);
+            List<RegisterMerchant> registerMerchantList =getMerchantList(file);
+            if(registerMerchantList==null){
+                return Response.fail("请正确填写省市!");
+            }
             ExcelDto dto = new ExcelDto();
             dto.setHeaders(RegisterMerchant.headers);
             dto.setKeys(RegisterMerchant.keys);
@@ -173,26 +181,62 @@ public class ExcelImportController {
         }
         Integer rowNum = sheet.getLastRowNum();
         RegisterMerchant qualification = null;
+        //省
+      Area area=new Area();
+        //市
+        Area area3=new Area();
         for (int i = 1; i <= rowNum; i++) {
             qualification = new RegisterMerchant();
-            qualification.setAppId("201910091625131208151");
-            qualification.setOperatorName("中国移动");
             HSSFRow row = sheet.getRow(i);
             format(row);
-            qualification.setWayId(getData(row, 1));
-            qualification.setStoreProvince(getData(row, 2));
-            qualification.setStoreCity(getData(row, 3));
-            qualification.setStoreCounty(getData(row, 4));
-            qualification.setStoreNo(getData(row, 5));
-            qualification.setStoreName(getData(row, 6));
-            qualification.setStoreSubjectCertNo(getData(row, 7));
-            qualification.setStoreSubjectName(getData(row, 8));
-            qualification.setContactName(getData(row, 9));
-            qualification.setContactPhone(getData(row, 10));
-            qualification.setName(getData(row, 11));
-            qualification.setSellerNo(getData(row, 12));
-            qualification.setMerchantNo("DZ" + qualification.getWayId());
-            qualification.setCreateTime(DateUtil.formatDate(new Date(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+            //判断省
+            String province=getData(row, 2);
+            String city=getData(row, 3);
+            if(province==""||city==""){
+                log.error("省市不能为空!");
+                return null;}
+            area.setName(province);
+            area3.setName(city);
+            //模糊查询省
+            Area area1=areaService.selectByName(area);
+            if(area1!=null&&area1.getLevel().equals("1")){
+                //查到省 再判断市
+                Area area2=areaService.selectByName(area3);
+                if(area2==null){
+                    area2=new Area();
+                    area2.setParentCode("0");
+                }
+                if(area1.getCode().equals(area2.getParentCode())){
+                    //省市匹配
+                    qualification.setStoreProvince(area1.getName());
+                    qualification.setStoreProvinceCode(area1.getCode());
+                    qualification.setStoreCity(area2.getName());
+                    qualification.setAppId("201910091625131208151");
+                    qualification.setOperatorName("中国移动");
+                    qualification.setStoreCityCode(area2.getCode());
+                    qualification.setWayId(getData(row, 1));
+                    qualification.setStoreCounty(getData(row, 4));
+                    qualification.setStoreNo(getData(row, 5));
+                    qualification.setStoreName(getData(row, 6));
+                    qualification.setStoreSubjectCertNo(getData(row, 7));
+                    qualification.setStoreSubjectName(getData(row, 8));
+                    qualification.setContactName(getData(row, 9));
+                    qualification.setContactPhone(getData(row, 10));
+                    qualification.setName(getData(row, 11));
+                    qualification.setSellerNo(getData(row, 12));
+                    qualification.setMerchantNo("DZ" + qualification.getWayId());
+                    qualification.setCreateTime(DateUtil.formatDate(new Date(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+                }else{
+                   Response.fail("省市不匹配!");
+                   log.error("省市不匹配!");
+                   return null;
+                }
+            }else{
+                Response.fail("省份填写错误!");
+                log.error("省份填写错误!");
+                return null;
+            }
+
             try {
                 AuthorizeMerchant merchant = authorizeMerchantService.createMerchant(qualification);
                 User user = userService.createUser(merchant.getSellerNo(),merchant.getStoreSubjectName(),merchant.getStoreName(),merchant.getWayId(),merchant.getContactPhone());
