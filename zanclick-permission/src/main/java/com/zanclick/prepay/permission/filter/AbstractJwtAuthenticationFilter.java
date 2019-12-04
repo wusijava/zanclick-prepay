@@ -65,6 +65,7 @@ public abstract class AbstractJwtAuthenticationFilter extends OncePerRequestFilt
                     requestUser.setSalt(user.getSalt());
                     requestUser.setPassword(user.getPassword());
                     requestUser.setStoreMarkCode(user.getStoreMarkCode());
+                    requestUser.setCityCode(user.getCityCode());
                     RequestContext.setCurrentUser(requestUser);
                     if (!isLogoutUrl(request)) {
                         JwtUtil.refreshAndAddTokenToResponseHeader(request, response, user.getId(), user.getUsername(), getTokenStoreResolver());

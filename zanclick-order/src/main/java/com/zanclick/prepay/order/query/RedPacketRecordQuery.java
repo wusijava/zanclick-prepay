@@ -1,6 +1,6 @@
 package com.zanclick.prepay.order.query;
 
-import com.zanclick.prepay.order.entity.RedPacket;
+import com.zanclick.prepay.order.entity.RedPacketRecord;
 import lombok.Data;
 
 /**
@@ -9,7 +9,7 @@ import lombok.Data;
  * @ CreateDate    :  2019/11/13$ 18:35$
  */
 @Data
-public class RedPacketQuery extends RedPacket {
+public class RedPacketRecordQuery extends RedPacketRecord {
     private Integer page;
 
     private Integer limit;

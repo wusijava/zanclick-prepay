@@ -7,9 +7,9 @@ import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.RedisUtil;
-import com.zanclick.prepay.order.entity.RedPacket;
-import com.zanclick.prepay.order.query.RedPacketQuery;
-import com.zanclick.prepay.order.service.RedPacketService;
+import com.zanclick.prepay.order.entity.RedPacketRecord;
+import com.zanclick.prepay.order.query.RedPacketRecordQuery;
+import com.zanclick.prepay.order.service.RedPacketRecordService;
 import com.zanclick.prepay.order.vo.RedPacketExcelList;
 import com.zanclick.prepay.order.vo.RedPacketList;
 import io.swagger.annotations.Api;
@@ -40,9 +40,9 @@ import java.util.UUID;
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/web/red/packet")
-public class RedPackWebController extends BaseController {
+public class RedPackRecordWebController extends BaseController {
     @Autowired
-    private RedPacketService RedPacketService;
+    private RedPacketRecordService RedPacketRecordService;
 
     @Value("${excelDownloadUrl}")
     private String excelDownloadUrl;
@@ -52,7 +52,7 @@ public class RedPackWebController extends BaseController {
             @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
     })
     @RequestMapping("/list")
-    public Response<Page<RedPacketList>> getPacketList(RedPacketQuery query) {
+    public Response<Page<RedPacketList>> getPacketList(RedPacketRecordQuery query) {
         if (DataUtil.isEmpty(query.getPage())) {
             query.setPage(0);
         }
@@ -60,26 +60,26 @@ public class RedPackWebController extends BaseController {
             query.setLimit(10);
         }
         Pageable pageable = PageRequest.of(query.getPage(), query.getLimit());
-        Page<RedPacket> page = RedPacketService.queryPage(query, pageable);
+        Page<RedPacketRecord> page = RedPacketRecordService.queryPage(query, pageable);
         List<RedPacketList> voList = new ArrayList<>();
-        for (RedPacket redPacket : page.getContent()) {
-            voList.add(getListVo(redPacket));
+        for (RedPacketRecord redPacketRecord : page.getContent()) {
+            voList.add(getListVo(redPacketRecord));
         }
         Page<RedPacketList> voPage = new PageImpl<>(voList, pageable, page.getTotalElements());
         return Response.ok(voPage);
     }
 
-    private RedPacketList getListVo(RedPacket redPacket) {
+    private RedPacketList getListVo(RedPacketRecord redPacketRecord) {
         RedPacketList vo = new RedPacketList();
-        vo.setOutTradeNo(redPacket.getOutTradeNo());
-        vo.setOutOrderNo(redPacket.getOutOrderNo());
-        vo.setAmount(redPacket.getAmount());
-        vo.setWayId(redPacket.getWayId());
-        vo.setReceiveNo(redPacket.getReceiveNo());
-        vo.setState(redPacket.getState());
-        vo.setCreateTime(redPacket.getCreateTime() == null ? "" : DateUtil.formatDate(redPacket.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
-        vo.setStateDesc(redPacket.getStateDesc());
-        vo.setReason(redPacket.getReason());
+        vo.setOutTradeNo(redPacketRecord.getOutTradeNo());
+        vo.setOutOrderNo(redPacketRecord.getOutOrderNo());
+        vo.setAmount(redPacketRecord.getAmount());
+        vo.setWayId(redPacketRecord.getWayId());
+        vo.setReceiveNo(redPacketRecord.getReceiveNo());
+        vo.setState(redPacketRecord.getState());
+        vo.setCreateTime(redPacketRecord.getCreateTime() == null ? "" : DateUtil.formatDate(redPacketRecord.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        vo.setStateDesc(redPacketRecord.getStateDesc());
+        vo.setReason(redPacketRecord.getReason());
         return vo;
     }
 
@@ -89,15 +89,15 @@ public class RedPackWebController extends BaseController {
     })
     @RequestMapping(value = "/batchExport", method = RequestMethod.POST)
     @ResponseBody
-    public Response<String> batchExport(RedPacketQuery query){
+    public Response<String> batchExport(RedPacketRecordQuery query){
         try {
-            List<RedPacket> redPacketList = RedPacketService.queryList(query);
-            if (DataUtil.isEmpty(redPacketList)){
+            List<RedPacketRecord> redPacketRecordList = RedPacketRecordService.queryList(query);
+            if (DataUtil.isEmpty(redPacketRecordList)){
                 return Response.fail("没有数据");
             }
             List<RedPacketExcelList> packetExcelList = new ArrayList<>();
-            for(int i = 0;i<redPacketList.size();i++){
-                RedPacketExcelList list = getExcelVo(redPacketList.get(i));
+            for(int i = 0; i< redPacketRecordList.size(); i++){
+                RedPacketExcelList list = getExcelVo(redPacketRecordList.get(i));
                 if (DataUtil.isNotEmpty(list)) {
                     list.setNo(String.valueOf(i+1));
                     packetExcelList.add(list);
@@ -121,16 +121,16 @@ public class RedPackWebController extends BaseController {
 
     }
 
-    private RedPacketExcelList getExcelVo(RedPacket redPacket){
+    private RedPacketExcelList getExcelVo(RedPacketRecord redPacketRecord){
         RedPacketExcelList packetExcelList = new RedPacketExcelList();
-        packetExcelList.setOutTradeNo(redPacket.getOutTradeNo());
-        packetExcelList.setOutOrderNo(redPacket.getOutOrderNo());
-        packetExcelList.setAmount(redPacket.getAmount());
-        packetExcelList.setWayId(redPacket.getWayId());
-        packetExcelList.setReceiveNo(redPacket.getReceiveNo());
-        packetExcelList.setCreateTime(DateUtil.formatDate(redPacket.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
-        packetExcelList.setState(redPacket.getStateDesc());
-        packetExcelList.setReason(redPacket.getReason());
+        packetExcelList.setOutTradeNo(redPacketRecord.getOutTradeNo());
+        packetExcelList.setOutOrderNo(redPacketRecord.getOutOrderNo());
+        packetExcelList.setAmount(redPacketRecord.getAmount());
+        packetExcelList.setWayId(redPacketRecord.getWayId());
+        packetExcelList.setReceiveNo(redPacketRecord.getReceiveNo());
+        packetExcelList.setCreateTime(DateUtil.formatDate(redPacketRecord.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        packetExcelList.setState(redPacketRecord.getStateDesc());
+        packetExcelList.setReason(redPacketRecord.getReason());
         return packetExcelList;
     }
 

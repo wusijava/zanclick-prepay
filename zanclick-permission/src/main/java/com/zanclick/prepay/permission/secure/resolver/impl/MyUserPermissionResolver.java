@@ -71,6 +71,7 @@ public class MyUserPermissionResolver extends UserPermissionResolver {
             loginUser.setUid(user.getUid());
             loginUser.setSalt(user.getSalt());
             loginUser.setStoreMarkCode(user.getStoreMarkCode());
+            loginUser.setCityCode(user.getCityCode());
             return loginUser;
         } else {
             return null;

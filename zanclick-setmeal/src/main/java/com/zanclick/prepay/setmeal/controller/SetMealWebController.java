@@ -153,6 +153,8 @@ public class SetMealWebController extends BaseController {
     private SetMeal setMealDetail(SetMealDetail detail) {
         SetMeal meal = new SetMeal();
         meal.setId(detail.getId());
+        meal.setTitle(detail.getTitle());
+        meal.setTotalAmount(detail.getTotalAmount());
         meal.setSettleAmount(detail.getSettleAmount());
         meal.setRedPackAmount(detail.getRedPacketAmount());
         meal.setAmount(detail.getEachAmount());

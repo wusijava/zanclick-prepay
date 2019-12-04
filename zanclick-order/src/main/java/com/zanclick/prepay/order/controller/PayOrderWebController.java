@@ -67,6 +67,8 @@ public class PayOrderWebController extends BaseController {
             query.setUid(user.getUid());
         }else if (user.getType().equals(2)){
             query.setStoreMarkCode(user.getStoreMarkCode());
+        }else if (user.getType().equals(3)){
+            query.setCity(user.getCityCode());
         }
         Pageable pageable = PageRequest.of(query.getPage(), query.getLimit());
         Page<PayOrder> page = payOrderService.queryPage(query, pageable);
@@ -153,6 +155,8 @@ public class PayOrderWebController extends BaseController {
             query.setUid(user.getUid());
         }else if (user.getType().equals(2)){
             query.setStoreMarkCode(user.getStoreMarkCode());
+        }else if (user.getType().equals(3)){
+            query.setCity(user.getCityCode());
         }
         List<PayOrder> orderList = payOrderService.queryList(query);
         if (DataUtil.isEmpty(orderList)) {
