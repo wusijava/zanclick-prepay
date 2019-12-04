@@ -1,11 +1,14 @@
 package com.zanclick.prepay.web.api.h5;
 
 import com.alibaba.fastjson.JSONObject;
+import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
+import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.common.config.JmsMessaging;
 import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
+import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.order.entity.RedPacket;
 import com.zanclick.prepay.order.entity.RedPacketRecord;
 import com.zanclick.prepay.order.service.RedPacketRecordService;
@@ -29,6 +32,8 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
     private RedPacketService redPacketService;
     @Autowired
     private RedPacketRecordService redPacketRecordService;
+    @Autowired
+    private AuthorizeMerchantService authorizeMerchantService;
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
@@ -82,6 +87,19 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
         if (!receive.getWayId().trim().equals(packet.getWayId().trim())){
             log.error("渠道编号不正确:{},{}", receive.getWayId(),packet.getWayId());
             throw new BizException("渠道编号不正确");
+        }
+        AuthorizeMerchant merchant = authorizeMerchantService.queryMerchant(packet.getMerchantNo());
+        if (!merchant.isSuccess()) {
+            log.error("商户注册状态异常:{}", merchant.getWayId());
+            throw new BizException("商户注册状态异常");
+        }
+        if (AuthorizeMerchant.RedPackState.closed.getCode().equals(merchant.getRedPackState())) {
+            log.error("本商户已关闭领取红包权限:{}", merchant.getWayId());
+            throw new BizException("当前商户暂无法领取红包");
+        }
+        if (DataUtil.isNotEmpty(merchant.getRedPackSellerNo()) && !receive.getReceiveNo().trim().equals(merchant.getRedPackSellerNo().trim())) {
+            log.error("本商户已指定红包领取账号，请使用指定账号领取:{}", merchant.getWayId());
+            throw new BizException("本商户已指定红包领取账号，请使用指定账号领取");
         }
         if (packet != null && packet.getState().equals(RedPacketRecord.State.waiting.getCode())){
             SendMessage.sendMessage(JmsMessaging.ORDER_RED_PACKET_MESSAGE,JSONObject.toJSONString(receive));
