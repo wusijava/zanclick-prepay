@@ -21,4 +21,19 @@ public class PayOrderQuery extends PayOrder {
 
     private String endTime;
 
+    /**
+     * 是否隐藏办理手机号
+     */
+    private String hiddenPhone;
+
+    /**
+     * 是否隐藏收款账号
+     */
+    private String hiddenSellerNo;
+
+    /**
+     * 是否隐藏收款人
+     */
+    private String hiddenSellerName;
+
 }
