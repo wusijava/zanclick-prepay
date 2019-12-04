@@ -2,23 +2,22 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.zanclick.prepay.order.mapper.PayRefundOrderMapper">
     <resultMap id="BaseResultMap" type="com.zanclick.prepay.order.entity.PayRefundOrder">
-            <id column="id" property="id" jdbcType="BIGINT"/>
-            <result column="app_id" property="appId" jdbcType="VARCHAR"/>
-            <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
-            <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
-            <result column="auth_no" property="authNo" jdbcType="VARCHAR"/>
-            <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>
-            <result column="out_order_no" property="outOrderNo" jdbcType="VARCHAR"/>
-            <result column="out_request_no" property="outRequestNo" jdbcType="VARCHAR"/>
-            <result column="amount" property="amount" jdbcType="VARCHAR"/>
-            <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
-            <result column="seller_name" property="sellerName" jdbcType="VARCHAR"/>
-            <result column="red_packet_amount" property="redPacketAmount" jdbcType="VARCHAR"/>
-            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-            <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
-            <result column="state" property="state" jdbcType="INTEGER"/>
-            <result column="red_packet_state" property="redPacketState" jdbcType="INTEGER"/>
-            <result column="repayment_state" property="repaymentState" jdbcType="INTEGER"/>
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="app_id" property="appId" jdbcType="VARCHAR"/>
+        <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
+        <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
+        <result column="auth_no" property="authNo" jdbcType="VARCHAR"/>
+        <result column="out_trade_no" property="outTradeNo" jdbcType="VARCHAR"/>
+        <result column="out_order_no" property="outOrderNo" jdbcType="VARCHAR"/>
+        <result column="out_request_no" property="outRequestNo" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="VARCHAR"/>
+        <result column="red_packet_amount" property="redPacketAmount" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
+        <result column="deal_time" property="dealTime" jdbcType="TIMESTAMP"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="red_packet_state" property="redPacketState" jdbcType="INTEGER"/>
+        <result column="repayment_state" property="repaymentState" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="table">pay_refund_order</sql>
@@ -32,11 +31,10 @@
             `out_order_no`,
             `out_request_no`,
             `amount`,
-            `seller_no`,
-            `seller_name`,
             `red_packet_amount`,
             `create_time`,
             `finish_time`,
+            `deal_time`,
             `state`,
             `red_packet_state`,
             `repayment_state`
@@ -44,57 +42,54 @@
     <sql id="Base_Where_Clause">
         <where>
             <trim prefixOverrides="and">
-                    <if test="id != null">
-                        AND `id`=#{id}
-                    </if>
-                    <if test="appId != null and appId != ''">
-                        AND `app_id`=#{appId}
-                    </if>
-                    <if test="merchantNo != null and merchantNo != ''">
-                        AND `merchant_no`=#{merchantNo}
-                    </if>
-                    <if test="wayId != null and wayId != ''">
-                        AND `way_id`=#{wayId}
-                    </if>
-                    <if test="authNo != null and authNo != ''">
-                        AND `auth_no`=#{authNo}
-                    </if>
-                    <if test="outTradeNo != null and outTradeNo != ''">
-                        AND `out_trade_no`=#{outTradeNo}
-                    </if>
-                    <if test="outOrderNo != null and outOrderNo != ''">
-                        AND `out_order_no`=#{outOrderNo}
-                    </if>
-                    <if test="outRequestNo != null and outRequestNo != ''">
-                        AND `out_request_no`=#{outRequestNo}
-                    </if>
-                    <if test="amount != null and amount != ''">
-                        AND `amount`=#{amount}
-                    </if>
-                    <if test="sellerNo != null and sellerNo != ''">
-                        AND `seller_no`=#{sellerNo}
-                    </if>
-                    <if test="sellerName != null and sellerName != ''">
-                        AND `seller_name`=#{sellerName}
-                    </if>
-                    <if test="redPacketAmount != null and redPacketAmount != ''">
-                        AND `red_packet_amount`=#{redPacketAmount}
-                    </if>
-                    <if test="createTime != null">
-                        AND `create_time`=#{createTime}
-                    </if>
-                    <if test="finishTime != null">
-                        AND `finish_time`=#{finishTime}
-                    </if>
-                    <if test="state != null">
-                        AND `state`=#{state}
-                    </if>
-                    <if test="redPacketState != null">
-                        AND `red_packet_state`=#{redPacketState}
-                    </if>
-                    <if test="repaymentState != null">
-                        AND `repayment_state`=#{repaymentState}
-                    </if>
+                <if test="id != null">
+                    AND `id`=#{id}
+                </if>
+                <if test="appId != null and appId != ''">
+                    AND `app_id`=#{appId}
+                </if>
+                <if test="merchantNo != null and merchantNo != ''">
+                    AND `merchant_no`=#{merchantNo}
+                </if>
+                <if test="wayId != null and wayId != ''">
+                    AND `way_id`=#{wayId}
+                </if>
+                <if test="authNo != null and authNo != ''">
+                    AND `auth_no`=#{authNo}
+                </if>
+                <if test="outTradeNo != null and outTradeNo != ''">
+                    AND `out_trade_no`=#{outTradeNo}
+                </if>
+                <if test="outOrderNo != null and outOrderNo != ''">
+                    AND `out_order_no`=#{outOrderNo}
+                </if>
+                <if test="outRequestNo != null and outRequestNo != ''">
+                    AND `out_request_no`=#{outRequestNo}
+                </if>
+                <if test="amount != null and amount != ''">
+                    AND `amount`=#{amount}
+                </if>
+                <if test="redPacketAmount != null and redPacketAmount != ''">
+                    AND `red_packet_amount`=#{redPacketAmount}
+                </if>
+                <if test="createTime != null">
+                    AND `create_time`=#{createTime}
+                </if>
+                <if test="finishTime != null">
+                    AND `finish_time`=#{finishTime}
+                </if>
+                <if test="dealTime != null">
+                    AND `deal_time`=#{dealTime}
+                </if>
+                <if test="state != null">
+                    AND `state`=#{state}
+                </if>
+                <if test="redPacketState != null">
+                    AND `red_packet_state`=#{redPacketState}
+                </if>
+                <if test="repaymentState != null">
+                    AND `repayment_state`=#{repaymentState}
+                </if>
             </trim>
         </where>
         <if test="offset == null and limit != null">
@@ -127,42 +122,40 @@
         INSERT INTO
         <include refid="table"/>
         (
-            `id`,
-            `app_id`,
-            `merchant_no`,
-            `way_id`,
-            `auth_no`,
-            `out_trade_no`,
-            `out_order_no`,
-            `out_request_no`,
-            `amount`,
-            `seller_no`,
-            `seller_name`,
-            `red_packet_amount`,
-            `create_time`,
-            `finish_time`,
-            `state`,
-            `red_packet_state`,
-            `repayment_state`
+        `id`,
+        `app_id`,
+        `merchant_no`,
+        `way_id`,
+        `auth_no`,
+        `out_trade_no`,
+        `out_order_no`,
+        `out_request_no`,
+        `amount`,
+        `red_packet_amount`,
+        `create_time`,
+        `finish_time`,
+        `deal_time`,
+        `state`,
+        `red_packet_state`,
+        `repayment_state`
         )
         VALUES(
-            #{id},
-            #{appId},
-            #{merchantNo},
-            #{wayId},
-            #{authNo},
-            #{outTradeNo},
-            #{outOrderNo},
-            #{outRequestNo},
-            #{amount},
-            #{sellerNo},
-            #{sellerName},
-            #{redPacketAmount},
-            #{createTime},
-            #{finishTime},
-            #{state},
-            #{redPacketState},
-            #{repaymentState}
+        #{id},
+        #{appId},
+        #{merchantNo},
+        #{wayId},
+        #{authNo},
+        #{outTradeNo},
+        #{outOrderNo},
+        #{outRequestNo},
+        #{amount},
+        #{redPacketAmount},
+        #{createTime},
+        #{finishTime},
+        #{dealTime},
+        #{state},
+        #{redPacketState},
+        #{repaymentState}
         )
     </insert>
 
@@ -170,23 +163,22 @@
         INSERT INTO
         <include refid="table"/>
         (
-            `id`,
-            `app_id`,
-            `merchant_no`,
-            `way_id`,
-            `auth_no`,
-            `out_trade_no`,
-            `out_order_no`,
-            `out_request_no`,
-            `amount`,
-            `seller_no`,
-            `seller_name`,
-            `red_packet_amount`,
-            `create_time`,
-            `finish_time`,
-            `state`,
-            `red_packet_state`,
-            `repayment_state`
+        `id`,
+        `app_id`,
+        `merchant_no`,
+        `way_id`,
+        `auth_no`,
+        `out_trade_no`,
+        `out_order_no`,
+        `out_request_no`,
+        `amount`,
+        `red_packet_amount`,
+        `create_time`,
+        `finish_time`,
+        `deal_time`,
+        `state`,
+        `red_packet_state`,
+        `repayment_state`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -200,11 +192,10 @@
             #{cm.outOrderNo},
             #{cm.outRequestNo},
             #{cm.amount},
-            #{cm.sellerNo},
-            #{cm.sellerName},
             #{cm.redPacketAmount},
             #{cm.createTime},
             #{cm.finishTime},
+            #{cm.dealTime},
             #{cm.state},
             #{cm.redPacketState},
             #{cm.repaymentState}
@@ -225,52 +216,49 @@
         <include refid="table"/>
         <set>
             <if test="appId != null and appId != ''">
-                 `app_id`=#{appId},
+                `app_id`=#{appId},
             </if>
             <if test="merchantNo != null and merchantNo != ''">
-                 `merchant_no`=#{merchantNo},
+                `merchant_no`=#{merchantNo},
             </if>
             <if test="wayId != null and wayId != ''">
-                 `way_id`=#{wayId},
+                `way_id`=#{wayId},
             </if>
             <if test="authNo != null and authNo != ''">
-                 `auth_no`=#{authNo},
+                `auth_no`=#{authNo},
             </if>
             <if test="outTradeNo != null and outTradeNo != ''">
-                 `out_trade_no`=#{outTradeNo},
+                `out_trade_no`=#{outTradeNo},
             </if>
             <if test="outOrderNo != null and outOrderNo != ''">
-                 `out_order_no`=#{outOrderNo},
+                `out_order_no`=#{outOrderNo},
             </if>
             <if test="outRequestNo != null and outRequestNo != ''">
-                 `out_request_no`=#{outRequestNo},
+                `out_request_no`=#{outRequestNo},
             </if>
             <if test="amount != null and amount != ''">
-                 `amount`=#{amount},
-            </if>
-            <if test="sellerNo != null and sellerNo != ''">
-                 `seller_no`=#{sellerNo},
-            </if>
-            <if test="sellerName != null and sellerName != ''">
-                 `seller_name`=#{sellerName},
+                `amount`=#{amount},
             </if>
             <if test="redPacketAmount != null and redPacketAmount != ''">
-                 `red_packet_amount`=#{redPacketAmount},
+                `red_packet_amount`=#{redPacketAmount},
             </if>
             <if test="createTime != null">
-                 `create_time`=#{createTime},
+                `create_time`=#{createTime},
             </if>
             <if test="finishTime != null">
-                 `finish_time`=#{finishTime},
+                `finish_time`=#{finishTime},
+            </if>
+            <if test="dealTime != null">
+                `deal_time`=#{dealTime},
             </if>
             <if test="state != null">
-                 `state`=#{state},
+                `state`=#{state},
             </if>
             <if test="redPacketState != null">
-                 `red_packet_state`=#{redPacketState},
+                `red_packet_state`=#{redPacketState},
             </if>
             <if test="repaymentState != null">
-                 `repayment_state`=#{repaymentState},
+                `repayment_state`=#{repaymentState},
             </if>
         </set>
         WHERE id=#{id}

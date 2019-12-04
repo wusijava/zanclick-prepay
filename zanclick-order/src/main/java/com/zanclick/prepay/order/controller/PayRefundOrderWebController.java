@@ -1,13 +1,17 @@
 package com.zanclick.prepay.order.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.base.controller.BaseController;
+import com.zanclick.prepay.common.entity.ExcelDto;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.common.utils.DateUtil;
+import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.order.entity.PayRefundOrder;
 import com.zanclick.prepay.order.query.PayRefundOrderQuery;
 import com.zanclick.prepay.order.service.PayRefundOrderService;
+import com.zanclick.prepay.order.vo.PayRefundOrderExcelList;
 import com.zanclick.prepay.order.vo.PayRefundOrderWebList;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -20,13 +24,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author duchong
@@ -67,6 +69,44 @@ public class PayRefundOrderWebController extends BaseController {
         return Response.ok(voPage);
     }
 
+
+    @ApiOperation(value = "导出退款信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
+    @RequestMapping(value = "/batchExport", method = RequestMethod.POST)
+    @ResponseBody
+    public Response<String> batchExport(PayRefundOrderQuery query) {
+        try {
+            List<PayRefundOrder> payRefundOrderList = payRefundOrderService.queryList(query);
+            if (DataUtil.isEmpty(payRefundOrderList)) {
+                return Response.fail("没有数据");
+            }
+            List<PayRefundOrderExcelList> payRefundOrderExcelList = new ArrayList<>();
+            for (PayRefundOrder payRefundOrder : payRefundOrderList) {
+                PayRefundOrderExcelList list = getExcelVo(payRefundOrder);
+                if (DataUtil.isNotEmpty(list)) {
+                    payRefundOrderExcelList.add(list);
+                }
+            }
+            if (DataUtil.isEmpty(payRefundOrderExcelList)) {
+                return Response.fail("没有数据");
+            }
+            ExcelDto dto = new ExcelDto();
+            dto.setHeaders(PayRefundOrderExcelList.headers);
+            dto.setKeys(PayRefundOrderExcelList.keys);
+            dto.setObjectList(parser(payRefundOrderExcelList));
+            String key = UUID.randomUUID().toString().replaceAll("-", "");
+            RedisUtil.set(key, dto, 1000 * 60 * 30L);
+            String url = excelDownloadUrl + key;
+            return Response.ok(url);
+
+        } catch (Exception e) {
+            log.error("导出退款信息出错:{}", e);
+            return Response.fail("导出退款信息失败");
+        }
+
+    }
 
     @ApiOperation(value = "改动红包回款状态")
     @ApiImplicitParams({
@@ -139,6 +179,30 @@ public class PayRefundOrderWebController extends BaseController {
         webList.setFinishTime(order.getFinishTime() == null ? "" : DateUtil.formatDate(order.getFinishTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
         webList.setSellerNo(order.getSellerNo());
         webList.setSellerName(order.getSellerName());
+        webList.setDealTime(DateUtil.formatDate(order.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
         return webList;
     }
+
+    private PayRefundOrderExcelList getExcelVo(PayRefundOrder order) {
+        PayRefundOrderExcelList vo = new PayRefundOrderExcelList();
+        vo.setNo(order.getId().toString());
+        vo.setOutTradeNo(order.getOutTradeNo());
+        vo.setOutOrderNo(order.getOutOrderNo());
+        vo.setAuthNo(order.getAuthNo());
+        vo.setWayId(order.getWayId());
+        vo.setCreateTime(DateUtil.formatDate(order.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        vo.setFinishTime(order.getFinishTime() == null ? "" : DateUtil.formatDate(order.getFinishTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        vo.setDealTime(DateUtil.formatDate(order.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        vo.setAmount(order.getAmount());
+        vo.setRedPacketAmount(order.getRedPacketAmount());
+        vo.setStateDesc(order.getStateDesc());
+        vo.setRedPacketStateDesc(order.getRepaymentStateDesc());
+        vo.setRepaymentStateDesc(order.getRepaymentStateDesc());
+        return vo;
+    }
+
+    private List<JSONObject> parser(List<PayRefundOrderExcelList> payRefundOrderExcelListList) {
+        return JSONObject.parseArray(JSONObject.toJSONString(payRefundOrderExcelListList), JSONObject.class);
+    }
+
 }

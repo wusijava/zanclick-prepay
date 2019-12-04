@@ -132,6 +132,15 @@ public class SetMeal implements Identifiable<Long> {
         }
     }
 
+    public String getStateDesc() {
+        if(State.open.getCode().equals(state)){
+            return "上架";
+        }
+        else {
+            return "下架";
+        }
+    }
+
     public Boolean isOpen() {
         return state.equals(State.open.getCode());
     }
