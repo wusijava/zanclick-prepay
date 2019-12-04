@@ -146,6 +146,7 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
         vo.setCreateTime(blacklist.getCreateTime());
         vo.setName(blacklist.getName());
         vo.setSellerNo(blacklist.getSellerNo());
+        vo.setType(blacklist.getTypeDesc());
         return vo;
     }
 

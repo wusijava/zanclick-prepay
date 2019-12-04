@@ -63,4 +63,16 @@ public class RedPackBlacklist implements Identifiable<Long> {
             this.desc = desc;
         }
     }
+
+    public String getTypeDesc(){
+        if(RedPackType.settleDay.getCode().equals(type)){
+            return RedPackType.settleDay.getDesc();
+        }else if(RedPackType.settleWeek.getCode().equals(type)){
+            return RedPackType.settleWeek.getDesc();
+        }else if(RedPackType.settleMonth.getCode().equals(type)){
+            return RedPackType.settleMonth.getDesc();
+        }else {
+            return RedPackType.personal.getDesc();
+        }
+    }
 }

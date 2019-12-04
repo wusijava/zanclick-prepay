@@ -2,8 +2,6 @@ package com.zanclick.prepay.authorize.vo.web;
 
 import lombok.Data;
 
-import java.util.Date;
-
 /**
  * @author duchong
  * @description
@@ -94,4 +92,6 @@ public class AuthorizeWebListInfo {
     private String createTime;
 
     private String reason;
+
+    private String redPackState;
 }
