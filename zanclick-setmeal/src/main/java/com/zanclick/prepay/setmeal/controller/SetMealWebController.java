@@ -1,11 +1,16 @@
 package com.zanclick.prepay.setmeal.controller;
 
 import com.zanclick.prepay.common.base.controller.BaseController;
+import com.zanclick.prepay.common.entity.RequestContext;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.DateUtil;
+import com.zanclick.prepay.common.utils.IpUtils;
 import com.zanclick.prepay.setmeal.entity.SetMeal;
+import com.zanclick.prepay.setmeal.entity.SetMealLog;
 import com.zanclick.prepay.setmeal.query.SetMealQuery;
+import com.zanclick.prepay.setmeal.service.SetMealLogService;
 import com.zanclick.prepay.setmeal.service.SetMealService;
 import com.zanclick.prepay.setmeal.vo.SetMealDetail;
 import com.zanclick.prepay.setmeal.vo.SetMealList;
@@ -37,6 +42,8 @@ public class SetMealWebController extends BaseController {
     @Autowired
     private SetMealService setMealService;
 
+    @Autowired
+    private SetMealLogService setMealLogService;
     @ApiOperation(value = "套餐列表")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
@@ -79,13 +86,44 @@ public class SetMealWebController extends BaseController {
         return Response.ok(getMealDetail(meal));
     }
 
-    @ApiOperation(value = "修改套餐信息")
+    @ApiOperation(value = "上下架")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
     })
     @RequestMapping(value = "update", method = RequestMethod.POST)
     @ResponseBody
     public Response<String> update(SetMealDetail detail) {
+        if (DataUtil.isEmpty(detail) || DataUtil.isEmpty(detail.getId())) {
+            return Response.fail("修改套餐信息异常");
+        }
+        try {
+            SetMeal meal = setMealDetail(detail);
+            setMealService.updateById(meal);
+            //获取当前ip地址
+            String ipAddress = IpUtils.getIpAddress(getRequest());
+            //获取当前用户
+            RequestContext.RequestUser user = RequestContext.getCurrentUser();
+            if (DataUtil.isEmpty(user)){
+                return Response.fail("用户信息异常");
+            }
+            //将记录插入记录表
+            setMealLogService.insert(new SetMealLog(null,user.getId(),ipAddress,meal.getTitle(),DateUtil.getCurrentDate(),meal.getState()));
+        } catch (BizException e) {
+            return Response.ok(e.getMessage());
+        } catch (Exception e) {
+            return Response.ok("修改失败");
+        }
+        return Response.ok("修改成功");
+    }
+
+
+    @ApiOperation(value = "修改套餐信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
+    @RequestMapping(value = "updateDetail", method = RequestMethod.POST)
+    @ResponseBody
+    public Response<String> updateDetail(SetMealDetail detail) {
         if (DataUtil.isEmpty(detail) || DataUtil.isEmpty(detail.getId())) {
             return Response.fail("修改套餐信息异常");
         }
@@ -99,8 +137,6 @@ public class SetMealWebController extends BaseController {
         }
         return Response.ok("修改成功");
     }
-
-
     /**
      * 获取显示Modal
      *
@@ -160,6 +196,8 @@ public class SetMealWebController extends BaseController {
         meal.setAmount(detail.getEachAmount());
         meal.setRedPackState(detail.getRedPacketState());
         meal.setState(detail.getState());
+        meal.setTitle(detail.getTitle());
+
         return meal;
     }
 }
