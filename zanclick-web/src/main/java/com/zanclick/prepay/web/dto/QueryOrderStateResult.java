@@ -20,6 +20,12 @@ public class QueryOrderStateResult {
 
     private String totalMoney;
 
+    private Integer num;
+
+    private String eachMoney;
+
+    private String storeName;
+
     private String url;
 
     /**

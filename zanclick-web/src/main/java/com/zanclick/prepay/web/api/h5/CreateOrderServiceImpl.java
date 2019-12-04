@@ -2,6 +2,8 @@ package com.zanclick.prepay.web.api.h5;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
+import com.zanclick.prepay.authorize.entity.RedPackBlacklist;
+import com.zanclick.prepay.authorize.mapper.RedPackBlacklistMapper;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.util.MoneyUtil;
 import com.zanclick.prepay.common.entity.ResponseParam;
@@ -38,6 +40,8 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
     private PayOrderService payOrderService;
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
+    @Autowired
+    private RedPackBlacklistMapper redPackBlacklistMapper;
 
     @Value("${h5.server}")
     private String h5Server;
@@ -126,6 +130,12 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder.setStoreMarkCode(merchant.getStoreMarkCode());
         payOrder.setDistrictName(merchant.getStoreCounty());
         if (SetMeal.RedPackState.open.getCode().equals(meal.getRedPackState())){
+            RedPackBlacklist redPackBlacklist = redPackBlacklistMapper.selectBySellerNo(merchant.getSellerNo());
+            if (DataUtil.isEmpty(redPackBlacklist)) {
+                payOrder.setRedPackType(PayOrder.RedPackType.personal.getCode());
+            } else {
+                payOrder.setRedPackType(redPackBlacklist.getType());
+            }
             payOrder.setRedPackAmount(meal.getRedPackAmount());
             payOrder.setRedPackState(PayOrder.RedPackState.un_receive.getCode());
         }else {

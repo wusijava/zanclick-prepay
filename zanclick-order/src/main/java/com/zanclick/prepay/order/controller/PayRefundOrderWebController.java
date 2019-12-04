@@ -137,6 +137,8 @@ public class PayRefundOrderWebController extends BaseController {
         webList.setRedPacketStateDesc(order.getRedPacketDesc());
         webList.setCreateTime(DateUtil.formatDate(order.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
         webList.setFinishTime(order.getFinishTime() == null ? "" : DateUtil.formatDate(order.getFinishTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
+        webList.setSellerNo(order.getSellerNo());
+        webList.setSellerName(order.getSellerName());
         return webList;
     }
 }

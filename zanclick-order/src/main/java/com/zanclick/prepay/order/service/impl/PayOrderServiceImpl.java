@@ -301,6 +301,8 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         refundOrder.setRepaymentState(getRepaymentState(order.getDealState()));
         refundOrder.setState(PayRefundOrder.State.wait.getCode());
         refundOrder.setWayId(order.getWayId());
+        refundOrder.setSellerNo(order.getSellerNo());
+        refundOrder.setSellerName(order.getName());
         return refundOrder;
     }
 

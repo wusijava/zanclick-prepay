@@ -113,6 +113,8 @@ public class PayOrder implements Identifiable<Long> {
 
     private Integer redPackState;
 
+    private Integer redPackType;
+
     private String redPackAmount;
 
     private String redPackSellerNo;
@@ -143,6 +145,37 @@ public class PayOrder implements Identifiable<Long> {
         private String desc;
 
         RedPackState(Integer code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public Integer getCode() {
+            return code;
+        }
+
+        public void setCode(Integer code) {
+            this.code = code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+
+        public void setDesc(String desc) {
+            this.desc = desc;
+        }
+    }
+
+    public enum RedPackType {
+        personal(0, "个人"),
+        settleDay(1, "日结"),
+        settleWeek(2, "周结"),
+        settleMonth(3, "月结");
+
+        private Integer code;
+        private String desc;
+
+        RedPackType(Integer code, String desc) {
             this.code = code;
             this.desc = desc;
         }
@@ -265,12 +298,25 @@ public class PayOrder implements Identifiable<Long> {
         }
     }
 
-
     public String getRedPacketStateDesc(){
         if (RedPackState.receive.getCode().equals(redPackState)){
             return RedPackState.receive.getDesc();
         } else {
             return RedPackState.un_receive.getDesc();
+        }
+    }
+
+    public String getRedPacketTypeDesc() {
+        if (RedPackType.personal.getCode().equals(redPackType)) {
+            return RedPackType.personal.getDesc();
+        } else if (RedPackType.settleDay.getCode().equals(redPackType)) {
+            return RedPackType.settleDay.getDesc();
+        } else if (RedPackType.settleWeek.getCode().equals(redPackType)) {
+            return RedPackType.settleWeek.getDesc();
+        } else if (RedPackType.settleMonth.getCode().equals(redPackType)) {
+            return RedPackType.settleMonth.getDesc();
+        } else {
+            return "无";
         }
     }
 

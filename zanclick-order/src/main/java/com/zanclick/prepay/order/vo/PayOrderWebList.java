@@ -52,6 +52,8 @@ public class PayOrderWebList {
 
     private String redPacketStateDesc;
 
+    private String redPacketTypeDesc;
+
     private String redPacketSellerNo;
 
     /**

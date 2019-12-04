@@ -38,6 +38,10 @@ public class PayRefundOrder implements Identifiable<Long> {
 
     private String amount;
 
+    private String sellerNo;
+
+    private String sellerName;
+
     private String redPacketAmount;
 
     private Date createTime;
@@ -93,7 +97,7 @@ public class PayRefundOrder implements Identifiable<Long> {
     public enum RepaymentState {
         no_need_paid(0, "无需结清"),
         paid(3, "成功回款"),
-        wait_success(2, "等待结清"),
+        wait_success(4, "等待结清"),
         success(1, "结清贷款"),
         no_paid(2, "等待回款");
 
