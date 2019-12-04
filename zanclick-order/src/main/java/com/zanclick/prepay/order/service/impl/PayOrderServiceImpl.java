@@ -14,6 +14,7 @@ import com.zanclick.prepay.common.config.JmsMessaging;
 import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.DateUtil;
 import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.entity.PayRefundOrder;
@@ -303,6 +304,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         refundOrder.setWayId(order.getWayId());
         refundOrder.setSellerNo(order.getSellerNo());
         refundOrder.setSellerName(order.getName());
+        refundOrder.setDealTime(DateUtil.formatDate(order.getCreateTime(), DateUtil.PATTERN_YYYY_MM_DD_HH_MM_SS));
         return refundOrder;
     }
 
