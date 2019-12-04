@@ -47,5 +47,7 @@ public class RequestContext {
         private String salt;
 
         private String storeMarkCode;
+
+        private String cityCode;
     }
 }

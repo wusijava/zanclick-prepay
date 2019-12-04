@@ -56,6 +56,8 @@ public class AuthorizeMerchantWebController extends BaseController {
             query.setUid(user.getUid());
         } else if (user.getType().equals(2)) {
             query.setStoreMarkCode(user.getStoreMarkCode());
+        }else if (user.getType().equals(3)){
+            query.setStoreCityCode(user.getCityCode());
         }
         Pageable pageable = PageRequest.of(query.getPage(), query.getLimit());
         Page<AuthorizeMerchant> page = authorizeMerchantService.queryPage(query, pageable);
