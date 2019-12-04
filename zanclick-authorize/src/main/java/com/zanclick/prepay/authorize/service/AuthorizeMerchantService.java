@@ -56,4 +56,23 @@ public interface AuthorizeMerchantService extends BaseService<AuthorizeMerchant,
      * @return
      */
     Boolean queryRepeatMerchant(String merchantNo);
+
+    /**
+     * 商户领红包的权限开关
+     */
+    void isReceive(Long id);
+
+    /**
+     * 根据支付宝收款账号查询List
+     *
+     * @param sellerNo
+     * @return
+     */
+    List<AuthorizeMerchant> queryBySellerNo(String sellerNo);
+
+    /**
+     * 通过收款账号更新可领红包状态
+     * @param merchant
+     */
+    void updateBySellerNo(AuthorizeMerchant merchant);
 }

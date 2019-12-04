@@ -13,6 +13,7 @@
         <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="salt" property="salt" jdbcType="VARCHAR"/>
         <result column="store_mark_code" property="storeMarkCode" jdbcType="VARCHAR"/>
+        <result column="city_code" property="cityCode" jdbcType="VARCHAR"/>
         <result column="pwd" property="pwd" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -29,6 +30,7 @@
             `type`,
             `salt`,
             `store_mark_code`,
+            `city_code`,
             `pwd`
     </sql>
     <sql id="Base_Where_Clause">
@@ -66,6 +68,9 @@
                 </if>
                 <if test="storeMarkCode != null and storeMarkCode != ''">
                     AND `store_mark_code`=#{storeMarkCode}
+                </if>
+                <if test="cityCode != null and cityCode != ''">
+                    AND `city_code`=#{cityCode}
                 </if>
                 <if test="pwd != null and pwd != ''">
                     AND `pwd`=#{pwd}
@@ -114,6 +119,7 @@
         `type`,
         `salt`,
         `store_mark_code`,
+        `city_code`,
         `pwd`
         )
         VALUES(
@@ -128,6 +134,7 @@
         #{type},
         #{salt},
         #{storeMarkCode},
+        #{cityCode},
         #{pwd}
         )
     </insert>
@@ -147,6 +154,7 @@
         `type`,
         `salt`,
         `store_mark_code`,
+        `city_code`,
         `pwd`
         )
         VALUES
@@ -163,6 +171,7 @@
             #{cm.type},
             #{cm.salt},
             #{cm.storeMarkCode},
+            #{cm.cityCode},
             #{cm.pwd}
             )
         </foreach>
@@ -225,6 +234,9 @@
             </if>
             <if test="storeMarkCode != null and storeMarkCode != ''">
                 `store_mark_code`=#{storeMarkCode},
+            </if>
+            <if test="cityCode != null and cityCode != ''">
+                `city_code`=#{cityCode},
             </if>
             <if test="pwd != null and pwd != ''">
                 `pwd`=#{pwd},

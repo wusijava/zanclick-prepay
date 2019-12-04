@@ -49,6 +49,11 @@ public class PayRefundOrder implements Identifiable<Long> {
     private Date finishTime;
 
     /**
+     * 交易时间
+     */
+    private  String dealTime;
+
+    /**
      * 退款状态
      */
     private Integer state;

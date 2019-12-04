@@ -28,4 +28,9 @@ public class BlacklistWebInfo {
      */
     private String createTime;
 
+    /**
+     * 结款类型
+     */
+    private String type;
+
 }

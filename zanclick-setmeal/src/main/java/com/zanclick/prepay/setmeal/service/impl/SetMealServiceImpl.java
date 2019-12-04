@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 /**
  * @author Administrator
- * @date 2019-09-24 15:36:10
+ * @date 2019-12-03 15:59:44
  **/
 @Service
 public class SetMealServiceImpl extends BaseMybatisServiceImpl<SetMeal,Long> implements SetMealService {
@@ -35,4 +35,5 @@ public class SetMealServiceImpl extends BaseMybatisServiceImpl<SetMeal,Long> imp
             setMealMapper.unshelveSetMealByAppId(appId);
         }
     }
+
 }

@@ -221,6 +221,23 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     /**
+     * 判断是否为电话号码（取消号段匹配）
+     *
+     * @param phone
+     */
+    public static boolean isPhoneAll(String phone) {
+        String regex = "^(1)\\d{10}$";
+        if (phone.length() != 11) {
+            return false;
+        } else {
+            Pattern p = Pattern.compile(regex);
+            Matcher m = p.matcher(phone);
+            boolean isMatch = m.matches();
+            return isMatch;
+        }
+    }
+
+    /**
      * 判断是否为邮箱
      *
      * @param string
@@ -259,5 +276,45 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
             ch[0] = (char) (ch[0] - 32);
         }
         return new String(ch);
+    }
+
+    public static String hiddenName(String name) {
+        if (name == null || "".equals(name)) {
+            return name;
+        }
+        int length = name.length();
+        StringBuffer new_name = new StringBuffer();
+        if (name.contains("@")) {
+            String[] arr = name.split("@");
+            if(arr[0].length() > 3){
+                new_name.append(arr[0].substring(0, 3)).append("***");
+            } else {
+                int count = arr[0].length() - 1;
+                new_name.append(arr[0].substring(0,1));
+                for(int i=0;i<count;i++){
+                    new_name.append("*");
+                }
+            }
+            new_name.append("@").append(arr[1]);
+        } else {
+            if (length == 1) {
+                new_name.append(name);
+            } else if (length == 2) {
+                new_name.append("*").append(name.substring(length - 1));
+            } else if (length == 3) {
+                new_name.append("*").append(name.substring(length - 2));
+            } else if (length == 4) {
+                new_name.append("**").append(name.substring(length - 2));
+            } else if (length == 11) {
+                if (isPhoneAll(name)) {
+                    new_name.append(name.substring(0, 3)).append("****").append(name.substring(length - 4));
+                } else {
+                    new_name.append("**").append(name.substring(length - 1));
+                }
+            } else {
+                new_name.append("**").append(name.substring(length - 1));
+            }
+        }
+        return new_name.toString();
     }
 }

@@ -35,6 +35,8 @@ public class User implements Identifiable<Long> {
 
     private String storeMarkCode;
 
+    private String cityCode;
+
     private String pwd;
 
     public enum State {
@@ -75,7 +77,11 @@ public class User implements Identifiable<Long> {
         /**
          * 商户角色
          */
-        MANAGE(2);
+        MANAGE(2),
+        /**
+         * 市级账号
+         * */
+        CITY(3);
 
         private Integer code;
 

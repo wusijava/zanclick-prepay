@@ -3,9 +3,11 @@ package com.zanclick.prepay.authorize.service.impl;
 import com.alipay.api.response.MybankCreditSupplychainFactoringSupplierCreateResponse;
 import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
+import com.zanclick.prepay.authorize.entity.RedPackBlacklist;
 import com.zanclick.prepay.authorize.mapper.AuthorizeMerchantMapper;
 import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
+import com.zanclick.prepay.authorize.service.RedPackBlacklistService;
 import com.zanclick.prepay.authorize.util.SupplyChainUtils;
 import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.authorize.vo.SuppilerCreate;
@@ -36,6 +38,9 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
     @Autowired
     private AuthorizeConfigurationService authorizeConfigurationService;
 
+    @Autowired
+    private RedPackBlacklistService redPackBlacklistService;
+
     @Override
     protected BaseMapper<AuthorizeMerchant, Long> getBaseMapper() {
         return authorizeMerchantMapper;
@@ -64,6 +69,8 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         if (response.isSuccess()) {
             merchant.setSupplierNo(response.getSupplierNo());
             this.updateById(merchant);
+            //校验商户可领红包权限开关 add panliang 2019.11.25
+            this.isReceive(merchant.getId());
             return;
         }
         log.error("修改商户信息异常:{}",response.getSubMsg());
@@ -128,6 +135,75 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
     }
 
     /**
+     * 商户领红包的权限开关
+     * @param id
+     */
+    @Override
+    public void isReceive(Long id) {
+        if(DataUtil.isEmpty(id)){
+            return;
+        }
+        AuthorizeMerchant merchant = authorizeMerchantMapper.selectById(id);
+        if(DataUtil.isEmpty(merchant)){
+            return;
+        }
+        if(merchant.getState()!=1){
+            return;
+        }
+        //取出商户收款账号
+        String sellerNo = merchant.getSellerNo();
+        //通过收款账号查询红包收款黑名单(若能查到,则商户默认不能领取红包)
+        RedPackBlacklist blacklist = redPackBlacklistService.querySellerNo(sellerNo);
+        if(DataUtil.isEmpty(blacklist)){
+            //没有查到,说明商户可以领红包,
+            if(merchant.getRedPackState() != 1){
+                //若收红包的状态不是可领取,则修改收款账号为可领取 1
+                AuthorizeMerchant update = new AuthorizeMerchant();
+                update.setId(merchant.getId());
+                update.setRedPackState(AuthorizeMerchant.RedPackState.open.getCode());
+                authorizeMerchantMapper.updateById(update);
+                return;
+            }
+        }else{
+            //能查到,说明商户不能领取红包
+            if(merchant.getRedPackState() == 1){
+                //若收红包的状态是可领取,则修改为不可领取 0
+                AuthorizeMerchant update = new AuthorizeMerchant();
+                update.setId(merchant.getId());
+                update.setRedPackState(AuthorizeMerchant.RedPackState.closed.getCode());
+                authorizeMerchantMapper.updateById(update);
+                return;
+            }
+        }
+        log.error("修改商户领红包的权限开关异常:{}", id);
+        throw new BizException("修改商户领红包的权限开关异常");
+
+    }
+
+
+    /**
+     * 根据支付宝收款账号查询List
+     * @param sellerNo
+     * @return
+     */
+    @Override
+    public List<AuthorizeMerchant> queryBySellerNo(String sellerNo) {
+        return authorizeMerchantMapper.selectBySellerNo(sellerNo);
+    }
+
+    /**
+     * 通过收款账号更新可领红包状态
+     * @param merchant
+     */
+    @Override
+    public void updateBySellerNo(AuthorizeMerchant merchant) {
+        authorizeMerchantMapper.updateBySellerNo(merchant);
+        return;
+//        log.error("修改商户领红包状态异常:{}", merchant.toString());
+//        throw new BizException("修改商户领红包状态失败");
+    }
+
+    /**
      * 查询是否有正在审核中的商户
      *
      * @param dto
@@ -154,9 +230,20 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         merchant.setStoreCityCode(dto.getStoreCityCode());
         merchant.setStoreCountyCode(dto.getStoreCountyCode());
         merchant.setSellerNo(dto.getSellerNo());
+        if(DataUtil.isNotEmpty(dto.getSellerNo())){
+            RedPackBlacklist blacklist = redPackBlacklistService.querySellerNo(dto.getSellerNo());
+            if(DataUtil.isEmpty(blacklist)){
+                merchant.setRedPackState(AuthorizeMerchant.RedPackState.open.getCode());
+            }else{
+                merchant.setRedPackState(AuthorizeMerchant.RedPackState.closed.getCode());
+            }
+        }else{
+            merchant.setRedPackState(AuthorizeMerchant.RedPackState.open.getCode());
+        }
         merchant.setState(AuthorizeMerchant.State.waiting.getCode());
-        merchant.setRedPackState(AuthorizeMerchant.RedPackState.open.getCode());
+//        merchant.setRedPackState(AuthorizeMerchant.RedPackState.open.getCode());
         this.insert(merchant);
+
         return merchant;
     }
 
