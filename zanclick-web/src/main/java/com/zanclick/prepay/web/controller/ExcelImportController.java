@@ -65,9 +65,6 @@ public class ExcelImportController {
     public Response<String> batchImportMerchant(MultipartFile file) {
         try {
             List<RegisterMerchant> registerMerchantList = getMerchantList(file);
-            if (registerMerchantList == null) {
-                return Response.fail("请正确填写省市!");
-            }
             ExcelDto dto = new ExcelDto();
             dto.setHeaders(RegisterMerchant.headers);
             dto.setKeys(RegisterMerchant.keys);
