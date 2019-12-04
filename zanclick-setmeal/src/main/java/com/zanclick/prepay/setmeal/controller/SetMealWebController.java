@@ -86,7 +86,7 @@ public class SetMealWebController extends BaseController {
         return Response.ok(getMealDetail(meal));
     }
 
-    @ApiOperation(value = "修改套餐信息")
+    @ApiOperation(value = "上下架")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
     })
@@ -117,6 +117,26 @@ public class SetMealWebController extends BaseController {
     }
 
 
+    @ApiOperation(value = "修改套餐信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "authorization", value = "加密参数", required = true, dataType = "String", paramType = "header"),
+    })
+    @RequestMapping(value = "updateDetail", method = RequestMethod.POST)
+    @ResponseBody
+    public Response<String> updateDetail(SetMealDetail detail) {
+        if (DataUtil.isEmpty(detail) || DataUtil.isEmpty(detail.getId())) {
+            return Response.fail("修改套餐信息异常");
+        }
+        try {
+            SetMeal meal = setMealDetail(detail);
+            setMealService.updateById(meal);
+        } catch (BizException e) {
+            return Response.ok(e.getMessage());
+        } catch (Exception e) {
+            return Response.ok("修改失败");
+        }
+        return Response.ok("修改成功");
+    }
     /**
      * 获取显示Modal
      *
@@ -175,6 +195,7 @@ public class SetMealWebController extends BaseController {
         meal.setRedPackState(detail.getRedPacketState());
         meal.setState(detail.getState());
         meal.setTitle(detail.getTitle());
+
         return meal;
     }
 }
