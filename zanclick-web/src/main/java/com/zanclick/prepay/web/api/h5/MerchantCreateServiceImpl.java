@@ -6,8 +6,8 @@ import com.zanclick.prepay.authorize.vo.RegisterMerchant;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
+import com.zanclick.prepay.common.utils.H5CityCode;
 import com.zanclick.prepay.user.entity.User;
-import com.zanclick.prepay.user.query.UserQuery;
 import com.zanclick.prepay.user.service.UserService;
 import com.zanclick.prepay.web.api.AbstractCommonService;
 import com.zanclick.prepay.web.dto.ApiRegisterMerchant;
@@ -70,6 +70,10 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
     }
 
 
+
+
+
+
     /**
      * 创建注册商户
      *
@@ -84,8 +88,11 @@ public class MerchantCreateServiceImpl extends AbstractCommonService implements 
         merchant.setStoreSubjectCertNo(apiMerchant.getStoreSubjectCertNo());
         merchant.setStoreName(apiMerchant.getStoreName());
         merchant.setStoreProvince(apiMerchant.getStoreProvince());
+        merchant.setStoreProvinceCode(apiMerchant.getStoreProvinceCode());
         merchant.setStoreCity(apiMerchant.getStoreCity());
+        merchant.setStoreCityCode(H5CityCode.getCityCode(apiMerchant.getStoreCityCode()));
         merchant.setStoreCounty(apiMerchant.getStoreCounty());
+        merchant.setStoreCountyCode(apiMerchant.getStoreCountyCode());
         merchant.setAppId(apiMerchant.getAppId());
         merchant.setContactName(apiMerchant.getContactName());
         merchant.setContactPhone(apiMerchant.getContactPhone());

@@ -32,6 +32,10 @@ public class RedPacket implements Identifiable<Long> {
 
     private String merchantNo;
 
+    private String sellerNo;
+
+    private String name;
+
     public enum State {
         refund(2, "红包退还"),
         waiting(0, "等待领取"),

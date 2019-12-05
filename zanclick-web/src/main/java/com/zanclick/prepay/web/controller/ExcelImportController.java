@@ -90,12 +90,17 @@ public class ExcelImportController {
             query.setStoreMarkCode(user.getStoreMarkCode());
         } else if (user.getType().equals(3)) {
             query.setStoreCityCode(user.getCityCode());
+        }else if (user.getType().equals(4)){
+            query.setStoreProvinceCode(user.getProvinceCode());
         }
         List<AuthorizeMerchant> merchantList = authorizeMerchantService.queryList(query);
         List<RegisterMerchant> registerMerchantList = new ArrayList<>();
+        int index = 1;
         for (AuthorizeMerchant merchant : merchantList) {
             RegisterMerchant registerMerchant = getRegisterMerchant(merchant);
+            registerMerchant.setIndex(index);
             registerMerchantList.add(registerMerchant);
+            index++;
         }
         userMap = null;
         ExcelDto dto = new ExcelDto();

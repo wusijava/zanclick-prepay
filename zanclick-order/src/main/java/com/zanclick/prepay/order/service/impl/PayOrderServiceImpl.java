@@ -150,6 +150,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             refundOrder.setState(PayRefundOrder.State.success.getCode());
             refundOrder.setFinishTime(new Date());
             payRefundOrderService.updateById(refundOrder);
+            redPacketService.refundRedPacket(order);
         }
         this.updateById(order);
     }
@@ -242,6 +243,11 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         SendMessage.sendMessage(JmsMessaging.ORDER_STATE_MESSAGE, object.toJSONString());
         syncQueryState(order.getOutTradeNo(),PayOrder.State.refund.getCode());
         return null;
+    }
+
+    @Override
+    public void updateBySellerNo(PayOrder order) {
+        payOrderMapper.updateBySellerNo(order);
     }
 
 

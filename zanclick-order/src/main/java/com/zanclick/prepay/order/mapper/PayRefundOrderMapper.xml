@@ -16,6 +16,8 @@
         <result column="finish_time" property="finishTime" jdbcType="TIMESTAMP"/>
         <result column="deal_time" property="dealTime" jdbcType="TIMESTAMP"/>
         <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="seller_no"  property="sellerNo" jdbcType="VARCHAR"></result>
+        <result column="seller_name"  property="sellerName" jdbcType="VARCHAR"></result>
         <result column="red_packet_state" property="redPacketState" jdbcType="INTEGER"/>
         <result column="repayment_state" property="repaymentState" jdbcType="INTEGER"/>
     </resultMap>
@@ -31,6 +33,8 @@
             `out_order_no`,
             `out_request_no`,
             `amount`,
+            `seller_no`,
+            `seller_name`,
             `red_packet_amount`,
             `create_time`,
             `finish_time`,
@@ -69,6 +73,12 @@
                 <if test="amount != null and amount != ''">
                     AND `amount`=#{amount}
                 </if>
+                <if test="sellerNo != null and sellerNo != ''">
+                    AND `seller_no`=#{sellerNo}
+                </if>
+                <if test="sellerName != null and sellerName != ''">
+                    AND `seller_name`=#{sellerName}
+                </if>
                 <if test="redPacketAmount != null and redPacketAmount != ''">
                     AND `red_packet_amount`=#{redPacketAmount}
                 </if>
@@ -92,6 +102,7 @@
                 </if>
             </trim>
         </where>
+        ORDER BY id DESC
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
@@ -131,6 +142,8 @@
         `out_order_no`,
         `out_request_no`,
         `amount`,
+        `seller_no`,
+        `seller_name`,
         `red_packet_amount`,
         `create_time`,
         `finish_time`,
@@ -149,6 +162,8 @@
         #{outOrderNo},
         #{outRequestNo},
         #{amount},
+        #{sellerNo},
+        #{sellerName},
         #{redPacketAmount},
         #{createTime},
         #{finishTime},
@@ -172,6 +187,8 @@
         `out_order_no`,
         `out_request_no`,
         `amount`,
+        `seller_no`,
+        `seller_name`,
         `red_packet_amount`,
         `create_time`,
         `finish_time`,
@@ -192,6 +209,8 @@
             #{cm.outOrderNo},
             #{cm.outRequestNo},
             #{cm.amount},
+            #{cm.sellerNo},
+            #{cm.sellerName},
             #{cm.redPacketAmount},
             #{cm.createTime},
             #{cm.finishTime},
@@ -238,6 +257,12 @@
             </if>
             <if test="amount != null and amount != ''">
                 `amount`=#{amount},
+            </if>
+            <if test="sellerNo != null and sellerNo != ''">
+                `seller_no`=#{sellerNo},
+            </if>
+            <if test="sellerName != null and sellerName != ''">
+                `seller_name`=#{sellerName},
             </if>
             <if test="redPacketAmount != null and redPacketAmount != ''">
                 `red_packet_amount`=#{redPacketAmount},

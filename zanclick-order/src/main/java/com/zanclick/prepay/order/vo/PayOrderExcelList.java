@@ -86,6 +86,10 @@ public class PayOrderExcelList {
 
     private String county;
 
+    private String redAmount;
+
+    private String redState;
+
     public static String[] headers = {
             "序号",
             "渠道编码",
@@ -105,7 +109,9 @@ public class PayOrderExcelList {
             "交易时间",
             "省",
             "市",
-            "区"
+            "区",
+            "红包金额",
+            "红包状态"
     };
     public static String[] keys = {
             "index",
@@ -126,7 +132,9 @@ public class PayOrderExcelList {
             "finishTime",
             "province",
             "city",
-            "county"
+            "county",
+            "redAmount",
+            "redState"
     };
 
     public static void main(String[] args) {

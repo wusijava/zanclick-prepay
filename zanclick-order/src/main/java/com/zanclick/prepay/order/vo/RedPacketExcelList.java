@@ -13,7 +13,7 @@ public class RedPacketExcelList {
     /**
      * 序号
      */
-    private String no;
+    private Integer index;
     /**
      * 订单号
      */
@@ -67,7 +67,7 @@ public class RedPacketExcelList {
     };
 
     public static String[] keys = {
-            "no",
+            "index",
             "outTradeNo",
             "outOrderNo",
             "amount",

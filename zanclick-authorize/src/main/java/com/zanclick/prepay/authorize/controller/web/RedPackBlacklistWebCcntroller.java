@@ -1,5 +1,6 @@
 package com.zanclick.prepay.authorize.controller.web;
 
+import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.entity.RedPackBlacklist;
 import com.zanclick.prepay.authorize.query.RedPackBlacklistQuery;
@@ -7,6 +8,8 @@ import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.service.RedPackBlacklistService;
 import com.zanclick.prepay.authorize.vo.web.BlacklistWebInfo;
 import com.zanclick.prepay.common.base.controller.BaseController;
+import com.zanclick.prepay.common.config.JmsMessaging;
+import com.zanclick.prepay.common.config.SendMessage;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.utils.DataUtil;
 import io.swagger.annotations.ApiOperation;
@@ -39,7 +42,7 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
 
-    @ApiOperation(value = "不可领红包账号列表")
+    @ApiOperation(value = "结算配置列表")
     @PostMapping(value = "/list")
     @ResponseBody
     public Response<Page<BlacklistWebInfo>> list(RedPackBlacklistQuery query) {
@@ -59,12 +62,12 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
             Page<BlacklistWebInfo> voPage = new PageImpl<>(voList, pageable, page.getTotalElements());
             return Response.ok(voPage);
         }catch (Exception e){
-            log.error("获取不可领红包账号列表失败:{}", e);
+            log.error("获取结算配置列表失败:{}", e);
             return Response.fail("查询失败");
         }
     }
 
-    @ApiOperation(value = "添加不可领红包账号")
+    @ApiOperation(value = "添加结算配置")
     @PostMapping(value = "/insertBlacklist")
     @ResponseBody
     public Response<RedPackBlacklist> insertBlacklist(RedPackBlacklist query){
@@ -87,7 +90,14 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
                 update.setRedPackState(AuthorizeMerchant.RedPackState.closed.getCode());
                 authorizeMerchantService.updateBySellerNo(update);
             }
+
             redPackBlacklistService.insert(query);
+
+            //每次配置账号时,同步更新订单表的红包结算类型
+            JSONObject object = new JSONObject();
+            object.put("sellerNo",query.getSellerNo());
+            object.put("redPackType",query.getType());
+            SendMessage.sendMessage(JmsMessaging.ORDER_REDPACKSTATE_MESSAGE, object.toJSONString());
             return Response.ok("添加成功", query);
         }catch (Exception e){
             log.error("添加不可领红包账号失败:{}", e);
@@ -115,7 +125,7 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
 //        return Response.ok("修改成功");
 //    }
 
-    @ApiOperation(value = "删除不可领红包账号信息")
+    @ApiOperation(value = "删除结算配置信息")
     @RequestMapping(value = "/deleteBlacklist", method = RequestMethod.POST)
     @ResponseBody
     public Response<String> deleteBlacklist(Long id) {
@@ -132,10 +142,17 @@ public class RedPackBlacklistWebCcntroller extends BaseController {
                 update.setSellerNo(sellerNo);
                 update.setRedPackState(AuthorizeMerchant.RedPackState.open.getCode());
                 authorizeMerchantService.updateBySellerNo(update);
+
+                //每次配置账号时,同步更新订单表的红包结算类型
+                JSONObject object = new JSONObject();
+                object.put("sellerNo",sellerNo);
+                object.put("redPackType",0);
+                SendMessage.sendMessage(JmsMessaging.ORDER_REDPACKSTATE_MESSAGE, object.toJSONString());
             }
+
             return Response.ok("删除成功",null);
         } catch (Exception e) {
-            log.error("删除不可领红包账号信息异常:{}", id, e);
+            log.error("删除结算配置信息异常:{}", id, e);
             return Response.fail("删除失败");
         }
     }

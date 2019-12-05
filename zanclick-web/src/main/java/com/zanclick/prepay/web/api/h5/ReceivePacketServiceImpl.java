@@ -9,8 +9,10 @@ import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.order.entity.PayOrder;
 import com.zanclick.prepay.order.entity.RedPacket;
 import com.zanclick.prepay.order.entity.RedPacketRecord;
+import com.zanclick.prepay.order.service.PayOrderService;
 import com.zanclick.prepay.order.service.RedPacketRecordService;
 import com.zanclick.prepay.order.service.RedPacketService;
 import com.zanclick.prepay.web.api.AbstractCommonService;
@@ -34,6 +36,8 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
     private RedPacketRecordService redPacketRecordService;
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
+    @Autowired
+    private PayOrderService payOrderService;
 
     @Override
     public String resolve(String appId, String cipherJson, String request) {
@@ -100,6 +104,15 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
         if (DataUtil.isNotEmpty(merchant.getRedPackSellerNo()) && !receive.getReceiveNo().trim().equals(merchant.getRedPackSellerNo().trim())) {
             log.error("本商户已指定红包领取账号，请使用指定账号领取:{}", merchant.getWayId());
             throw new BizException("本商户已指定红包领取账号，请使用指定账号领取");
+        }
+        PayOrder order = payOrderService.queryByOutOrderNo(receive.getOutOrderNo());
+        if (order != null && !order.isPayed()){
+            log.error("订单状态异常:{}", receive.getOutOrderNo());
+            throw new BizException("订单状态异常");
+        }
+        if (PayOrder.RedPackState.receive.getCode().equals(order.getRedPackState())){
+            log.error("红包已领取:{}", receive.getOutOrderNo());
+            throw new BizException("红包已领取");
         }
         if (packet != null && packet.getState().equals(RedPacketRecord.State.waiting.getCode())){
             SendMessage.sendMessage(JmsMessaging.ORDER_RED_PACKET_MESSAGE,JSONObject.toJSONString(receive));

@@ -2,14 +2,19 @@ package com.zanclick.prepay.order.listener;
 
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.config.JmsMessaging;
+import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
+import com.zanclick.prepay.order.entity.RedPacket;
+import com.zanclick.prepay.order.query.PayOrderQuery;
 import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.order.service.RedPacketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 统一处理订单状态的改变（支付成功，关闭，退款等）
@@ -23,6 +28,8 @@ public class PayOrderStateListener {
 
     @Autowired
     private PayOrderService payOrderService;
+    @Autowired
+    private RedPacketService redPacketService;
 
     static String outTradeNoKey = "outTradeNo";
     static String stateKey = "state";
@@ -68,6 +75,22 @@ public class PayOrderStateListener {
             order.setBuyerNo(buyerNo);
         }
         payOrderService.handlePayOrder(order);
+    }
+
+    @JmsListener(destination = JmsMessaging.ORDER_REDPACKSTATE_MESSAGE)
+    public void getSellerNoMessage(String message) {
+        JSONObject object = JSONObject.parseObject(message);
+        if (!object.containsKey("sellerNo") || !object.containsKey("redPackType")){
+            log.error("红包结算类型处理出错:{}",message);
+            return;
+        }
+        String sellerNo = object.getString("sellerNo");
+        Integer redPackType = object.getInteger("redPackType");
+        PayOrder updateOrder = new PayOrder();
+        updateOrder.setSellerNo(sellerNo);
+        updateOrder.setRedPackType(redPackType);
+        payOrderService.updateBySellerNo(updateOrder);
+        redPacketService.updateTypeBySellerNo(sellerNo, redPackType);
     }
 
 }

@@ -69,6 +69,8 @@ public class PayOrderWebController extends BaseController {
             query.setStoreMarkCode(user.getStoreMarkCode());
         }else if (user.getType().equals(3)){
             query.setCity(user.getCityCode());
+        }else if (user.getType().equals(4)){
+            query.setProvince(user.getProvinceCode());
         }
         Pageable pageable = PageRequest.of(query.getPage(), query.getLimit());
         Page<PayOrder> page = payOrderService.queryPage(query, pageable);
@@ -157,12 +159,15 @@ public class PayOrderWebController extends BaseController {
             query.setStoreMarkCode(user.getStoreMarkCode());
         }else if (user.getType().equals(3)){
             query.setCity(user.getCityCode());
+        } else if (user.getType().equals(4)){
+            query.setProvince(user.getProvinceCode());
         }
         List<PayOrder> orderList = payOrderService.queryList(query);
         if (DataUtil.isEmpty(orderList)) {
             return Response.fail("没有数据");
         }
         List<PayOrderExcelList> orderExcelList = new ArrayList<>();
+        int index = 1;
         for (PayOrder order : orderList) {
             if (!DataUtil.isEmpty(query) && "true".equals(query.getHiddenPhone())) {
                 order.setPhoneNumber(StringUtils.hiddenName(order.getPhoneNumber()));
@@ -175,7 +180,9 @@ public class PayOrderWebController extends BaseController {
             }
             PayOrderExcelList list = getExcelVo(order);
             if (DataUtil.isNotEmpty(list)) {
+                list.setIndex(index);
                 orderExcelList.add(list);
+                index++;
             }
         }
         if (DataUtil.isEmpty(orderExcelList)) {
@@ -248,6 +255,8 @@ public class PayOrderWebController extends BaseController {
         vo.setProvince(order.getProvinceName());
         vo.setCity(order.getCityName());
         vo.setCounty(order.getDistrictName());
+        vo.setRedAmount(order.getRedPackAmount());
+        vo.setRedState(order.getRedPacketStateDesc());
         return vo;
     }
 

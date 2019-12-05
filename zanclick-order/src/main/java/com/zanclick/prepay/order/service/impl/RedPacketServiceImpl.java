@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Administrator
@@ -62,6 +64,27 @@ public class RedPacketServiceImpl extends BaseMybatisServiceImpl<RedPacket,Long>
         packet.setCreateTime(new Date());
         packet.setAmount(order.getRedPackAmount());
         packet.setAppId(order.getAppId());
+        packet.setSellerNo(order.getSellerNo());
+        packet.setName(order.getName());
         getBaseMapper().insert(packet);
+    }
+
+    @Override
+    public void refundRedPacket(PayOrder order) {
+        RedPacket packet = this.queryByOutTradeNo(order.getOutTradeNo());
+        if (packet != null && packet.getState().equals(RedPacket.State.waiting.getCode())){
+           packet.setState(PayOrder.State.refund.getCode());
+           packet.setFinishTime(new Date());
+           this.updateById(packet);
+        }
+
+    }
+
+    @Override
+    public void updateTypeBySellerNo(String sellerNo, Integer type) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", type);
+        map.put("sellerNo", sellerNo);
+        redPacketMapper.updateTypeBySellerNo(map);
     }
 }

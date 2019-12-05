@@ -8,9 +8,7 @@ public class PayRefundOrderExcelList {
     /**
      * 序号
      */
-    private String no;
-
-    private Long id;
+    private Integer index;
 
     /**
      * 商户号
@@ -41,6 +39,11 @@ public class PayRefundOrderExcelList {
     private String amount;
 
     private String redPacketAmount;
+
+
+    private String sellerNo;
+
+    private String sellerName;
 
     /**
      * 冻结金额
@@ -73,6 +76,8 @@ public class PayRefundOrderExcelList {
             "退款时间",
             "交易时间",
             "退款金额",
+            "收款账号",
+            "收款人",
             "红包金额",
             "退款状态",
             "红包状态",
@@ -80,7 +85,7 @@ public class PayRefundOrderExcelList {
     };
 
     public static String[] keys = {
-            "no",
+            "index",
             "outTradeNo",
             "outOrderNo",
             "authNo",
@@ -89,9 +94,16 @@ public class PayRefundOrderExcelList {
             "finishTime",
             "dealTime",
             "amount",
+            "sellerNo",
+            "sellerName",
             "redPacketAmount",
             "stateDesc",
             "redPacketStateDesc",
             "repaymentStateDesc"
     };
+
+    public static void main(String[] args) {
+        System.out.println(headers.length);
+        System.out.println(keys.length);
+    }
 }

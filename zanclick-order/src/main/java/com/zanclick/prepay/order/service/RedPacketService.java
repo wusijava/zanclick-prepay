@@ -33,4 +33,12 @@ public interface RedPacketService extends BaseService<RedPacket,Long> {
      * */
     void createRedPacket(PayOrder order);
 
+    /**
+     * 回退红包
+     * @param order
+     * */
+    void refundRedPacket(PayOrder order);
+
+    void updateTypeBySellerNo(String sellerNo, Integer type);
+
 }

@@ -554,4 +554,15 @@
         </set>
         WHERE id=#{id}
     </update>
+
+    <update id="updateBySellerNo" parameterType="com.zanclick.prepay.order.entity.PayOrder">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="redPackType != null">
+                `red_pack_type`=#{redPackType},
+            </if>
+        </set>
+        WHERE seller_no=#{sellerNo} and red_pack_state = 0 and state in (1, 2)
+    </update>
 </mapper>

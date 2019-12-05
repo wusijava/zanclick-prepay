@@ -96,11 +96,13 @@ public class RedPackRecordWebController extends BaseController {
                 return Response.fail("没有数据");
             }
             List<RedPacketExcelList> packetExcelList = new ArrayList<>();
-            for(int i = 0; i< redPacketRecordList.size(); i++){
-                RedPacketExcelList list = getExcelVo(redPacketRecordList.get(i));
+            int index = 1;
+            for(RedPacketRecord record : redPacketRecordList){
+                RedPacketExcelList list = getExcelVo(record);
                 if (DataUtil.isNotEmpty(list)) {
-                    list.setNo(String.valueOf(i+1));
+                    list.setIndex(index);
                     packetExcelList.add(list);
+                    index++;
                 }
             }
             if (DataUtil.isEmpty(packetExcelList)){

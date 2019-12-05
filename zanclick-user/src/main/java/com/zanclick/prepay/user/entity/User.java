@@ -37,6 +37,8 @@ public class User implements Identifiable<Long> {
 
     private String cityCode;
 
+    private String provinceCode;
+
     private String pwd;
 
     public enum State {
@@ -81,7 +83,11 @@ public class User implements Identifiable<Long> {
         /**
          * 市级账号
          * */
-        CITY(3);
+        CITY(3),
+        /**
+         * 省级账号
+         * */
+        PROVINCE(4);
 
         private Integer code;
 

@@ -2,11 +2,7 @@ package com.zanclick.prepay.order.mapper;
 
 import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.order.entity.PayOrder;
-import com.zanclick.prepay.order.query.PayOrderQuery;
-import com.zanclick.prepay.order.vo.RedPacketList;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
 
 /**
  * @author Administrator
@@ -38,6 +34,7 @@ public interface PayOrderMapper extends BaseMapper<PayOrder, Long> {
      */
     PayOrder selectByOutOrderNo(String outOrderNo);
 
+    void updateBySellerNo(PayOrder order);
 
 
 }

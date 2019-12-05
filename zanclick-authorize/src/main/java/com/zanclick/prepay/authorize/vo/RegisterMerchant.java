@@ -14,6 +14,8 @@ import lombok.Data;
 @Data
 public class RegisterMerchant extends Param {
 
+    private Integer index;
+
     /**
      * 渠道标识
      */
@@ -119,13 +121,13 @@ public class RegisterMerchant extends Param {
         if (checkNull(contactPhone)) {
             return "缺少联系人电话";
         }
-        if (!StringUtils.isPhone(contactPhone)){
+        if (!StringUtils.isPhone(contactPhone)) {
             return "联系人电话格式不正确";
         }
         if (checkNull(sellerNo)) {
             return "缺少收款支付宝账号";
         }
-        if (!StringUtils.isPhone(sellerNo) && !StringUtils.isEmail(sellerNo)){
+        if (!StringUtils.isPhone(sellerNo) && !StringUtils.isEmail(sellerNo)) {
             return "收款支付宝账号格式不正确";
         }
         if (checkNull(appId)) {
@@ -155,8 +157,44 @@ public class RegisterMerchant extends Param {
         return null;
     }
 
-   public static String[] headers = {"渠道编码","省份","地区","县（区）","门店编号","门店名称","营业执照注册号","营业执照名称","联系人","联系人电话","支付宝认证姓名","支付宝账号","注册时间","当前状态","原因","密码"};
-   public static String[] keys = {"wayId","storeProvince","storeCity","storeCounty","storeNo","storeName","storeSubjectCertNo","storeSubjectName","contactName","contactPhone","name","sellerNo","createTime","state","reason","password"};
+    public static String[] headers = {
+            "序号",
+            "渠道编码",
+            "省份",
+            "地区",
+            "县（区）",
+            "门店编号",
+            "门店名称",
+            "营业执照注册号",
+            "营业执照名称",
+            "联系人",
+            "联系人电话",
+            "支付宝认证姓名",
+            "支付宝账号",
+            "注册时间",
+            "当前状态",
+            "原因",
+            "密码"
+    };
+    public static String[] keys = {
+            "index",
+            "wayId",
+            "storeProvince",
+            "storeCity",
+            "storeCounty",
+            "storeNo",
+            "storeName",
+            "storeSubjectCertNo",
+            "storeSubjectName",
+            "contactName",
+            "contactPhone",
+            "name",
+            "sellerNo",
+            "createTime",
+            "state",
+            "reason",
+            "password"
+    };
 
     public static void main(String[] args) {
         JSONObject object = new JSONObject();

@@ -3,6 +3,8 @@ package com.zanclick.prepay.authorize.entity;
 import com.zanclick.prepay.common.entity.Identifiable;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @Author panliang
  * @Date 2019/12/2 10:32
@@ -39,7 +41,7 @@ public class RedPacketConfiguration implements Identifiable<Long> {
     /**
      * 创建时间
      */
-    private String createTime;
+    private Date createTime;
 
     /**
      * 红包配置信息
@@ -47,7 +49,6 @@ public class RedPacketConfiguration implements Identifiable<Long> {
     private String amountInfo;
 
     public enum Level{
-
         shopLevel(1,"门店"),
         cityLevel(2,"市"),
         provinceLevel(3,"省");

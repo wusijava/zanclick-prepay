@@ -4,6 +4,8 @@ import com.zanclick.prepay.common.base.dao.mybatis.BaseMapper;
 import com.zanclick.prepay.order.entity.RedPacket;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.Map;
+
 /**
  * @author Administrator
  * @date 2019-12-04 18:07:00
@@ -27,5 +29,6 @@ public interface RedPacketMapper extends BaseMapper<RedPacket, Long> {
      */
     RedPacket selectByOutTradeNo(String outTradeNo);
 
+    void updateTypeBySellerNo(Map<String, Object> map);
 
 }

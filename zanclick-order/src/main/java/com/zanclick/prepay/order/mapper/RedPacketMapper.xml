@@ -14,6 +14,8 @@
         <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="way_id" property="wayId" jdbcType="VARCHAR"/>
         <result column="merchant_no" property="merchantNo" jdbcType="VARCHAR"/>
+        <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="table">red_packet</sql>
@@ -29,7 +31,9 @@
             `state`,
             `type`,
             `way_id`,
-            `merchant_no`
+            `merchant_no`,
+            `seller_no`,
+            `name`
     </sql>
     <sql id="Base_Where_Clause">
         <where>
@@ -69,6 +73,12 @@
                 </if>
                 <if test="merchantNo != null and merchantNo != ''">
                     AND `merchant_no`=#{merchantNo}
+                </if>
+                <if test="sellerNo != null and sellerNo != ''">
+                    AND `seller_no`=#{sellerNo}
+                </if>
+                <if test="name != null and name != ''">
+                    AND `name`=#{name}
                 </if>
             </trim>
         </where>
@@ -114,6 +124,28 @@
         WHERE out_trade_no = #{outTradeNo} ORDER BY id DESC LIMIT 1
     </select>
 
+    <update id="updateTypeBySellerNo" parameterType="java.util.Map">
+        update
+        red_packet r
+        set r.type = #{type}
+        where r.state = 0
+        and r.seller_no = #{sellerNo}
+    </update>
+
+    <!--<update id="updateTypeBySellerNo" parameterType="java.util.Map">-->
+        <!--update-->
+        <!--red_packet r-->
+        <!--set r.type = #{type}-->
+        <!--where r.state = 0-->
+        <!--and r.out_order_no in (-->
+        <!--select-->
+        <!--p.out_order_no-->
+        <!--from pay_order p-->
+        <!--where p.seller_no = #{sellerNo}-->
+        <!--and p.state in (1, 2)-->
+        <!--)-->
+    <!--</update>-->
+
     <insert id="insert" parameterType="com.zanclick.prepay.order.entity.RedPacket" useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO
@@ -130,7 +162,9 @@
         `state`,
         `type`,
         `way_id`,
-        `merchant_no`
+        `merchant_no`,
+        `seller_no`,
+        `name`
         )
         VALUES(
         #{id},
@@ -144,7 +178,9 @@
         #{state},
         #{type},
         #{wayId},
-        #{merchantNo}
+        #{merchantNo},
+        #{sellerNo},
+        #{name}
         )
     </insert>
 
@@ -163,7 +199,9 @@
         `state`,
         `type`,
         `way_id`,
-        `merchant_no`
+        `merchant_no`,
+        `seller_no`,
+        `name`
         )
         VALUES
         <foreach collection="list" item="cm" index="index" separator=",">
@@ -179,7 +217,9 @@
             #{cm.state},
             #{cm.type},
             #{cm.wayId},
-            #{cm.merchantNo}
+            #{cm.merchantNo},
+            #{cm.sellerNo},
+            #{cm.name}
             )
         </foreach>
     </insert>
@@ -228,6 +268,12 @@
             </if>
             <if test="merchantNo != null and merchantNo != ''">
                 `merchant_no`=#{merchantNo},
+            </if>
+            <if test="sellerNo != null and sellerNo != ''">
+                `seller_no`=#{sellerNo},
+            </if>
+            <if test="name != null and name != ''">
+                `name`=#{name},
             </if>
         </set>
         WHERE id=#{id}
