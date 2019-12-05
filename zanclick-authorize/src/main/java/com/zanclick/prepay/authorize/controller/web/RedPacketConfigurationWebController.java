@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -165,6 +166,29 @@ public class RedPacketConfigurationWebController extends BaseController {
         } catch (Exception e) {
             log.error("删除红包配置信息异常:{}", id, e);
             return Response.fail("删除失败");
+        }
+    }
+
+    @ApiOperation(value = "启用/禁用状态")
+    @RequestMapping(value = "/changeState", method = RequestMethod.POST)
+    @ResponseBody
+    public Response changeState(@ApiIgnore Long id, @ApiIgnore Integer status) {
+        try {
+            if (DataUtil.isEmpty(id) || DataUtil.isEmpty(status)) {
+                Response.fail("参数有误");
+            }
+            RedPacketConfiguration configuration = redPacketConfigurationService.queryById(id);
+            if(DataUtil.isEmpty(configuration)){
+                Response.fail("操作失败");
+            }
+            RedPacketConfiguration updateConfig = new RedPacketConfiguration();
+            updateConfig.setId(id);
+            updateConfig.setStatus(status);
+            redPacketConfigurationService.updateById(updateConfig);
+            return Response.ok((status == 1) ? "已开启" : "已关闭", null);
+        } catch (Exception e) {
+            log.error("修改红包配置信息异常:{},{}", id, e);
+            return Response.fail("操作失败");
         }
     }
 
