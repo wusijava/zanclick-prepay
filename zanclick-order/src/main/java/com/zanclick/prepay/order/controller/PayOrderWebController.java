@@ -167,6 +167,7 @@ public class PayOrderWebController extends BaseController {
             return Response.fail("没有数据");
         }
         List<PayOrderExcelList> orderExcelList = new ArrayList<>();
+        int index = 1;
         for (PayOrder order : orderList) {
             if (!DataUtil.isEmpty(query) && "true".equals(query.getHiddenPhone())) {
                 order.setPhoneNumber(StringUtils.hiddenName(order.getPhoneNumber()));
@@ -179,7 +180,9 @@ public class PayOrderWebController extends BaseController {
             }
             PayOrderExcelList list = getExcelVo(order);
             if (DataUtil.isNotEmpty(list)) {
+                list.setIndex(index);
                 orderExcelList.add(list);
+                index++;
             }
         }
         if (DataUtil.isEmpty(orderExcelList)) {
@@ -252,6 +255,8 @@ public class PayOrderWebController extends BaseController {
         vo.setProvince(order.getProvinceName());
         vo.setCity(order.getCityName());
         vo.setCounty(order.getDistrictName());
+        vo.setRedAmount(order.getRedPackAmount());
+        vo.setRedState(order.getRedPacketStateDesc());
         return vo;
     }
 

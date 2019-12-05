@@ -2,6 +2,8 @@ package com.zanclick.prepay.authorize.vo.web;
 
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * @Author panliang
  * @Date 2019/12/2 10:39

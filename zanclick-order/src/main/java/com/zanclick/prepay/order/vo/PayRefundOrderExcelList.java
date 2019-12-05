@@ -8,9 +8,7 @@ public class PayRefundOrderExcelList {
     /**
      * 序号
      */
-    private String no;
-
-    private Long id;
+    private Integer index;
 
     /**
      * 商户号
@@ -87,7 +85,7 @@ public class PayRefundOrderExcelList {
     };
 
     public static String[] keys = {
-            "no",
+            "index",
             "outTradeNo",
             "outOrderNo",
             "authNo",
