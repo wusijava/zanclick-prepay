@@ -1,8 +1,10 @@
 package com.zanclick.prepay.authorize.controller.web;
 
+import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.entity.RedPacketConfiguration;
 import com.zanclick.prepay.authorize.entity.RedPacketConfigurationRecord;
 import com.zanclick.prepay.authorize.query.RedPacketConfigurationQuery;
+import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
 import com.zanclick.prepay.authorize.service.RedPacketConfigurationRecordService;
 import com.zanclick.prepay.authorize.service.RedPacketConfigurationService;
 import com.zanclick.prepay.authorize.vo.web.RedPacketConfigurationWebInfo;
@@ -41,6 +43,8 @@ public class RedPacketConfigurationWebController extends BaseController {
     private RedPacketConfigurationService redPacketConfigurationService;
     @Autowired
     private RedPacketConfigurationRecordService recordService;
+    @Autowired
+    private AuthorizeMerchantService authorizeMerchantService;
 
     @ApiOperation(value = "红包配置列表")
     @PostMapping(value = "/list")
@@ -70,24 +74,31 @@ public class RedPacketConfigurationWebController extends BaseController {
     @ApiOperation(value = "添加不可领红包账号")
     @PostMapping(value = "/insertConfiguration")
     @ResponseBody
-    public Response<RedPacketConfiguration> insertConfiguration(RedPacketConfiguration query){
+    public Response<RedPacketConfiguration> insertConfiguration(RedPacketConfiguration configuration){
         try {
-            if (DataUtil.isEmpty(query) || DataUtil.isEmpty(query.getLevel()) || DataUtil.isEmpty(query.getName())
-                    || DataUtil.isEmpty(query.getStatus()) || DataUtil.isEmpty(query.getNameCode()) || DataUtil.isEmpty(query.getAmountInfo())){
+            if (DataUtil.isEmpty(configuration)
+                    || DataUtil.isEmpty(configuration.getLevel())
+                    || DataUtil.isEmpty(configuration.getName())
+                    || DataUtil.isEmpty(configuration.getStatus())
+                    || DataUtil.isEmpty(configuration.getNameCode())
+                    || DataUtil.isEmpty(configuration.getAmountInfo())){
                 return Response.fail("参数有误");
             }
-            Date date = new Date();
-            SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String nowDate = dateFormat.format(date);
-            query.setCreateTime(nowDate);
+            configuration.setCreateTime(new Date());
             RedPacketConfiguration checkName = new RedPacketConfiguration();
-            checkName.setName(query.getName());
+            checkName.setName(configuration.getName());
             List<RedPacketConfiguration> configurationList = redPacketConfigurationService.queryList(checkName);
             if(DataUtil.isNotEmpty(configurationList)){
                 return Response.fail("名称已存在");
             }
-            redPacketConfigurationService.insert(query);
-            return Response.ok("添加成功", query);
+            if (configuration.getLevel().equals(RedPacketConfiguration.Level.shopLevel.getCode())) {
+                AuthorizeMerchant merchant = authorizeMerchantService.queryByAliPayLoginNo(configuration.getName());
+                if (DataUtil.isEmpty(merchant)) {
+                    return Response.fail("收款账号不存在");
+                }
+            }
+            redPacketConfigurationService.insert(configuration);
+            return Response.ok("添加成功", configuration);
         }catch (Exception e){
             log.error("添加红包配置失败:{}", e);
             return Response.fail("添加失败");
@@ -106,7 +117,6 @@ public class RedPacketConfigurationWebController extends BaseController {
             if (DataUtil.isEmpty(configuration)) {
                 return Response.fail("获取红包配置信息失败");
             }
-//            RedPacketConfigurationWebInfo configurationWebInfo = getListVo(configuration);
             return Response.ok(configuration);
         } catch (Exception e) {
             log.error("获取红包配置信息失败:{}", e);
@@ -124,20 +134,10 @@ public class RedPacketConfigurationWebController extends BaseController {
                     || DataUtil.isEmpty(updateConfig.getStatus()) || DataUtil.isEmpty(updateConfig.getAmountInfo())) {
                 return Response.fail("参数有误");
             }
-//            RedPacketConfiguration checkName = new RedPacketConfiguration();
-//            checkName.setName(updateConfig.getName());
-//            List<RedPacketConfiguration> configurationList = redPacketConfigurationService.queryList(checkName);
-//            if (DataUtil.isNotEmpty(configurationList)) {
-//                return Response.fail("账号重复");
-//            }
-
             redPacketConfigurationService.updateById(updateConfig);
             //修改日志记录
             RedPacketConfigurationRecord record = getRecordVo(updateConfig);
-            Date date = new Date();
-            SimpleDateFormat dateFormat= new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String nowDate = dateFormat.format(date);
-            record.setCreateTime(nowDate);
+            record.setCreateTime(new Date());
             record.setAddress(IpUtils.getIpAddress(req));
             RequestContext.RequestUser user = RequestContext.getCurrentUser();
             record.setUserId(user.getUid());
@@ -171,7 +171,7 @@ public class RedPacketConfigurationWebController extends BaseController {
     private RedPacketConfigurationWebInfo getListVo(RedPacketConfiguration configuration) {
         RedPacketConfigurationWebInfo vo = new RedPacketConfigurationWebInfo();
         vo.setId(configuration.getId());
-        vo.setCreateTime(configuration.getCreateTime());
+        vo.setCreateTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(configuration.getCreateTime()));
         vo.setName(configuration.getName());
         vo.setLevel(configuration.getLevelDesc());
         vo.setStatus(configuration.getStatusDesc());
@@ -180,7 +180,6 @@ public class RedPacketConfigurationWebController extends BaseController {
 
     private RedPacketConfigurationRecord getRecordVo(RedPacketConfiguration configuration) {
         RedPacketConfigurationRecord vo = new RedPacketConfigurationRecord();
-//        vo.setId(configuration.getId());
         vo.setName(configuration.getName());
         vo.setNameCode(configuration.getNameCode());
         vo.setLevel(configuration.getLevel());
