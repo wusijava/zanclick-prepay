@@ -3,8 +3,9 @@ package com.zanclick.prepay.web.api.h5;
 import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.authorize.entity.AuthorizeMerchant;
 import com.zanclick.prepay.authorize.entity.RedPackBlacklist;
-import com.zanclick.prepay.authorize.mapper.RedPackBlacklistMapper;
 import com.zanclick.prepay.authorize.service.AuthorizeMerchantService;
+import com.zanclick.prepay.authorize.service.RedPackBlacklistService;
+import com.zanclick.prepay.authorize.service.RedPacketConfigurationService;
 import com.zanclick.prepay.authorize.util.MoneyUtil;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.exception.BizException;
@@ -41,7 +42,9 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
     @Autowired
     private AuthorizeMerchantService authorizeMerchantService;
     @Autowired
-    private RedPackBlacklistMapper redPackBlacklistMapper;
+    private RedPackBlacklistService redPackBlacklistService;
+    @Autowired
+    private RedPacketConfigurationService redPacketConfigurationService;
 
     @Value("${h5.server}")
     private String h5Server;
@@ -129,8 +132,14 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder.setUid(merchant.getUid());
         payOrder.setStoreMarkCode(merchant.getStoreMarkCode());
         payOrder.setDistrictName(merchant.getStoreCounty());
-        if (SetMeal.RedPackState.open.getCode().equals(meal.getRedPackState())){
-            RedPackBlacklist redPackBlacklist = redPackBlacklistMapper.selectBySellerNo(merchant.getSellerNo());
+        String redPacketAmount = redPacketConfigurationService.queryRedPacketAmount(payOrder.getSellerNo(),payOrder.getCity(),payOrder.getProvince(),payOrder.getAmount(),payOrder.getNum());
+        if (redPacketAmount == null || MoneyUtil.equal(redPacketAmount,"0.00")){
+            payOrder.setRedPackAmount("0.00");
+            payOrder.setRedPackState(PayOrder.RedPackState.un_receive.getCode());
+            payOrder.setRedPackType(PayOrder.RedPackType.personal.getCode());
+            payOrder.setRedPackSellerNo("11111111111");
+        }else {
+            RedPackBlacklist redPackBlacklist = redPackBlacklistService.querySellerNo(merchant.getSellerNo());
             if (DataUtil.isEmpty(redPackBlacklist)) {
                 payOrder.setRedPackType(PayOrder.RedPackType.personal.getCode());
             } else {
@@ -138,10 +147,6 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
             }
             payOrder.setRedPackAmount(meal.getRedPackAmount());
             payOrder.setRedPackState(PayOrder.RedPackState.un_receive.getCode());
-        }else {
-            payOrder.setRedPackAmount("0.00");
-            payOrder.setRedPackState(PayOrder.RedPackState.un_receive.getCode());
-            payOrder.setRedPackSellerNo("11111111111");
         }
         String eachAmount = MoneyUtil.divide(payOrder.getAmount(),payOrder.getNum().toString());
         String amount = MoneyUtil.multiply(eachAmount,String.valueOf(payOrder.getNum()-1));

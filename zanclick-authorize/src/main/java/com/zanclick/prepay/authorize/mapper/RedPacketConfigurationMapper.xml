@@ -70,6 +70,14 @@
         <include refid="Base_Where_Clause"/>
     </select>
 
+    <select id="selectByLevelAndNameCode" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE `level` = #{level} AND name_code = #{nameCode} ORDER BY id DESC LIMIT 1
+    </select>
+
     <insert id="insert" parameterType="com.zanclick.prepay.authorize.entity.RedPacketConfiguration" useGeneratedKeys="true"
             keyProperty="id">
         INSERT INTO
