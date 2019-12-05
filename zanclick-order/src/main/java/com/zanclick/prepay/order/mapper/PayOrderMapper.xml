@@ -563,6 +563,6 @@
                 `red_pack_type`=#{redPackType},
             </if>
         </set>
-        WHERE seller_no=#{sellerNo} and red_pack_state = 0
+        WHERE seller_no=#{sellerNo} and red_pack_state = 0 and state in (1, 2)
     </update>
 </mapper>
