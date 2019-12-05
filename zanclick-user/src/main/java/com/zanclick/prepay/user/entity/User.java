@@ -37,6 +37,8 @@ public class User implements Identifiable<Long> {
 
     private String cityCode;
 
+    private String provinceCode;
+
     private String pwd;
 
     public enum State {
