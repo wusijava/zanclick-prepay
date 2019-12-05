@@ -150,6 +150,7 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
             refundOrder.setState(PayRefundOrder.State.success.getCode());
             refundOrder.setFinishTime(new Date());
             payRefundOrderService.updateById(refundOrder);
+            redPacketService.refundRedPacket(order);
         }
         this.updateById(order);
     }
