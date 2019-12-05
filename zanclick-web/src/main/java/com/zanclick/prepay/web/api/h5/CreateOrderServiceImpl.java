@@ -132,7 +132,7 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder.setUid(merchant.getUid());
         payOrder.setStoreMarkCode(merchant.getStoreMarkCode());
         payOrder.setDistrictName(merchant.getStoreCounty());
-        String redPacketAmount = redPacketConfigurationService.queryRedPacketAmount(payOrder.getSellerNo(),payOrder.getCity(),payOrder.getProvince(),payOrder.getAmount(),payOrder.getNum());
+        String redPacketAmount = redPacketConfigurationService.queryRedPacketAmount(payOrder.getSellerNo(),payOrder.getCity(),payOrder.getProvince(),payOrder.getSettleAmount(),payOrder.getNum());
         if (redPacketAmount != null && MoneyUtil.equal(redPacketAmount,"0.00")){
             payOrder.setRedPackAmount("0.00");
             payOrder.setRedPackState(PayOrder.RedPackState.un_receive.getCode());

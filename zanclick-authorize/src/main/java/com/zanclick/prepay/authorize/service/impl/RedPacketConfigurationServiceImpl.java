@@ -57,7 +57,7 @@ public class RedPacketConfigurationServiceImpl extends BaseMybatisServiceImpl<Re
             String max = object.getString("max");
             Integer fqNum = object.getInteger("num");
             String money = object.getString("money");
-            if (MoneyUtil.judgeMoney(amount,min) && MoneyUtil.largeMoney(max,amount) && fqNum.equals(num)){
+            if (MoneyUtil.judgeMoney(amount,min) && (MoneyUtil.largeMoney(max,amount) || !MoneyUtil.isNumber(max)) && fqNum.equals(num)){
                 return MoneyUtil.formatMoney(money);
             }
         }

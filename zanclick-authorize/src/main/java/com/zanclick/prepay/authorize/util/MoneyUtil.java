@@ -1,9 +1,6 @@
 package com.zanclick.prepay.authorize.util;
 
-import com.zanclick.prepay.common.utils.DataUtil;
-
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 
 /**
  * @author duchong
@@ -44,10 +41,18 @@ public class MoneyUtil {
         try {
             decimal = decimal.add(new BigDecimal(total_money));
         } catch (Exception e) {
-            e.printStackTrace();
             return decimal;
         }
         return decimal.setScale(2, BigDecimal.ROUND_HALF_EVEN);
+    }
+
+    public static boolean isNumber(String total_money) {
+        try {
+            new BigDecimal(total_money);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     public static boolean equal(String money1, String money2) {
