@@ -64,6 +64,8 @@ public class RedPacketServiceImpl extends BaseMybatisServiceImpl<RedPacket,Long>
         packet.setCreateTime(new Date());
         packet.setAmount(order.getRedPackAmount());
         packet.setAppId(order.getAppId());
+        packet.setSellerNo(order.getSellerNo());
+        packet.setName(order.getName());
         getBaseMapper().insert(packet);
     }
 
