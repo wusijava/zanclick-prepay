@@ -102,6 +102,7 @@
                 </if>
             </trim>
         </where>
+        ORDER BY id DESC
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
