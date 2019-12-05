@@ -117,9 +117,15 @@
     <update id="updateTypeBySellerNo" parameterType="java.util.Map">
         update
         red_packet r
-        left join pay_order p on r.out_order_no = p.out_order_no
         set r.type = #{type}
-        where p.seller_no = #{sellerNo} and p.red_pack_state = 0
+        where r.state = 0
+        and r.out_order_no in (
+        select
+        p.out_order_no
+        from pay_order p
+        where p.seller_no = #{sellerNo}
+        and p.state in (1, 2)
+        )
     </update>
 
     <insert id="insert" parameterType="com.zanclick.prepay.order.entity.RedPacket" useGeneratedKeys="true"
