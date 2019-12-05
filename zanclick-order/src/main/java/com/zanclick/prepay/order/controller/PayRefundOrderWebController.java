@@ -196,8 +196,10 @@ public class PayRefundOrderWebController extends BaseController {
         vo.setAmount(order.getAmount());
         vo.setRedPacketAmount(order.getRedPacketAmount());
         vo.setStateDesc(order.getStateDesc());
-        vo.setRedPacketStateDesc(order.getRepaymentStateDesc());
+        vo.setRedPacketStateDesc(order.getRedPacketDesc());
         vo.setRepaymentStateDesc(order.getRepaymentStateDesc());
+        vo.setSellerName(order.getSellerName());
+        vo.setSellerNo(order.getSellerNo());
         return vo;
     }
 
