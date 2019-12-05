@@ -83,10 +83,13 @@ public class PayRefundOrderWebController extends BaseController {
                 return Response.fail("没有数据");
             }
             List<PayRefundOrderExcelList> payRefundOrderExcelList = new ArrayList<>();
+            int index = 1;
             for (PayRefundOrder payRefundOrder : payRefundOrderList) {
                 PayRefundOrderExcelList list = getExcelVo(payRefundOrder);
                 if (DataUtil.isNotEmpty(list)) {
+                    list.setIndex(index);
                     payRefundOrderExcelList.add(list);
+                    index++;
                 }
             }
             if (DataUtil.isEmpty(payRefundOrderExcelList)) {
@@ -185,7 +188,6 @@ public class PayRefundOrderWebController extends BaseController {
 
     private PayRefundOrderExcelList getExcelVo(PayRefundOrder order) {
         PayRefundOrderExcelList vo = new PayRefundOrderExcelList();
-        vo.setNo(order.getId().toString());
         vo.setOutTradeNo(order.getOutTradeNo());
         vo.setOutOrderNo(order.getOutOrderNo());
         vo.setAuthNo(order.getAuthNo());

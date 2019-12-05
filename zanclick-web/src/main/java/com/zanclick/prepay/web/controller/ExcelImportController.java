@@ -93,9 +93,12 @@ public class ExcelImportController {
         }
         List<AuthorizeMerchant> merchantList = authorizeMerchantService.queryList(query);
         List<RegisterMerchant> registerMerchantList = new ArrayList<>();
+        int index = 1;
         for (AuthorizeMerchant merchant : merchantList) {
             RegisterMerchant registerMerchant = getRegisterMerchant(merchant);
+            registerMerchant.setIndex(index);
             registerMerchantList.add(registerMerchant);
+            index++;
         }
         userMap = null;
         ExcelDto dto = new ExcelDto();
