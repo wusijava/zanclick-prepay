@@ -133,7 +133,7 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
         payOrder.setStoreMarkCode(merchant.getStoreMarkCode());
         payOrder.setDistrictName(merchant.getStoreCounty());
         String redPacketAmount = redPacketConfigurationService.queryRedPacketAmount(payOrder.getSellerNo(),payOrder.getCity(),payOrder.getProvince(),payOrder.getAmount(),payOrder.getNum());
-        if (redPacketAmount == null || MoneyUtil.equal(redPacketAmount,"0.00")){
+        if (redPacketAmount != null && MoneyUtil.equal(redPacketAmount,"0.00")){
             payOrder.setRedPackAmount("0.00");
             payOrder.setRedPackState(PayOrder.RedPackState.un_receive.getCode());
             payOrder.setRedPackType(PayOrder.RedPackType.personal.getCode());
@@ -145,7 +145,11 @@ public class CreateOrderServiceImpl extends AbstractCommonService implements Api
             } else {
                 payOrder.setRedPackType(redPackBlacklist.getType());
             }
-            payOrder.setRedPackAmount(meal.getRedPackAmount());
+            if (redPacketAmount == null){
+                payOrder.setRedPackAmount(meal.getRedPackAmount());
+            }else {
+                payOrder.setRedPackAmount(redPacketAmount);
+            }
             payOrder.setRedPackState(PayOrder.RedPackState.un_receive.getCode());
         }
         String eachAmount = MoneyUtil.divide(payOrder.getAmount(),payOrder.getNum().toString());

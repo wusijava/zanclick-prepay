@@ -259,10 +259,10 @@
                 `amount`=#{amount},
             </if>
             <if test="sellerNo != null and sellerNo != ''">
-                `seller_no`=#{sellerNo}
+                `seller_no`=#{sellerNo},
             </if>
             <if test="sellerName != null and sellerName != ''">
-                `seller_name`=#{sellerName}
+                `seller_name`=#{sellerName},
             </if>
             <if test="redPacketAmount != null and redPacketAmount != ''">
                 `red_packet_amount`=#{redPacketAmount},
