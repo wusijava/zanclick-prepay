@@ -19,7 +19,7 @@
         <result column="name" property="name" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <sql id="table">red_packet</sql>
+    <sql id="table">red_packet_record</sql>
     <sql id="Base_Column_List">
             `id`,
             `amount`,
