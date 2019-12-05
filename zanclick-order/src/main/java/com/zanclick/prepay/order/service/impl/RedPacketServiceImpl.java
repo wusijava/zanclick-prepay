@@ -64,4 +64,15 @@ public class RedPacketServiceImpl extends BaseMybatisServiceImpl<RedPacket,Long>
         packet.setAppId(order.getAppId());
         getBaseMapper().insert(packet);
     }
+
+    @Override
+    public void refundRedPacket(PayOrder order) {
+        RedPacket packet = this.queryByOutTradeNo(order.getOutTradeNo());
+        if (packet != null && packet.getState().equals(RedPacket.State.waiting.getCode())){
+           packet.setState(PayOrder.State.refund.getCode());
+           packet.setFinishTime(new Date());
+           this.updateById(packet);
+        }
+
+    }
 }
