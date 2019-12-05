@@ -119,14 +119,22 @@
         red_packet r
         set r.type = #{type}
         where r.state = 0
-        and r.out_order_no in (
-        select
-        p.out_order_no
-        from pay_order p
-        where p.seller_no = #{sellerNo}
-        and p.state in (1, 2)
-        )
+        and r.seller_no = #{sellerNo}
     </update>
+
+    <!--<update id="updateTypeBySellerNo" parameterType="java.util.Map">-->
+        <!--update-->
+        <!--red_packet r-->
+        <!--set r.type = #{type}-->
+        <!--where r.state = 0-->
+        <!--and r.out_order_no in (-->
+        <!--select-->
+        <!--p.out_order_no-->
+        <!--from pay_order p-->
+        <!--where p.seller_no = #{sellerNo}-->
+        <!--and p.state in (1, 2)-->
+        <!--)-->
+    <!--</update>-->
 
     <insert id="insert" parameterType="com.zanclick.prepay.order.entity.RedPacket" useGeneratedKeys="true"
             keyProperty="id">
