@@ -129,7 +129,7 @@ public class AuthorizeMerchant implements Identifiable<Long> {
      * */
     public enum RedPackState {
         open(1, "开启"),
-        closed(0, "关闭的");
+        closed(0, "关闭");
 
         private Integer code;
         private String desc;
