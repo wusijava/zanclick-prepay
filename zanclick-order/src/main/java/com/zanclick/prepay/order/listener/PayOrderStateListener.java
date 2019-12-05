@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSONObject;
 import com.zanclick.prepay.common.config.JmsMessaging;
 import com.zanclick.prepay.common.utils.DataUtil;
 import com.zanclick.prepay.order.entity.PayOrder;
+import com.zanclick.prepay.order.entity.RedPacket;
 import com.zanclick.prepay.order.query.PayOrderQuery;
 import com.zanclick.prepay.order.service.PayOrderService;
+import com.zanclick.prepay.order.service.RedPacketService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
@@ -26,6 +28,8 @@ public class PayOrderStateListener {
 
     @Autowired
     private PayOrderService payOrderService;
+    @Autowired
+    private RedPacketService redPacketService;
 
     static String outTradeNoKey = "outTradeNo";
     static String stateKey = "state";
@@ -91,6 +95,7 @@ public class PayOrderStateListener {
             updateOrder.setSellerNo(sellerNo);
             updateOrder.setRedPackType(redPackType);
             payOrderService.updateBySellerNo(updateOrder);
+            redPacketService.updateTypeBySellerNo(sellerNo, redPackType);
         }
 
     }

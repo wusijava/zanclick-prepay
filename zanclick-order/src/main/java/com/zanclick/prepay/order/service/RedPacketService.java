@@ -39,4 +39,6 @@ public interface RedPacketService extends BaseService<RedPacket,Long> {
      * */
     void refundRedPacket(PayOrder order);
 
+    void updateTypeBySellerNo(String sellerNo, Integer type);
+
 }
