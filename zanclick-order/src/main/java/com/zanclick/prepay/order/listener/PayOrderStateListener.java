@@ -86,18 +86,11 @@ public class PayOrderStateListener {
         }
         String sellerNo = object.getString("sellerNo");
         Integer redPackType = object.getInteger("redPackType");
-        PayOrderQuery payOrderQuery = new PayOrderQuery();
-        payOrderQuery.setSellerNo(sellerNo);
-        payOrderQuery.setRedPackState(0);
-        List<PayOrder> payOrders = payOrderService.queryList(payOrderQuery);
-        if(DataUtil.isNotEmpty(payOrders)){
-            PayOrder updateOrder = new PayOrder();
-            updateOrder.setSellerNo(sellerNo);
-            updateOrder.setRedPackType(redPackType);
-            payOrderService.updateBySellerNo(updateOrder);
-            redPacketService.updateTypeBySellerNo(sellerNo, redPackType);
-        }
-
+        PayOrder updateOrder = new PayOrder();
+        updateOrder.setSellerNo(sellerNo);
+        updateOrder.setRedPackType(redPackType);
+        payOrderService.updateBySellerNo(updateOrder);
+        redPacketService.updateTypeBySellerNo(sellerNo, redPackType);
     }
 
 }
