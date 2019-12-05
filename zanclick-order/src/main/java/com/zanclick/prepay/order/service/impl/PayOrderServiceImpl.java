@@ -244,6 +244,11 @@ public class PayOrderServiceImpl extends BaseMybatisServiceImpl<PayOrder, Long> 
         return null;
     }
 
+    @Override
+    public void updateBySellerNo(PayOrder order) {
+        payOrderMapper.updateBySellerNo(order);
+    }
+
 
     /**
      * 解冻相关操作

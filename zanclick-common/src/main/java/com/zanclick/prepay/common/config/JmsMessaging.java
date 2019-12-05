@@ -26,4 +26,11 @@ public class JmsMessaging {
      * 结算完成
      * */
     public final static String ORDER_SETTLE_MESSAGE = "order.settle.message";
+
+    /**
+     * 红包结算类型更新
+     * */
+    public final static String ORDER_REDPACKSTATE_MESSAGE = "order.redpackstate.message";
+
+
 }
