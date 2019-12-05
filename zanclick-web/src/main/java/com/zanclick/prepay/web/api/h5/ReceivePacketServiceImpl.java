@@ -107,8 +107,12 @@ public class ReceivePacketServiceImpl extends AbstractCommonService implements A
         }
         PayOrder order = payOrderService.queryByOutOrderNo(receive.getOutOrderNo());
         if (order != null && !order.isPayed()){
-            log.error("红包，订单状态异常:{}", receive.getOutOrderNo());
+            log.error("订单状态异常:{}", receive.getOutOrderNo());
             throw new BizException("订单状态异常");
+        }
+        if (PayOrder.RedPackState.receive.getCode().equals(order.getRedPackState())){
+            log.error("红包已领取:{}", receive.getOutOrderNo());
+            throw new BizException("红包已领取");
         }
         if (packet != null && packet.getState().equals(RedPacketRecord.State.waiting.getCode())){
             SendMessage.sendMessage(JmsMessaging.ORDER_RED_PACKET_MESSAGE,JSONObject.toJSONString(receive));
