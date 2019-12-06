@@ -14,6 +14,7 @@
         <result column="salt" property="salt" jdbcType="VARCHAR"/>
         <result column="store_mark_code" property="storeMarkCode" jdbcType="VARCHAR"/>
         <result column="city_code" property="cityCode" jdbcType="VARCHAR"/>
+        <result column="province_code" property="provinceCode" jdbcType="VARCHAR"/>
         <result column="pwd" property="pwd" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -31,6 +32,7 @@
             `salt`,
             `store_mark_code`,
             `city_code`,
+            `province_code`,
             `pwd`
     </sql>
     <sql id="Base_Where_Clause">
@@ -71,6 +73,9 @@
                 </if>
                 <if test="cityCode != null and cityCode != ''">
                     AND `city_code`=#{cityCode}
+                </if>
+                <if test="provinceCode != null and provinceCode != ''">
+                    AND `province_code`=#{provinceCode}
                 </if>
                 <if test="pwd != null and pwd != ''">
                     AND `pwd`=#{pwd}
@@ -120,6 +125,7 @@
         `salt`,
         `store_mark_code`,
         `city_code`,
+        `province_code`,
         `pwd`
         )
         VALUES(
@@ -135,6 +141,7 @@
         #{salt},
         #{storeMarkCode},
         #{cityCode},
+        #{provinceCode},
         #{pwd}
         )
     </insert>
@@ -155,6 +162,7 @@
         `salt`,
         `store_mark_code`,
         `city_code`,
+        `province_code`,
         `pwd`
         )
         VALUES
@@ -172,6 +180,7 @@
             #{cm.salt},
             #{cm.storeMarkCode},
             #{cm.cityCode},
+            #{cm.provinceCode},
             #{cm.pwd}
             )
         </foreach>
@@ -237,6 +246,9 @@
             </if>
             <if test="cityCode != null and cityCode != ''">
                 `city_code`=#{cityCode},
+            </if>
+            <if test="provinceCode != null and provinceCode != ''">
+                `province_code`=#{provinceCode},
             </if>
             <if test="pwd != null and pwd != ''">
                 `pwd`=#{pwd},

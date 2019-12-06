@@ -109,10 +109,13 @@ public class PoiUtil {
         InputStream fis = new BufferedInputStream(new FileInputStream(file));
         byte[] b = new byte[fis.available()];
         fis.read(b);
-        response.getOutputStream().write(b);
+        OutputStream out = response.getOutputStream();
+        out.write(b);
+        out.flush();
         fis.close();
         if (file.exists()) {
             file.delete();
         }
+        out.close();
     }
 }

@@ -34,4 +34,6 @@ public class LoginUser implements Serializable {
     private String storeMarkCode;
 
     private String cityCode;
+
+    private String provinceCode;
 }

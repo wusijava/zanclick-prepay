@@ -49,7 +49,6 @@ public class RedPacketConfiguration implements Identifiable<Long> {
     private String amountInfo;
 
     public enum Level{
-
         shopLevel(1,"门店"),
         cityLevel(2,"市"),
         provinceLevel(3,"省");

@@ -49,5 +49,7 @@ public class RequestContext {
         private String storeMarkCode;
 
         private String cityCode;
+
+        private String provinceCode;
     }
 }
