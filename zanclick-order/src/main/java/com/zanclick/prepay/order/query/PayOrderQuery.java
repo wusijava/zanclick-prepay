@@ -36,4 +36,6 @@ public class PayOrderQuery extends PayOrder {
      */
     private String hiddenSellerName;
 
+    private String sort;
+
 }

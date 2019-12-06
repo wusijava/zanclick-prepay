@@ -12,22 +12,8 @@ import java.util.List;
 @Data
 public class AreaWebInfo {
 
-    private List<AreaInfo> provinceList;
+    private List<AreaData> provinceList;
 
-    private List<AreaInfo> cityList;
-
-    @Data
-    public static class AreaInfo {
-        /**
-         * code
-         */
-        private String code;
-
-        /**
-         * 名称
-         */
-        private String name;
-
-    }
+    private List<AreaData> cityList;
 
 }

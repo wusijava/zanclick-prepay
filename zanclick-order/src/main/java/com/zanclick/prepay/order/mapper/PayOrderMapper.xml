@@ -196,14 +196,19 @@
                     AND `uid`=#{uid}
                 </if>
                 <if test="startTime != null">
-                    and DATE_FORMAT(create_time,'%Y-%m-%d') &gt;= #{startTime}
+                    and create_time &gt;= #{startTime}
                 </if>
                 <if test="endTime != null">
-                    and DATE_FORMAT(create_time,'%Y-%m-%d') &lt;= #{endTime}
+                    and create_time &lt;= #{endTime}
                 </if>
             </trim>
         </where>
-        ORDER BY id DESC
+        <if test="sort == null or sort == ''">
+            ORDER BY id DESC
+        </if>
+        <if test="sort != null and sort != ''">
+            ORDER BY ${sort} DESC
+        </if>
         <if test="offset == null and limit != null">
             limit #{limit}
         </if>
