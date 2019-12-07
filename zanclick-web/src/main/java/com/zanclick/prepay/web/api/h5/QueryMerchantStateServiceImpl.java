@@ -51,12 +51,12 @@ public class QueryMerchantStateServiceImpl extends AbstractCommonService impleme
         QueryMerchantStateResult result = new QueryMerchantStateResult();
         AuthorizeMerchant merchant = authorizeMerchantService.queryLastOneByWayId(query.getWayId());
         if (DataUtil.isEmpty(merchant)) {
-            result.setTitle("该商户暂未入驻");
+            result.setTitle("该商户暂未注册");
         } else {
             if (merchant.isSuccess()) {
-                result.setTitle("该商户已入驻成功");
+                result.setTitle("该商户已注册成功");
             } else {
-                result.setTitle("该商户入驻失败原因如下");
+                result.setTitle("该商户注册失败原因如下");
                 result.setMsg(merchant.getReason());
             }
         }
