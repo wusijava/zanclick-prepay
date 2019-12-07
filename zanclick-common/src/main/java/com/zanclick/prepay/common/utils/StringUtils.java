@@ -317,4 +317,23 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         }
         return new_name.toString();
     }
+
+    public static String hiddenTradeNo(String tradeNo) {
+        if (tradeNo == null || "".equals(tradeNo)) {
+            return tradeNo;
+        }
+        int length = tradeNo.length();
+        if (length < 7) {
+            return tradeNo;
+        }
+        int hiddenLength = length - 7;
+        StringBuffer newTrade = new StringBuffer();
+        newTrade.append(tradeNo.substring(0, 3));
+        for (int i = 0; i < hiddenLength; i++) {
+            newTrade.append("*");
+        }
+        newTrade.append(tradeNo.substring(length - 4));
+        return newTrade.toString();
+    }
+
 }

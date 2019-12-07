@@ -175,9 +175,6 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
                 return;
             }
         }
-        log.error("修改商户领红包的权限开关异常:{}", id);
-        throw new BizException("修改商户领红包的权限开关异常");
-
     }
 
 
@@ -295,4 +292,8 @@ public class AuthorizeMerchantServiceImpl extends BaseMybatisServiceImpl<Authori
         return create;
     }
 
+    @Override
+    public AuthorizeMerchant queryLastOneByWayId(String wayId) {
+        return authorizeMerchantMapper.queryLastOneByWayId(wayId);
+    }
 }

@@ -43,4 +43,6 @@ public interface AuthorizeMerchantMapper extends BaseMapper<AuthorizeMerchant, L
      */
     void updateBySellerNo(AuthorizeMerchant merchant);
 
+    AuthorizeMerchant queryLastOneByWayId(String wayId);
+
 }

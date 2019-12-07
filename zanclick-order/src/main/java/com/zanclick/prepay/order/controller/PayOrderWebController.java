@@ -16,6 +16,7 @@ import com.zanclick.prepay.order.query.PayOrderQuery;
 import com.zanclick.prepay.order.service.PayOrderService;
 import com.zanclick.prepay.order.vo.PayOrderExcelList;
 import com.zanclick.prepay.order.vo.PayOrderWebList;
+import com.zanclick.prepay.user.entity.User;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -30,6 +31,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,19 +65,25 @@ public class PayOrderWebController extends BaseController {
             query.setLimit(10);
         }
         RequestContext.RequestUser user = RequestContext.getCurrentUser();
-        if (user.getType().equals(1)){
+        if (user.getType().equals(User.Type.USER.getCode())) {
             query.setUid(user.getUid());
-        }else if (user.getType().equals(2)){
+        } else if (user.getType().equals(User.Type.MANAGE.getCode())) {
             query.setStoreMarkCode(user.getStoreMarkCode());
-        }else if (user.getType().equals(3)){
+        } else if (user.getType().equals(User.Type.CITY.getCode())) {
             query.setCity(user.getCityCode());
-        }else if (user.getType().equals(4)){
+        } else if (user.getType().equals(User.Type.PROVINCE.getCode())) {
             query.setProvince(user.getProvinceCode());
         }
         Pageable pageable = PageRequest.of(query.getPage(), query.getLimit());
         Page<PayOrder> page = payOrderService.queryPage(query, pageable);
         List<PayOrderWebList> voList = new ArrayList<>();
         for (PayOrder order : page.getContent()) {
+            if (user.getType().equals(User.Type.CITY.getCode())) {
+                order.setOutOrderNo(StringUtils.hiddenTradeNo(order.getOutOrderNo()));
+                order.setOutTradeNo(StringUtils.hiddenTradeNo(order.getOutTradeNo()));
+                order.setPhoneNumber(StringUtils.hiddenName(order.getPhoneNumber()));
+                order.setSellerNo(StringUtils.hiddenName(order.getSellerNo()));
+            }
             voList.add(getListVo(order));
         }
         Page<PayOrderWebList> voPage = new PageImpl<>(voList, pageable, page.getTotalElements());
@@ -123,7 +131,7 @@ public class PayOrderWebController extends BaseController {
             log.error("订单状态不正确无法取消打款:{}", outTradeNo);
             return Response.fail("订单状态不正确无法取消打款");
         }
-        if (!order.isSettleWait()){
+        if (!order.isSettleWait()) {
             log.error("订单状态不正确无法取消打款:{}", outTradeNo);
             return Response.fail("订单状态不正确无法取消打款");
         }
@@ -153,14 +161,18 @@ public class PayOrderWebController extends BaseController {
     @ResponseBody
     public Response<String> batchExport(PayOrderQuery query) {
         RequestContext.RequestUser user = RequestContext.getCurrentUser();
-        if (user.getType().equals(1)){
+        if (user.getType().equals(1)) {
             query.setUid(user.getUid());
-        }else if (user.getType().equals(2)){
+        } else if (user.getType().equals(2)) {
             query.setStoreMarkCode(user.getStoreMarkCode());
-        }else if (user.getType().equals(3)){
+        } else if (user.getType().equals(3)) {
             query.setCity(user.getCityCode());
-        } else if (user.getType().equals(4)){
+        } else if (user.getType().equals(4)) {
             query.setProvince(user.getProvinceCode());
+        }
+        if (DataUtil.isEmpty(query.getStartTime()) || DataUtil.isEmpty(query.getEndTime())) {
+            query.setStartTime(DateUtil.formatDate(new Date(), DateUtil.PATTERN_YYYY_MM_DD) + " 00:00:00");
+            query.setEndTime(DateUtil.formatDate(new Date(), DateUtil.PATTERN_YYYY_MM_DD) + " 23:59:59");
         }
         List<PayOrder> orderList = payOrderService.queryList(query);
         if (DataUtil.isEmpty(orderList)) {
@@ -177,6 +189,16 @@ public class PayOrderWebController extends BaseController {
             }
             if (!DataUtil.isEmpty(query) && "true".equals(query.getHiddenSellerName())) {
                 order.setName(StringUtils.hiddenName(order.getName()));
+            }
+            if (user.getType().equals(User.Type.CITY.getCode())) {
+                order.setOutOrderNo(StringUtils.hiddenTradeNo(order.getOutOrderNo()));
+                order.setOutTradeNo(StringUtils.hiddenTradeNo(order.getOutTradeNo()));
+                if (order.getPhoneNumber().indexOf("*") < 0) {
+                    order.setPhoneNumber(StringUtils.hiddenName(order.getPhoneNumber()));
+                }
+                if (order.getSellerNo().indexOf("*") < 0) {
+                    order.setSellerNo(StringUtils.hiddenName(order.getSellerNo()));
+                }
             }
             PayOrderExcelList list = getExcelVo(order);
             if (DataUtil.isNotEmpty(list)) {
