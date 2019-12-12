@@ -243,7 +243,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
      * @param string
      */
     public static boolean isEmail(String string) {
-        String regEx1 = "^([a-z0-9A-Z]+[-|\\.]?)+[a-z0-9A-Z]@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-zA-Z]{2,}$";
+        String regEx1 = "^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$";
         if (string == null) {
             return false;
         }
@@ -335,5 +335,4 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
         newTrade.append(tradeNo.substring(length - 4));
         return newTrade.toString();
     }
-
 }
