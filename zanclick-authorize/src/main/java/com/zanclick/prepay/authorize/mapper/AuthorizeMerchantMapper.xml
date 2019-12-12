@@ -359,6 +359,14 @@
         WHERE seller_no = #{sellerNo} ORDER BY id DESC
     </select>
 
+    <select id="queryLastOneByWayId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE way_id = #{wayId} ORDER BY id DESC LIMIT 1
+    </select>
+
     <update id="updateBySellerNo" parameterType="com.zanclick.prepay.authorize.entity.AuthorizeMerchant">
         UPDATE
         <include refid="table"/>

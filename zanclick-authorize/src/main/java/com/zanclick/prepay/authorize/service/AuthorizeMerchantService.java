@@ -75,4 +75,6 @@ public interface AuthorizeMerchantService extends BaseService<AuthorizeMerchant,
      * @param merchant
      */
     void updateBySellerNo(AuthorizeMerchant merchant);
+
+    AuthorizeMerchant queryLastOneByWayId(String wayId);
 }
