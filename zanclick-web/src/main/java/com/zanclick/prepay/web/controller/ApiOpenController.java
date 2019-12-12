@@ -1,15 +1,26 @@
 package com.zanclick.prepay.web.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alipay.api.AlipayClient;
+import com.zanclick.prepay.authorize.entity.AuthorizeConfiguration;
+import com.zanclick.prepay.authorize.entity.AuthorizeOrder;
+import com.zanclick.prepay.authorize.query.AuthorizeOrderQuery;
+import com.zanclick.prepay.authorize.service.AuthorizeConfigurationService;
+import com.zanclick.prepay.authorize.service.AuthorizeOrderService;
+import com.zanclick.prepay.authorize.util.AlipayOauthUtil;
+import com.zanclick.prepay.authorize.util.AuthorizePayUtil;
 import com.zanclick.prepay.common.entity.Response;
 import com.zanclick.prepay.common.entity.ResponseParam;
 import com.zanclick.prepay.common.resolver.ApiRequestResolver;
 import com.zanclick.prepay.common.utils.ApplicationContextProvider;
+import com.zanclick.prepay.common.utils.DataUtil;
+import com.zanclick.prepay.common.utils.RedisUtil;
 import com.zanclick.prepay.common.utils.StringUtils;
 import com.zanclick.prepay.web.exeption.DecryptException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -17,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.UUID;
 
 /**
  * 第三方放get请求调用接口
@@ -31,6 +43,18 @@ public class ApiOpenController {
 
     @Value("${h5.server}")
     private String h5Server;
+
+    @Value("${web.server}")
+    private String webServer;
+
+    @Value("${alipay.order.times-p-uid}")
+    private Integer timesPerUid;
+
+    @Autowired
+    private AuthorizeOrderService authorizeOrderService;
+
+    @Autowired
+    private AuthorizeConfigurationService authorizeConfigurationService;
 
     @ApiOperation(value = "商户信息验证接口")
     @GetMapping(value = "/verifyMerchant", produces = "application/json;charset=utf-8")
@@ -52,6 +76,48 @@ public class ApiOpenController {
             sb.append("/auth/fail");
             sb.append("?desc=" + URLEncoder.encode("订单创建异常，请稍后再试", "utf-8"));
             response.sendRedirect(h5Server + sb.toString());
+        }
+    }
+
+
+    @ApiOperation(value = "顾客跳转支付确认页面")
+    @GetMapping(value = "/confirmOrder")
+    public void confirmOrder(String appId, String cipherJson, String auth_code, String state, HttpServletResponse response) throws IOException {
+        if (DataUtil.isEmpty(auth_code)) {
+            AuthorizeConfiguration configuration = authorizeConfigurationService.queryDefaultConfiguration();
+            String url = webServer + "/confirmOrder";
+            String uuid = UUID.randomUUID().toString().replaceAll("-", "");
+            String param = appId + "&" + cipherJson;
+            RedisUtil.set("ORDERCONFIRM:REDIRECT:" + uuid, param,60*60);
+            String redirectUrl = AlipayOauthUtil.goToAuthUrlBase(configuration.getIsvAppId(), url,uuid);
+            response.sendRedirect(redirectUrl);
+        } else {
+            AlipayClient alipayClient = authorizeConfigurationService.queryDefaultAlipayClient();
+            String userid = AlipayOauthUtil.getUserid(alipayClient,auth_code);
+            if(userid != null){
+                AuthorizeOrderQuery query = new AuthorizeOrderQuery();
+                query.setBuyerId(userid);
+                query.setState(1);
+                Long times = authorizeOrderService.queryCount(query);
+                if(times >= timesPerUid){
+                    String url = h5Server + "/auth/error";
+                    response.sendRedirect(url);
+                }else {
+                    if (state != null) {
+                        String param = (String) RedisUtil.get("ORDERCONFIRM:REDIRECT:" + state);
+                        if (param != null) {
+                            String[] arr = param.split("&");
+                            appId = arr[0];
+                            cipherJson = param.replace(appId + "&", "");
+                        }
+                    }
+                    String url = h5Server+"/order/orderConfirmation?appId="+appId+"&cipherJson="+URLEncoder.encode(cipherJson,"UTF-8");
+                    response.sendRedirect(url);
+                }
+            }else{
+                String url = h5Server+"/order/orderConfirmation?appId="+appId+"&cipherJson="+URLEncoder.encode(cipherJson,"UTF-8");
+                response.sendRedirect(url);
+            }
         }
     }
 

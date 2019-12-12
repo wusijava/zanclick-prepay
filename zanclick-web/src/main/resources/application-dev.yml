@@ -1,8 +1,8 @@
 spring:
   datasource:
-    username: lvlu
-    password: Lvlu2018.
-    url: jdbc:mysql://172.16.4.201/zanclick_prepay_bak?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: root
+    url: jdbc:mysql://127.0.0.1/zanclick_prepay?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=Asia/Shanghai&useSSL=false
     driver-class-name: com.mysql.cj.jdbc.Driver
     type: com.alibaba.druid.pool.DruidDataSource
     druid:
@@ -45,19 +45,23 @@ spring:
         max-idle: 100
         max-active: 200
 
-activemq: #MQ消息中间件
-  broker-url: failover:(tcp://172.16.4.201:61616)
-  user: system
-  password: ba4643ac16d4d15f131e61e6b7936850
-  enabled: true
-  max-connections: 50
-  expiry-timeout: 10000
-  idle-timeout: 30000
+#activemq: #MQ消息中间件
+#  broker-url: failover:(tcp://172.16.4.201:61616)
+#  user: system
+#  password: ba4643ac16d4d15f131e61e6b7936850
+#  enabled: true
+#  max-connections: 50
+#  expiry-timeout: 10000
+#  idle-timeout: 30000
 
 #预授权通知接口
 authorize:
   #notify: http://api.ngrok.zanclick.cn/api/open/authorize/notify
   notify: http://prepay.utools.club/api/open/authorize/notify
+  budget:
+    pay-date: 20
+    late-days: 14
+
 
 excelDownloadUrl: http://172.16.4.9:8888/api/open/downloadExcel/
 
@@ -65,6 +69,16 @@ excelDownloadUrl: http://172.16.4.9:8888/api/open/downloadExcel/
 h5:
   key: 12345678qwertyui
   server: http://172.16.4.9:8082
+web:
+  server: http://172.16.4.222:8888
+
+alipay:
+  order:
+    times-p-uid: 6
+excel:
+  templateDir: D:\storage
+
+
  #支付超时时间
 timeout:
   authorize:

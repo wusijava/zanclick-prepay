@@ -71,6 +71,10 @@ public class AuthorizeDTO {
 
     private String refund_amount;
 
+    private String store_id;
+
+    private String terminal_id;
+
     @Override
     public String toString() {
         return JSONObject.toJSONString(this);

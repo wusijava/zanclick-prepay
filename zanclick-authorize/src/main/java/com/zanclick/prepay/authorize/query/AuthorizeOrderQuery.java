@@ -21,4 +21,6 @@ public class AuthorizeOrderQuery extends AuthorizeOrder {
 
     private String stateIn;
 
+    private String authNoStart;
+
 }

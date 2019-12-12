@@ -12,15 +12,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
 import sun.misc.BASE64Decoder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -57,14 +62,14 @@ public class OpenController extends BaseController {
             log.error("key已经过期:{}", key);
             return;
         }
-        PoiUtil.batchExport(dto.getHeaders(), dto.getKeys(),dto.getObjectList(), request, response);
+        PoiUtil.batchExport(dto.getHeaders(), dto.getKeys(), dto.getObjectList(), request, response);
         RedisUtil.del(key);
     }
 
     @GetMapping(value = "getCityData")
-    public void getCityData(String date,Integer type,String endtime, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void getCityData(String date, Integer type, String endtime, HttpServletRequest request, HttpServletResponse response) throws IOException {
         String authorization = request.getHeader("authorization");
-        if (!doBeforeBiz(response, authorization)){
+        if (!doBeforeBiz(response, authorization)) {
             return;
         }
         Date d = null;
@@ -87,8 +92,8 @@ public class OpenController extends BaseController {
         if (endtime != null) {
             nextdate = date + " " + endtime;
         }
-        String cndate = sdfCN.format(d) + (type!=null&&type==1?"社会渠道":"");
-        String cnlastdate = sdfCN.format(lastd)+ (type!=null&&type==1?"社会渠道":"");
+        String cndate = sdfCN.format(d) + (type != null && type == 1 ? "社会渠道" : "");
+        String cnlastdate = sdfCN.format(lastd) + (type != null && type == 1 ? "社会渠道" : "");
         String html = "<style>body,td,th {font-family: Verdana, Arial, Helvetica, sans-serif;font-size: 12px;color: #1d1007; line-height:24px}td{text-align:center;}</style> " +
                 "<div style=\"width: 50%;float: right;\">" +
                 "<table  border=\"1\" cellspacing=\"0\" cellpadding=\"0\" text-align=\"center\"><thead><tr><th width=\"110\">运营中心</td><th width=\"70\">地市</th><th width=\"140\">" + cndate + "销量<br/>(截至" + endtime + ")</th><th width=\"80\">增长率</th><th width=\"140\">" + cnlastdate + "销量<br/>(截至" + endtime + ")</th></tr></thead><tbody>TBODY</tbody></table></div>";
@@ -129,7 +134,7 @@ public class OpenController extends BaseController {
             }
             total1 += num1;
             total2 += num2;
-            String rateStr = rate==0?"0.00":df.format(rate * 100);
+            String rateStr = rate == 0 ? "0.00" : df.format(rate * 100);
             cityDatas.add(new CityData(groupid, id, groupname, name, date, cndate, num1, lastdate, cnlastdate, num2, rateStr));
 
         }
@@ -164,8 +169,8 @@ public class OpenController extends BaseController {
                 .append("</td></tr>");
         html = html.replace("TBODY", tbody.toString());
         StringBuilder sb = new StringBuilder(html);
-        sb.append("<div style=\"width: 50%;float: right;\">") ;
-        for(CityData cityData:cityDatas){
+        sb.append("<div style=\"width: 50%;float: right;\">");
+        for (CityData cityData : cityDatas) {
             sb.append("<table  border=\"1\" cellspacing=\"0\" cellpadding=\"0\" text-align=\"center\"><thead><tr><th width=\"70\">地市</th><th width=\"140\">" + cndate + "销量<br/>(截至" + endtime + ")</th><th width=\"80\">增长率</th><th width=\"140\">" + cnlastdate + "销量<br/>(截至" + endtime + ")</th></tr></thead><tbody>")
                     .append("<tr><td align=\"center\">").append(cityData.getCityName())
                     .append("</td><td align=\"center\">").append(cityData.getNum())
@@ -180,6 +185,110 @@ public class OpenController extends BaseController {
         writer.println(sb.toString());
         writer.close();
     }
+
+    @Value("${excel.templateDir}")
+    private String templateDir;
+
+
+    @GetMapping(value = "getTotalData")
+    public void getCityData(String date, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String authorization = request.getHeader("authorization");
+        if (!doBeforeBiz(response, authorization)) {
+            return;
+        }
+        Date d = null;
+        DateFormat sdf = new SimpleDateFormat(DateUtil.PATTERN_YYYY_MM_DD);
+        try {
+            d = sdf.parse(date);
+        } catch (Exception e) {
+            d = new Date();
+            date = sdf.format(d);
+        }
+        String dateStr = new SimpleDateFormat("MM.dd").format(d);
+        String monthStr = new SimpleDateFormat("yyyy-MM").format(d);
+        String sql = "SELECT a.id as id,a.groupid as groupid,a.groupname,a.cityname,ifnull(p.n,0) as n,ifnull(p.m,0) as m" +
+                ",ifnull(c.m,0) as mm,ifnull(c.n,0) as mn,ifnull(d.m,0) as am,ifnull(d.n,0) as an from area_group a " +
+                "LEFT JOIN (select city,sum(p.amount) as m," +
+                "count(p.id) as n from pay_order p  where p.finish_time BETWEEN '" + date + " 00:00:00' and '" + date + " 23:59:59' and p.state=1 " +
+                " group by p.city) " +
+                " p on p.city=a.cityid " +
+                "LEFT JOIN (select city,sum(p.amount) as m," +
+                "count(p.id) as n from pay_order p  where p.finish_time BETWEEN '" + monthStr + "-01 00:00:00' and '" + date + " 23:59:59' and p.state=1 " +
+                " group by p.city) " +
+                " c on c.city=a.cityid " +
+                "LEFT JOIN (select city,sum(p.amount) as m," +
+                "count(p.id) as n from pay_order p  where p.finish_time <'" + date + " 23:59:59' and p.state=1 " +
+                " group by p.city) " +
+                " d on d.city=a.cityid " +
+                " ORDER BY a.city_idx ASC ";
+        List<Map<String, Object>> maps = jdbcTemplate.queryForList(sql);
+        File f = new File(templateDir + File.separator + "和商汇分资方销量日报.xlsx");
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream(f);
+            Workbook wb = new XSSFWorkbook(fis);
+            Sheet sheet = wb.getSheetAt(0);
+            sheet.getRow(2).getCell(0).setCellValue(dateStr);
+            Long t1 = 0L;
+            Double t2 = 0.00;
+            Long t3 = 0L;
+            Double t4 = 0.00;
+            Long t5 = 0L;
+            Double t6 = 0.00;
+            for (int i = 0; i < maps.size(); i++) {
+                Row row = sheet.getRow(i + 2);
+                int j = 3;
+                Map<String, Object> map = maps.get(i);
+                Long n =  (Long) map.getOrDefault("n", 0);
+                Long mn =  (Long) map.getOrDefault("mn", 0);
+                Long an =  (Long) map.getOrDefault("an", 0);
+                Double m = (Double) map.getOrDefault("m", 0.00);
+                Double mm = (Double) map.getOrDefault("mm", 0.00);
+                Double am = (Double) map.getOrDefault("am", 0.00);
+                t1 += n;
+                t2 += m;
+                t3 += mn;
+                t4 += mm;
+                t5 += an;
+                t6 += am;
+                row.getCell(j++).setCellValue((Long) map.getOrDefault("n", 0));
+                row.getCell(j++).setCellValue((Double) map.getOrDefault("m", 0.00));
+                row.getCell(j++).setCellValue((Long) map.getOrDefault("mn", 0));
+                row.getCell(j++).setCellValue((Double) map.getOrDefault("mm", 0.00));
+                row.getCell(j++).setCellValue((Long) map.getOrDefault("an", 0));
+                row.getCell(j++).setCellValue((Double) map.getOrDefault("am", 0.00));
+            }
+            Row row = sheet.getRow(23);
+            int j = 3;
+            row.getCell(j++).setCellValue(t1);
+            row.getCell(j++).setCellValue(t2);
+            row.getCell(j++).setCellValue(t3);
+            row.getCell(j++).setCellValue(t4);
+            row.getCell(j++).setCellValue(t5);
+            row.getCell(j++).setCellValue(t6);
+            wb.setSheetName(0,dateStr);
+            String file_name = "和商汇分资方销量日报" + new SimpleDateFormat("yyyyMMdd").format(d) + ".xlsx";
+            response.setContentType("application/vnd.ms-excel;charset=utf-8");
+            response.addHeader("Content-Disposition", "attachment;filename=" + new String(file_name.getBytes("GBK"), "ISO8859-1"));
+            response.setCharacterEncoding("utf-8");
+            OutputStream outputStream = response.getOutputStream();
+            wb.write(outputStream);
+            outputStream.flush();
+            outputStream.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
 
     @Data
     @AllArgsConstructor
