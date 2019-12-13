@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -86,5 +87,15 @@ public class RedPacketServiceImpl extends BaseMybatisServiceImpl<RedPacket,Long>
         map.put("type", type);
         map.put("sellerNo", sellerNo);
         redPacketMapper.updateTypeBySellerNo(map);
+    }
+
+    @Override
+    public List<Map<String, Object>> getSettleList(RedPacket RedPacket) {
+        return redPacketMapper.getSettleList(RedPacket);
+    }
+
+    @Override
+    public List<Map<String, Object>> getSettleDetail(RedPacket redPacket) {
+        return redPacketMapper.getSettleDetail(redPacket);
     }
 }

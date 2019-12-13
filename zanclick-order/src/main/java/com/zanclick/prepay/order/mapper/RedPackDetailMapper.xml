@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.zanclick.prepay.order.mapper.RedPackDetailMapper">
+    <resultMap id="BaseResultMap" type="com.zanclick.prepay.order.entity.RedPackDetail">
+            <id column="id" property="id" jdbcType="BIGINT"/>
+            <result column="out_order_no" property="outOrderNo" jdbcType="VARCHAR"/>
+            <result column="amount" property="amount" jdbcType="VARCHAR"/>
+            <result column="settle_amount" property="settleAmount" jdbcType="VARCHAR"/>
+            <result column="num" property="num" jdbcType="BIGINT"/>
+            <result column="red_pack_amount" property="redPackAmount" jdbcType="VARCHAR"/>
+            <result column="state" property="state" jdbcType="BIGINT"/>
+            <result column="seller_no" property="sellerNo" jdbcType="VARCHAR"/>
+            <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+            <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="table">red_pack_detail</sql>
+    <sql id="Base_Column_List">
+            `id`,
+            `out_order_no`,
+            `amount`,
+            `settle_amount`,
+            `num`,
+            `red_pack_amount`,
+            `state`,
+            `seller_no`,
+            `create_time`,
+            `update_time`
+    </sql>
+    <sql id="Base_Where_Clause">
+        <where>
+            <trim prefixOverrides="and">
+                    <if test="id != null">
+                        AND `id`=#{id}
+                    </if>
+                    <if test="outOrderNo != null and outOrderNo != ''">
+                        AND `out_order_no`=#{outOrderNo}
+                    </if>
+                    <if test="amount != null and amount != ''">
+                        AND `amount`=#{amount}
+                    </if>
+                    <if test="settleAmount != null and settleAmount != ''">
+                        AND `settle_amount`=#{settleAmount}
+                    </if>
+                    <if test="num != null">
+                        AND `num`=#{num}
+                    </if>
+                    <if test="redPackAmount != null and redPackAmount != ''">
+                        AND `red_pack_amount`=#{redPackAmount}
+                    </if>
+                    <if test="state != null">
+                        AND `state`=#{state}
+                    </if>
+                    <if test="sellerNo != null and sellerNo != ''">
+                        AND `seller_no`=#{sellerNo}
+                    </if>
+                    <if test="createTime != null">
+                        AND `create_time`=#{createTime}
+                    </if>
+                    <if test="updateTime != null">
+                        AND `update_time`=#{updateTime}
+                    </if>
+            </trim>
+        </where>
+        <if test="offset == null and limit != null">
+            limit #{limit}
+        </if>
+        <if test="offset != null and limit != null">
+            limit #{offset}, #{limit}
+        </if>
+    </sql>
+
+    <!-- 查询总数 -->
+    <select id="selectCount" resultType="java.lang.Long" parameterType="java.util.Map">
+        SELECT count(id)
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <!-- 查询 -->
+    <select id="select" resultMap="BaseResultMap" parameterType="java.util.Map">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        <include refid="Base_Where_Clause"/>
+    </select>
+
+    <insert id="insert" parameterType="com.zanclick.prepay.order.entity.RedPackDetail" useGeneratedKeys="true"
+            keyProperty="id">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `out_order_no`,
+            `amount`,
+            `settle_amount`,
+            `num`,
+            `red_pack_amount`,
+            `state`,
+            `seller_no`,
+            `create_time`,
+            `update_time`
+        )
+        VALUES(
+            #{id},
+            #{outOrderNo},
+            #{amount},
+            #{settleAmount},
+            #{num},
+            #{redPackAmount},
+            #{state},
+            #{sellerNo},
+            #{createTime},
+            #{updateTime}
+        )
+    </insert>
+
+    <insert id="insertBatch" parameterType="java.util.List" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO
+        <include refid="table"/>
+        (
+            `id`,
+            `out_order_no`,
+            `amount`,
+            `settle_amount`,
+            `num`,
+            `red_pack_amount`,
+            `state`,
+            `seller_no`,
+            `create_time`,
+            `update_time`
+        )
+        VALUES
+        <foreach collection="list" item="cm" index="index" separator=",">
+            (
+            #{cm.id},
+            #{cm.outOrderNo},
+            #{cm.amount},
+            #{cm.settleAmount},
+            #{cm.num},
+            #{cm.redPackAmount},
+            #{cm.state},
+            #{cm.sellerNo},
+            #{cm.createTime},
+            #{cm.updateTime}
+            )
+        </foreach>
+    </insert>
+
+    <select id="selectById" resultMap="BaseResultMap" parameterType="java.lang.Long">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM
+        <include refid="table"/>
+        WHERE id=#{id}
+    </select>
+
+    <update id="updateById" parameterType="com.zanclick.prepay.order.entity.RedPackDetail">
+        UPDATE
+        <include refid="table"/>
+        <set>
+            <if test="outOrderNo != null and outOrderNo != ''">
+                 `out_order_no`=#{outOrderNo},
+            </if>
+            <if test="amount != null and amount != ''">
+                 `amount`=#{amount},
+            </if>
+            <if test="settleAmount != null and settleAmount != ''">
+                 `settle_amount`=#{settleAmount},
+            </if>
+            <if test="num != null">
+                 `num`=#{num},
+            </if>
+            <if test="redPackAmount != null and redPackAmount != ''">
+                 `red_pack_amount`=#{redPackAmount},
+            </if>
+            <if test="state != null">
+                 `state`=#{state},
+            </if>
+            <if test="sellerNo != null and sellerNo != ''">
+                 `seller_no`=#{sellerNo},
+            </if>
+            <if test="createTime != null">
+                 `create_time`=#{createTime},
+            </if>
+            <if test="updateTime != null">
+                 `update_time`=#{updateTime},
+            </if>
+        </set>
+        WHERE id=#{id}
+    </update>
+</mapper>

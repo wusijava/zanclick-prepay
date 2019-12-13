@@ -133,17 +133,17 @@
     </update>
 
     <!--<update id="updateTypeBySellerNo" parameterType="java.util.Map">-->
-        <!--update-->
-        <!--red_packet r-->
-        <!--set r.type = #{type}-->
-        <!--where r.state = 0-->
-        <!--and r.out_order_no in (-->
-        <!--select-->
-        <!--p.out_order_no-->
-        <!--from pay_order p-->
-        <!--where p.seller_no = #{sellerNo}-->
-        <!--and p.state in (1, 2)-->
-        <!--)-->
+    <!--update-->
+    <!--red_packet r-->
+    <!--set r.type = #{type}-->
+    <!--where r.state = 0-->
+    <!--and r.out_order_no in (-->
+    <!--select-->
+    <!--p.out_order_no-->
+    <!--from pay_order p-->
+    <!--where p.seller_no = #{sellerNo}-->
+    <!--and p.state in (1, 2)-->
+    <!--)-->
     <!--</update>-->
 
     <insert id="insert" parameterType="com.zanclick.prepay.order.entity.RedPacket" useGeneratedKeys="true"
@@ -230,6 +230,63 @@
         FROM
         <include refid="table"/>
         WHERE id=#{id}
+    </select>
+    <select id="getSettleList" resultType="java.util.Map">
+        select
+        name,
+        seller_no,
+        type,
+        count(id) as count,
+        sum(amount) as sum
+        from
+        <include refid="table"/>
+        <where>
+        <trim prefixOverrides="and">
+            <if test="sellerNo != null and sellerNo != ''">
+            AND `seller_no`=#{sellerNo}
+            </if>
+            <if test="name != null and name != ''">
+            AND `name`=#{name}
+            </if>
+            <if test="startTime != null">
+                and create_time &gt;= #{startTime}
+            </if>
+            <if test="endTime != null">
+                and create_time &lt;= #{endTime}
+            </if>
+        </trim>
+        and state != 1
+        </where>
+        group by name,seller_no,type
+
+    </select>
+    <select id="getSettleDetail" resultType="java.util.Map">
+    SELECT
+    po.out_order_no,po.amount,po.settle_amount,po.num,po.red_pack_amount,po.seller_no
+    FROM  red_packet as  rp
+    inner JOIN
+    pay_order as po
+    on
+    rp.out_order_no=po.out_order_no
+        <where>
+            <trim prefixOverrides="and">
+                <if test="sellerNo != null and sellerNo != ''">
+                    AND rp.seller_no=#{sellerNo}
+                </if>
+                <if test="name != null and name != ''">
+                    AND rp.name=#{name}
+                </if>
+                <if test="startTime != null">
+                    and rp.create_time &gt;= #{startTime}
+                </if>
+                <if test="endTime != null">
+                    and rp.create_time &lt;= #{endTime}
+                </if>
+            </trim>
+            and rp.state != 1
+        </where>
+
+
     </select>
 
     <update id="updateById" parameterType="com.zanclick.prepay.order.entity.RedPacket">
